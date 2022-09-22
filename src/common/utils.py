@@ -7,6 +7,28 @@ import threading
 import numpy as np
 from src.common import config, settings
 from random import random
+from ctypes import windll
+from ctypes.wintypes import RECT, HWND
+
+
+def move_window(handle: HWND, x: int, y: int):
+    """移動視窗到座標(x, y)
+
+    Args:
+        handle (HWND): 窗口句柄
+        x (int): 横座標
+        y (int): 綜座標
+    """
+    #test move
+    SetWindowPos = windll.user32.SetWindowPos
+    # GetClientRect = windll.user32.GetClientRect
+    # GetWindowRect = windll.user32.GetWindowRect
+    # EnableWindow = windll.user32.EnableWindow
+
+    SWP_NOSIZE = 0x0001
+    SWP_NOMOVE = 0X0002
+    SWP_NOZORDER = 0x0004
+    SetWindowPos(handle, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER)
 
 
 def run_if_enabled(function):
