@@ -9,6 +9,8 @@ import mss.windows
 import numpy as np
 from src.common import config, utils
 from ctypes import wintypes
+from ctypes import windll, byref, c_ubyte
+from ctypes.wintypes import RECT, HWND
 user32 = ctypes.windll.user32
 user32.SetProcessDPIAware()
 
@@ -34,6 +36,16 @@ MMT_WIDTH = max(MM_TL_TEMPLATE.shape[1], MM_BR_TEMPLATE.shape[1])
 PLAYER_TEMPLATE = cv2.imread('assets/player_template.png', 0)
 PT_HEIGHT, PT_WIDTH = PLAYER_TEMPLATE.shape
 
+GetDC = windll.user32.GetDC
+CreateCompatibleDC = windll.gdi32.CreateCompatibleDC
+GetClientRect = windll.user32.GetClientRect
+CreateCompatibleBitmap = windll.gdi32.CreateCompatibleBitmap
+SelectObject = windll.gdi32.SelectObject
+BitBlt = windll.gdi32.BitBlt
+SRCCOPY = 0x00CC0020
+GetBitmapBits = windll.gdi32.GetBitmapBits
+DeleteObject = windll.gdi32.DeleteObject
+ReleaseDC = windll.user32.ReleaseDC
 
 class Capture:
     """
@@ -46,7 +58,7 @@ class Capture:
         """Initializes this Capture object's main thread."""
 
         config.capture = self
-
+        self.capture_gap_sec = 0.002
         self.frame = None
         self.minimap = {}
         self.minimap_ratio = 1
@@ -56,13 +68,17 @@ class Capture:
             'left': 0,
             'top': 0,
             'width': 1366,
-            'height': 768
+            'height': 768,
+            # 'width': 400, #only need small area at top left
+            # 'height': 200,
         }
 
         self.ready = False
         self.calibrated = False
+        self.refresh_counting = 0
         self.thread = threading.Thread(target=self._main)
         self.thread.daemon = True
+        self.handle = user32.FindWindowW(None, "MapleStory")
 
     def start(self):
         """Starts this Capture's thread."""
@@ -76,9 +92,10 @@ class Capture:
         mss.windows.CAPTUREBLT = 0
         while True:
             # Calibrate screen capture
-            handle = user32.FindWindowW(None, 'MapleStory')
+            self.handle = user32.FindWindowW(None, "MapleStory")
+            # old version for front screenshot
             rect = wintypes.RECT()
-            user32.GetWindowRect(handle, ctypes.pointer(rect))
+            user32.GetWindowRect(self.handle, ctypes.pointer(rect))
             rect = (rect.left, rect.top, rect.right, rect.bottom)
             rect = tuple(max(0, x) for x in rect)
 
@@ -88,8 +105,7 @@ class Capture:
             self.window['height'] = max(rect[3] - rect[1], MMT_HEIGHT)
 
             # Calibrate by finding the bottom right corner of the minimap
-            with mss.mss() as self.sct:
-                self.frame = self.screenshot()
+            self.frame = self.screenshot_in_bg(self.handle,self.window['left'],self.window['top'],self.window['width'],self.window['height'])
             if self.frame is None:
                 continue
             tl, _ = utils.single_match(self.frame, MM_TL_TEMPLATE)
@@ -105,37 +121,37 @@ class Capture:
             self.minimap_ratio = (mm_br[0] - mm_tl[0]) / (mm_br[1] - mm_tl[1])
             self.minimap_sample = self.frame[mm_tl[1]:mm_br[1], mm_tl[0]:mm_br[0]]
             self.calibrated = True
+            while True:
+                if not self.calibrated or self.refresh_counting >= 150:
+                    self.refresh_counting = 0
+                    break
+                # refresh whole game frame every 0.5s
+                if self.refresh_counting % 10 == 0:
+                  self.frame = self.screenshot_in_bg(self.handle,self.window['left'],self.window['top'],self.window['width'],self.window['height'])
+                # Take screenshot
+                minimap = self.screenshot_in_bg(self.handle,mm_tl[0],mm_tl[1],mm_br[0]-mm_tl[0],mm_br[1]-mm_tl[1])
+                if minimap is None:
+                    continue
 
-            with mss.mss() as self.sct:
-                while True:
-                    if not self.calibrated:
-                        break
+                # Determine the player's position
+                player = utils.multi_match(minimap, PLAYER_TEMPLATE, threshold=0.8)
+                if player:
+                    config.player_pos = utils.convert_to_relative(player[0], minimap)
 
-                    # Take screenshot
-                    self.frame = self.screenshot()
-                    if self.frame is None:
-                        continue
+                # Package display information to be polled by GUI
+                self.minimap = {
+                    'minimap': minimap,
+                    'rune_active': config.bot.rune_active,
+                    'rune_pos': config.bot.rune_pos,
+                    'path': config.path,
+                    'player_pos': config.player_pos
+                }
 
-                    # Crop the frame to only show the minimap
-                    minimap = self.frame[mm_tl[1]:mm_br[1], mm_tl[0]:mm_br[0]]
-
-                    # Determine the player's position
-                    player = utils.multi_match(minimap, PLAYER_TEMPLATE, threshold=0.8)
-                    if player:
-                        config.player_pos = utils.convert_to_relative(player[0], minimap)
-
-                    # Package display information to be polled by GUI
-                    self.minimap = {
-                        'minimap': minimap,
-                        'rune_active': config.bot.rune_active,
-                        'rune_pos': config.bot.rune_pos,
-                        'path': config.path,
-                        'player_pos': config.player_pos
-                    }
-
-                    if not self.ready:
-                        self.ready = True
-                    time.sleep(0.001)
+                if not self.ready:
+                    self.ready = True
+                self.refresh_counting = self.refresh_counting + 1
+                time.sleep(self.capture_gap_sec)
+                
 
     def screenshot(self, delay=1):
         try:
@@ -144,3 +160,36 @@ class Capture:
             print(f'\n[!] Error while taking screenshot, retrying in {delay} second'
                   + ('s' if delay != 1 else ''))
             time.sleep(delay)
+    
+    def screenshot_in_bg(self,handle: HWND, tl_x = 0, tl_y = 0, width=0, height=0):
+        """窗口客户区截图
+
+        Args:
+            handle (HWND): 要截图的窗口句柄
+
+        Returns:
+            numpy.ndarray: 截图数据
+        """
+
+        if width == 0 or height == 0:
+          # get target window size
+          r = RECT()
+          GetClientRect(handle, byref(r))
+          width, height = r.right, r.bottom
+
+        # 开始截图
+        dc = GetDC(handle)
+        cdc = CreateCompatibleDC(dc)
+        bitmap = CreateCompatibleBitmap(dc, width, height)
+        SelectObject(cdc, bitmap)
+        BitBlt(cdc, 0, 0, width, height, dc, tl_x, tl_y, SRCCOPY)
+        # 截图是BGRA排列，因此总元素个数需要乘以4
+        total_bytes = width*height*4
+        buffer = bytearray(total_bytes)
+        byte_array = c_ubyte*total_bytes
+        GetBitmapBits(bitmap, total_bytes, byte_array.from_buffer(buffer))
+        DeleteObject(bitmap)
+        DeleteObject(cdc)
+        ReleaseDC(handle, dc)
+        # 返回截图数据为numpy.ndarray
+        return np.frombuffer(buffer, dtype=np.uint8).reshape(height, width, 4)
