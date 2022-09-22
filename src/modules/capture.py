@@ -58,7 +58,7 @@ class Capture:
         """Initializes this Capture object's main thread."""
 
         config.capture = self
-        self.capture_gap_sec = 0.002
+        self.capture_gap_sec = 0.03
         self.frame = None
         self.minimap = {}
         self.minimap_ratio = 1
@@ -67,7 +67,7 @@ class Capture:
         self.window = {
             'left': 0,
             'top': 0,
-            'width': 1366,
+            'width': 1366, # 1366*768 is the default resolution in dev
             'height': 768,
             # 'width': 400, #only need small area at top left
             # 'height': 200,
@@ -99,8 +99,6 @@ class Capture:
             rect = (rect.left, rect.top, rect.right, rect.bottom)
             rect = tuple(max(0, x) for x in rect)
 
-            self.window['left'] = rect[0]
-            self.window['top'] = rect[1]
             self.window['width'] = max(rect[2] - rect[0], MMT_WIDTH)
             self.window['height'] = max(rect[3] - rect[1], MMT_HEIGHT)
 
@@ -121,6 +119,7 @@ class Capture:
             self.minimap_ratio = (mm_br[0] - mm_tl[0]) / (mm_br[1] - mm_tl[1])
             self.minimap_sample = self.frame[mm_tl[1]:mm_br[1], mm_tl[0]:mm_br[0]]
             self.calibrated = True
+            print(mm_tl,mm_br)
             while True:
                 if not self.calibrated or self.refresh_counting >= 150:
                     self.refresh_counting = 0
