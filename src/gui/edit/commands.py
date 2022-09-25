@@ -15,7 +15,7 @@ class Commands(Frame):
         self.scroll = tk.Scrollbar(self)
         self.scroll.pack(side=tk.RIGHT, fill='y', pady=(0, 5))
 
-        self.listbox = tk.Listbox(self, width=25,
+        self.listbox = tk.Listbox(self, width=15,
                                   listvariable=parent.parent.commands_var,
                                   exportselection=False,
                                   activestyle='none',

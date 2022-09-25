@@ -11,8 +11,8 @@ from src.gui import Menu, View, Edit, Settings
 class GUI:
     DISPLAY_FRAME_RATE = 30
     RESOLUTIONS = {
-        'DEFAULT': '800x800',
-        'Edit': '1400x800'
+        'DEFAULT': '600x630',
+        'Edit': '900x630'
     }
 
     def __init__(self):

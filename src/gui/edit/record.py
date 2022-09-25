@@ -15,7 +15,7 @@ class Record(LabelFrame):
         self.scroll = tk.Scrollbar(self)
         self.scroll.pack(side=tk.RIGHT, fill='y', pady=5)
 
-        self.listbox = tk.Listbox(self, width=25,
+        self.listbox = tk.Listbox(self, width=20,
                                   listvariable=self.display_var,
                                   exportselection=False,
                                   activestyle='none',

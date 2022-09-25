@@ -14,7 +14,7 @@ class Components(Frame):
         self.scroll = tk.Scrollbar(self)
         self.scroll.pack(side=tk.RIGHT, fill='y', pady=(0, 5))
 
-        self.listbox = tk.Listbox(self, width=25,
+        self.listbox = tk.Listbox(self, width=15,
                                   listvariable=config.gui.routine_var,
                                   exportselection=False,
                                   activestyle='none',

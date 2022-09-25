@@ -11,6 +11,7 @@ class Routine(LabelFrame):
 
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
 
         self.list_frame = Frame(self)
         self.list_frame.grid(row=0, column=0, sticky=tk.NSEW)

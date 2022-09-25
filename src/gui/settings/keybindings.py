@@ -1,4 +1,5 @@
 import tkinter as tk
+from turtle import width
 import keyboard as kb
 from src.gui.interfaces import LabelFrame, Frame
 from src.common import utils
@@ -11,7 +12,7 @@ class KeyBindings(LabelFrame):
         assert isinstance(target, Configurable)
         self.target = target
 
-        self.columnconfigure(0, minsize=300)
+        self.columnconfigure(0, weight=1)
 
         self.displays = {}          # Holds each action's display variable
         self.forward = {}           # Maps actions to keys
