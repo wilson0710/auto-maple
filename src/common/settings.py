@@ -78,17 +78,17 @@ def reset():
     """Resets all settings to their default values."""
 
     global move_tolerance, adjust_tolerance, record_layout, buff_cooldown
-    move_tolerance = 0.1
-    adjust_tolerance = 0.005
+    move_tolerance = 12
+    adjust_tolerance = 3
     record_layout = False
     buff_cooldown = 180
 
 
 # The allowed error from the destination when moving towards a Point
-move_tolerance = 0.1
+move_tolerance = 12
 
 # The allowed error from a specific location while adjusting to that location
-adjust_tolerance = 0.005
+adjust_tolerance = 3
 
 # Whether the bot should save new player positions to the current layout
 record_layout = False
