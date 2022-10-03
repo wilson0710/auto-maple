@@ -60,7 +60,7 @@ class Capture:
         config.capture = self
         self.capture_gap_sec = 0.03
         self.frame = None
-        self.minimap = {}
+        self.minimap = None
         self.minimap_ratio = 1
         self.minimap_sample = None
         self.sct = None
@@ -99,11 +99,13 @@ class Capture:
             rect = (rect.left, rect.top, rect.right, rect.bottom)
             rect = tuple(max(0, x) for x in rect)
 
+            self.window['left'] = rect[0]
+            self.window['top'] = rect[1]
             self.window['width'] = max(rect[2] - rect[0], MMT_WIDTH)
             self.window['height'] = max(rect[3] - rect[1], MMT_HEIGHT)
 
             # Calibrate by finding the bottom right corner of the minimap
-            self.frame = self.screenshot_in_bg(self.handle,self.window['left'],self.window['top'],self.window['width'],self.window['height'])
+            self.frame = self.screenshot_in_bg(self.handle,0,0,self.window['width'],self.window['height'])
             if self.frame is None:
                 continue
             tl, _ = utils.single_match(self.frame, MM_TL_TEMPLATE)
@@ -119,14 +121,13 @@ class Capture:
             self.minimap_ratio = (mm_br[0] - mm_tl[0]) / (mm_br[1] - mm_tl[1])
             self.minimap_sample = self.frame[mm_tl[1]:mm_br[1], mm_tl[0]:mm_br[0]]
             self.calibrated = True
-            print(mm_tl,mm_br)
             while True:
-                if not self.calibrated or self.refresh_counting >= 150:
+                if not self.calibrated:
                     self.refresh_counting = 0
                     break
                 # refresh whole game frame every 0.5s
                 if self.refresh_counting % 10 == 0:
-                  self.frame = self.screenshot_in_bg(self.handle,self.window['left'],self.window['top'],self.window['width'],self.window['height'])
+                  self.frame = self.screenshot_in_bg(self.handle,0,0,self.window['width'],self.window['height'])
                 # Take screenshot
                 minimap = self.screenshot_in_bg(self.handle,mm_tl[0],mm_tl[1],mm_br[0]-mm_tl[0],mm_br[1]-mm_tl[1])
                 if minimap is None:
@@ -135,8 +136,14 @@ class Capture:
                 # Determine the player's position
                 player = utils.multi_match(minimap, PLAYER_TEMPLATE, threshold=0.8)
                 if player:
+                    # config.player_pos = player[0]
+                    # print("origin player pos : ",config.player_pos)
                     config.player_pos = utils.convert_to_relative(player[0], minimap)
-
+                    # print("player pos : ",config.player_pos)
+                else:
+                    if config.player_pos != (0,0): # check is last player_pos near the border
+                      pass
+              
                 # Package display information to be polled by GUI
                 self.minimap = {
                     'minimap': minimap,

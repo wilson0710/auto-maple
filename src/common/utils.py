@@ -141,8 +141,10 @@ def convert_to_relative(point, frame):
     :return:        The given point in relative coordinates.
     """
 
-    x = point[0] / frame.shape[1]
-    y = point[1] / config.capture.minimap_ratio / frame.shape[0]
+    # x = point[0] / frame.shape[1]
+    # y = point[1] / config.capture.minimap_ratio / frame.shape[0]
+    x = point[0] 
+    y = point[1] 
     return x, y
 
 
@@ -155,9 +157,12 @@ def convert_to_absolute(point, frame):
     :param frame:   The image to use as a reference.
     :return:        The given point in absolute coordinates.
     """
-
-    x = int(round(point[0] * frame.shape[1]))
-    y = int(round(point[1] * config.capture.minimap_ratio * frame.shape[0]))
+    if point[0] < 1 and point[1] < 1:
+        x = int(round(point[0] * frame.shape[1]))
+        y = int(round(point[1] * config.capture.minimap_ratio * frame.shape[0]))
+    else:
+        x = int(round(point[0]))
+        y = int(round(point[1]))
     return x, y
 
 
@@ -193,9 +198,14 @@ def draw_location(minimap, pos, color):
     """
 
     center = convert_to_absolute(pos, minimap)
+    # center = pos
+    if settings.move_tolerance < 1:
+        radius = round(minimap.shape[1] * settings.move_tolerance)
+    else:
+        radius = round(settings.move_tolerance)
     cv2.circle(minimap,
                center,
-               round(minimap.shape[1] * settings.move_tolerance),
+               radius,
                color,
                1)
 

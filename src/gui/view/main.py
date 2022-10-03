@@ -13,7 +13,7 @@ class View(Tab):
         super().__init__(parent, 'View', **kwargs)
 
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
 
         self.minimap = Minimap(self)
         self.minimap.grid(row=0, column=1, sticky=tk.NSEW, padx=5, pady=5)

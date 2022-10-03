@@ -19,6 +19,15 @@ enabled = False
 # If there is another player in the map, Auto Maple will purposely make random human-like mistakes
 stage_fright = False
 
+# record the player's current states
+player_states = {
+  'in_the_ground':True,
+  'fly_mode':True,
+}
+
+# skill cd timer
+skill_cd_timer = {}
+
 # Represents the current shortest path that the bot is taking
 path = []
 

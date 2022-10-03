@@ -25,7 +25,7 @@ class Bot(Configurable):
     """A class that interprets and executes user-defined routines."""
 
     DEFAULT_CONFIG = {
-        'Interact': 'y',
+        'Interact': 'space',
         'Feed pet': '9'
     }
 
@@ -59,7 +59,7 @@ class Bot(Configurable):
         :return:    None
         """
 
-        self.update_submodules()
+        # self.update_submodules()
         print('\n[~] Started main bot loop')
         self.thread.start()
 
@@ -98,7 +98,7 @@ class Bot(Configurable):
                         and element.location == self.rune_closest_pos:
                     self._solve_rune(model)
                 element.execute()
-                config.routine.step()
+                config.routine.next_step()
             else:
                 time.sleep(0.01)
 
@@ -119,13 +119,12 @@ class Bot(Configurable):
         press(self.config['Interact'], 1, down_time=0.2)        # Inherited from Configurable
 
         print('\nSolving rune:')
-        inferences = []
-        for _ in range(15):
+        for _ in range(10):
             frame = config.capture.frame
             solution = detection.merge_detection(model, frame)
             if solution:
                 print(', '.join(solution))
-                if solution in inferences:
+                if len(solution) == 4:
                     print('Solution found, entering result')
                     for arrow in solution:
                         press(arrow, 1, down_time=0.1)
@@ -145,9 +144,8 @@ class Bot(Configurable):
                             click(target, button='right')
                     self.rune_active = False
                     break
-                elif len(solution) == 4:
-                    inferences.append(solution)
-
+            else:
+              time.sleep(0.1)
     def load_commands(self, file):
         """Prompts the user to select a command module to import. Updates config's command book."""
 

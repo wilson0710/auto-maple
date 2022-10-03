@@ -1,6 +1,7 @@
 """A collection of classes used to execute a Routine."""
 
 import math
+from pickle import FALSE
 import time
 from src.common import config, settings, utils
 from src.common.vkeys import key_down, key_up, press
@@ -138,18 +139,23 @@ class Jump(Component):
 
     id = '>'
 
-    def __init__(self, label, frequency=1, skip='False'):
+    def __init__(self, label, frequency=1, skip='False',frequency_to_loop='False'):
         super().__init__(locals())
         self.label = str(label)
         self.frequency = settings.validate_nonnegative_int(frequency)
         self.counter = int(settings.validate_boolean(skip))
         self.link = None
+        self.frequency_to_loop = settings.validate_boolean(frequency_to_loop)
+        if self.frequency_to_loop:
+            self.counter = 1
 
     def main(self):
         if self.link is None:
             print(f"\n[!] Label '{self.label}' does not exist.")
         else:
-            if self.counter == 0:
+            if self.counter == 0 and not self.frequency_to_loop:
+                config.routine.index = self.link.index
+            elif self.counter != 0 and self.frequency_to_loop:
                 config.routine.index = self.link.index
             self._increment_counter()
 
@@ -214,6 +220,10 @@ class Command(Component):
     def __init__(self, *args):
         super().__init__(*args)
         self.id = self.__class__.__name__
+        # print(self.__dict__)
+        # if 'name' in self.__dict__:
+        #   print(self.__dict__['name'])
+        #   self.id = self.__dict__['name']
 
     def __str__(self):
         variables = self.__dict__
@@ -224,6 +234,24 @@ class Command(Component):
             if key != 'id':
                 result += f'\n        {key}={value}'
         return result
+
+    def wait_in_the_ground(self):
+        for i in range(40): # maximum time : 2s
+            if config.player_states['in_the_ground']:
+                return True
+            time.sleep(0.05)
+        return False
+
+    def get_my_last_cooldown(self):
+        if self.id  in config.skill_cd_timer:
+            return config.skill_cd_timer[self.id]
+        else: 
+            return 0
+
+    def set_my_last_cooldown(self,last_time):
+        config.skill_cd_timer[self.id] = last_time
+
+          
 
 
 class Move(Command):
@@ -347,17 +375,17 @@ class Fall(Command):
     def main(self):
         start = config.player_pos
         key_down('down')
-        time.sleep(0.05)
+        time.sleep(utils.rand_float(0.05, 0.08))
         if config.stage_fright and utils.bernoulli(0.5):
             time.sleep(utils.rand_float(0.2, 0.4))
         counter = 6
         while config.enabled and \
                 counter > 0 and \
                 utils.distance(start, config.player_pos) < self.distance:
-            press('space', 1, down_time=0.1)
+            press('alt', 1, down_time=0.1)
             counter -= 1
         key_up('down')
-        time.sleep(0.05)
+        time.sleep(utils.rand_float(0.1, 0.3))
 
 
 class Buff(Command):
@@ -366,3 +394,4 @@ class Buff(Command):
     def main(self):
         print("\n[!] 'Buff' command not implemented in current command book, aborting process.")
         config.enabled = False
+

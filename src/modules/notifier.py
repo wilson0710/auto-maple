@@ -94,6 +94,7 @@ class Notifier:
                     if matches and config.routine.sequence:
                         abs_rune_pos = (matches[0][0], matches[0][1])
                         config.bot.rune_pos = utils.convert_to_relative(abs_rune_pos, minimap)
+                        print('rune pos : ',config.bot.rune_pos)
                         distances = list(map(distance_to_rune, config.routine.sequence))
                         index = np.argmin(distances)
                         config.bot.rune_closest_pos = config.routine[index].location
@@ -104,7 +105,7 @@ class Notifier:
                     self._alert('siren')
             time.sleep(0.05)
 
-    def _alert(self, name, volume=0.75):
+    def _alert(self, name, volume=0.6):
         """
         Plays an alert to notify user of a dangerous event. Stops the alert
         once the key bound to 'Start/stop' is pressed.

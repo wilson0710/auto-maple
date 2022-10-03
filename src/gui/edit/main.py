@@ -112,7 +112,10 @@ class Editor(LabelFrame):
 
         title = tk.Entry(self.contents, justify=tk.CENTER)
         title.pack(expand=True, fill='x', pady=(5, 2))
-        title.insert(0, f"Editing {arr[i].__class__.__name__}")
+        if hasattr(arr[i].__class__,'_display_name'):
+            title.insert(0, f"Edit {arr[i].__class__.__name__}({arr[i].__class__._display_name})")
+        else:
+            title.insert(0, f"Edit {arr[i].__class__.__name__}")
         title.config(state=tk.DISABLED)
 
         if len(arr[i].kwargs) > 0:
@@ -139,19 +142,37 @@ class Editor(LabelFrame):
         options = config.routine.get_all_components()
         var = tk.StringVar(value=tuple(options.keys()))
 
+        def get_keys_and_displayname(options):
+          new_options = []
+          for key in options:
+              if key.lower() == "key": # dont show class "Key" in command book
+                  continue
+              if hasattr(options[key],'_display_name'):
+                  new_options.append(key + '(' + options[key]._display_name + ')')
+              else:
+                  new_options.append(key)
+          return new_options
+
+        var.set(get_keys_and_displayname(options))
+        
         def update_search(*_):
             value = input_var.get().strip().lower()
             if value == '':
-                var.set(tuple(options.keys()))
+                var.set(get_keys_and_displayname(options))
             else:
                 new_options = []
                 for key in options:
-                    if key.lower().startswith(value):
+                    if value in key.lower():
                         new_options.append(key)
+                    elif hasattr(options[key],'_display_name'):
+                        if value in options[key]._display_name:
+                            new_options.append(key + '(' + options[key]._display_name + ')')
                 var.set(new_options)
 
         def on_entry_return(e):
             value = e.widget.get().strip().lower()
+            temp_value = value.split('(')
+            value = temp_value[0] # remove display_name
             if value in options:
                 self.create_add_ui(options[value], sticky=True)
             else:
@@ -166,6 +187,8 @@ class Editor(LabelFrame):
             selects = w.curselection()
             if len(selects) > 0:
                 value = w.get(int(selects[0]))
+                temp_value = value.split('(')
+                value = temp_value[0] # remove display_name
                 if value in options:
                     self.create_add_ui(options[value], sticky=True)
 
@@ -225,7 +248,10 @@ class Editor(LabelFrame):
 
         title = tk.Entry(self.contents, justify=tk.CENTER)
         title.pack(expand=True, fill='x', pady=(5, 2))
-        title.insert(0, f"Creating new {component.__name__}")
+        if hasattr(component,'_display_name'):
+            title.insert(0, f"new {component.__name__}({component._display_name})")
+        else:
+            title.insert(0, f"new {component.__name__}")
         title.config(state=tk.DISABLED)
 
         sig = inspect.getfullargspec(component.__init__)
