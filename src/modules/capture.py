@@ -79,7 +79,8 @@ class Capture:
         self.thread = threading.Thread(target=self._main)
         self.thread.daemon = True
         self.handle = user32.FindWindowW(None, "MapleStory")
-
+        self.check_is_standing_count = 0
+        
     def start(self):
         """Starts this Capture's thread."""
 
@@ -121,6 +122,8 @@ class Capture:
             self.minimap_ratio = (mm_br[0] - mm_tl[0]) / (mm_br[1] - mm_tl[1])
             self.minimap_sample = self.frame[mm_tl[1]:mm_br[1], mm_tl[0]:mm_br[0]]
             self.calibrated = True
+            self.check_is_standing_count = 0
+
             while True:
                 if not self.calibrated:
                     self.refresh_counting = 0
@@ -136,14 +139,26 @@ class Capture:
                 # Determine the player's position
                 player = utils.multi_match(minimap, PLAYER_TEMPLATE, threshold=0.8)
                 if player:
-                    # config.player_pos = player[0]
-                    # print("origin player pos : ",config.player_pos)
+                    # check is_standing
+                    last_player_pos = config.player_pos
                     config.player_pos = utils.convert_to_relative(player[0], minimap)
                     # print("player pos : ",config.player_pos)
+                    if last_player_pos[1] == config.player_pos[1] and not config.player_states['is_standing']:
+                        self.check_is_standing_count += 1
+                        if self.check_is_standing_count >= 7:
+                            config.player_states['is_standing'] = True
+                            self.check_is_standing_count = 0
+                            print('back to ground')
+                    elif last_player_pos[1] != config.player_pos[1]:
+                        self.check_is_standing_count = 0
+                        config.player_states['is_standing'] = False
                 else:
                     if config.player_pos != (0,0): # check is last player_pos near the border
                       pass
               
+                
+
+
                 # Package display information to be polled by GUI
                 self.minimap = {
                     'minimap': minimap,

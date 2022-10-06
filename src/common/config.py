@@ -4,7 +4,7 @@
 #########################
 #       Constants       #
 #########################
-RESOURCES_DIR = 'resources'
+RESOURCES_DIR = 'new_resources'
 
 
 #################################
@@ -21,12 +21,15 @@ stage_fright = False
 
 # record the player's current states
 player_states = {
-  'in_the_ground':True,
+  'is_standing':True,
   'fly_mode':True,
 }
 
 # skill cd timer
 skill_cd_timer = {}
+
+# is_skill_ready
+is_skill_ready_collector = {}
 
 # Represents the current shortest path that the bot is taking
 path = []

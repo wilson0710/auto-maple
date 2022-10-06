@@ -146,6 +146,7 @@ class Bot(Configurable):
                     break
             else:
               time.sleep(0.1)
+    
     def load_commands(self, file):
         """Prompts the user to select a command module to import. Updates config's command book."""
 
@@ -164,7 +165,7 @@ class Bot(Configurable):
 
         # Import the desired command book file
         module_name = splitext(basename(file))[0]
-        target = '.'.join(['resources', 'command_books', module_name])
+        target = '.'.join([config.RESOURCES_DIR, 'command_books', module_name])
         try:
             module = importlib.import_module(target)
             module = importlib.reload(module)
@@ -212,6 +213,12 @@ class Bot(Configurable):
             self.module_name = module_name
             self.command_book = new_cb
             self.buff = new_cb['buff']()
+            # initialize skills ready state
+            for key in self.command_book:
+                if hasattr(self.command_book[key],"get_is_skill_ready"):
+                    self.command_book[key].get_is_skill_ready()
+            print(config.is_skill_ready_collector)
+            
             components.step = new_step
             config.gui.menu.file.enable_routine_state()
             config.gui.view.status.set_cb(basename(file))

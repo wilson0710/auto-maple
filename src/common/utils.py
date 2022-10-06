@@ -3,6 +3,7 @@
 import math
 import queue
 import cv2
+import time
 import threading
 import numpy as np
 from src.common import config, settings
@@ -71,6 +72,18 @@ def distance(a, b):
 
     return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
+
+def wait_for_is_standing(ms=2000):
+    """
+    Wait until player stand on the ground 
+    :param ms:   The maximun waiting time
+    :return:    is_standing or not
+    """
+    for i in range(int(2000 / 20)): # maximum time : 2s
+        if config.player_states['is_standing']:
+            return True
+        time.sleep(0.02)
+    return False
 
 def separate_args(arguments):
     """

@@ -266,9 +266,11 @@ class Layout:
 
         layout_name = splitext(basename(routine))[0]
         target = os.path.join(get_layouts_dir(), layout_name)
+        print(target)
         if isfile(target):
             print(f" -  Found existing Layout file at '{target}'.")
             with open(target, 'rb') as file:
+                print("loaded layout : ",pickle.load(file))
                 return pickle.load(file)
         else:
             print(f" -  Created new Layout file at '{target}'.")
@@ -292,4 +294,4 @@ class Layout:
 
 
 def get_layouts_dir():
-    return os.path.join(config.RESOURCES_DIR, 'layouts', config.bot.module_name)
+    return os.path.join(os.getcwd(),config.RESOURCES_DIR, 'layouts', config.bot.module_name)

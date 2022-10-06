@@ -64,7 +64,8 @@ class Point(Component):
 
     id = '*'
 
-    def __init__(self, x, y, frequency=1, skip='False', adjust='False'):
+    def __init__(self, x, y, frequency=1, skip='False', adjust='False'\
+        , active_if_skill_ready = '', active_if_skill_cd=''):
         super().__init__(locals())
         self.x = float(x)
         self.y = float(y)
@@ -72,12 +73,37 @@ class Point(Component):
         self.frequency = settings.validate_nonnegative_int(frequency)
         self.counter = int(settings.validate_boolean(skip))
         self.adjust = settings.validate_boolean(adjust)
+        self.active_if_skill_ready = active_if_skill_ready
+        self.active_if_skill_cd = active_if_skill_cd
         if not hasattr(self, 'commands'):       # Updating Point should not clear commands
             self.commands = []
 
     def main(self):
-        """Executes the set of actions associated with this Point."""
+        """ return if these condition are not satisfied  """
+        if self.active_if_skill_cd != '':
+            # check if target skill name exist, if not continue next steps 
+            command_book = config.bot.command_book
+            target_skill_name = None
+            for key in command_book:
+                if key.lower() == self.active_if_skill_cd:
+                    target_skill_name = command_book[key].__name__
+                    break
 
+            if target_skill_name and config.is_skill_ready_collector[target_skill_name]:
+                return
+        elif self.active_if_skill_ready != '':
+            # check if target skill name exist, if not continue next steps 
+            command_book = config.bot.command_book
+            target_skill_name = None
+            for key in command_book:
+                if key.lower() == self.active_if_skill_ready:
+                    target_skill_name = command_book[key].__name__
+                    break
+
+            if target_skill_name and not config.is_skill_ready_collector[target_skill_name]:
+                return
+
+        """Executes the set of actions associated with this Point."""
         if self.counter == 0:
             move = config.bot.command_book['move']
             move(*self.location).execute()
@@ -139,7 +165,8 @@ class Jump(Component):
 
     id = '>'
 
-    def __init__(self, label, frequency=1, skip='False',frequency_to_loop='False'):
+    def __init__(self, label, frequency=1, skip='False'\
+        ,frequency_to_loop='False', active_if_skill_ready = '', active_if_skill_cd=''):
         super().__init__(locals())
         self.label = str(label)
         self.frequency = settings.validate_nonnegative_int(frequency)
@@ -148,11 +175,37 @@ class Jump(Component):
         self.frequency_to_loop = settings.validate_boolean(frequency_to_loop)
         if self.frequency_to_loop:
             self.counter = 1
+        self.active_if_skill_ready = active_if_skill_ready
+        self.active_if_skill_cd = active_if_skill_cd
 
     def main(self):
         if self.link is None:
             print(f"\n[!] Label '{self.label}' does not exist.")
         else:
+            """ return if these condition are not satisfied  """
+            if self.active_if_skill_cd != '':
+                # check if target skill name exist, if not continue next steps 
+                command_book = config.bot.command_book
+                target_skill_name = None
+                for key in command_book:
+                    if key.lower() == self.active_if_skill_cd:
+                        target_skill_name = command_book[key].__name__
+                        break
+
+                if target_skill_name and config.is_skill_ready_collector[target_skill_name]:
+                    return
+            elif self.active_if_skill_ready != '':
+                # check if target skill name exist, if not continue next steps 
+                command_book = config.bot.command_book
+                target_skill_name = None
+                for key in command_book:
+                    if key.lower() == self.active_if_skill_cd:
+                        target_skill_name = command_book[key].__name__
+                        break
+
+                if target_skill_name and not config.is_skill_ready_collector[target_skill_name]:
+                    return
+
             if self.counter == 0 and not self.frequency_to_loop:
                 config.routine.index = self.link.index
             elif self.counter != 0 and self.frequency_to_loop:
@@ -216,10 +269,14 @@ SYMBOLS = {
 #############################
 class Command(Component):
     id = 'Command Superclass'
+    _display_name = ""
+    skill_cool_down = 0
+    last_cool_down = 0
 
     def __init__(self, *args):
         super().__init__(*args)
         self.id = self.__class__.__name__
+        
         # print(self.__dict__)
         # if 'name' in self.__dict__:
         #   print(self.__dict__['name'])
@@ -235,23 +292,47 @@ class Command(Component):
                 result += f'\n        {key}={value}'
         return result
 
-    def wait_in_the_ground(self):
-        for i in range(40): # maximum time : 2s
-            if config.player_states['in_the_ground']:
-                return True
-            time.sleep(0.05)
-        return False
-
-    def get_my_last_cooldown(self):
-        if self.id  in config.skill_cd_timer:
-            return config.skill_cd_timer[self.id]
+    def get_my_last_cooldown(self,id):
+        if id in config.skill_cd_timer:
+            return config.skill_cd_timer[id]
         else: 
             return 0
 
-    def set_my_last_cooldown(self,last_time):
+    def set_my_last_cooldown(self,last_time=time.time()):
         config.skill_cd_timer[self.id] = last_time
+        config.is_skill_ready_collector[self.id] = False
 
-          
+    @classmethod
+    def get_is_skill_ready(cls):
+        if not cls.__name__ in config.is_skill_ready_collector:
+            config.is_skill_ready_collector[cls.__name__] = False
+
+        if config.is_skill_ready_collector[cls.__name__] == True:
+            return True
+
+        last_cool_down = cls.get_my_last_cooldown(cls,cls.__name__)
+        now = time.time()
+        if now - last_cool_down > cls.skill_cool_down:
+            config.is_skill_ready_collector[cls.__name__] = True
+            print(cls.__name__,cls._display_name," is ready to use CD:",cls.skill_cool_down)
+            return True
+        else:
+            config.is_skill_ready_collector[cls.__name__] = False
+            return False
+
+    def check_is_skill_ready(self):
+        if config.is_skill_ready_collector[self.id] == True:
+            return True
+
+        last_cool_down = self.get_my_last_cooldown(self.id)
+        now = time.time()
+        if now - last_cool_down > self.skill_cool_down:
+            config.is_skill_ready_collector[self.id] = True
+            print(self.id,self._display_name," is ready to use")
+            return True
+        else:
+            config.is_skill_ready_collector[self.id] = False
+            return False
 
 
 class Move(Command):
@@ -269,6 +350,9 @@ class Move(Command):
             key_up(self.prev_direction)
         self.prev_direction = new
 
+    def _new_move_method(self,target):
+        pass
+
     def main(self):
         counter = self.max_steps
         path = config.layout.shortest_path(config.player_pos, self.target)
@@ -277,9 +361,12 @@ class Move(Command):
             self.prev_direction = ''
             local_error = utils.distance(config.player_pos, point)
             global_error = utils.distance(config.player_pos, self.target)
+            d_x = point[0] - config.player_pos[0]
+            d_y = point[1] - config.player_pos[1]
             while config.enabled and counter > 0 and \
                     local_error > settings.move_tolerance and \
-                    global_error > settings.move_tolerance:
+                    global_error > settings.move_tolerance or \
+                    abs(d_y) > settings.move_tolerance / 2:
                 if toggle:
                     d_x = point[0] - config.player_pos[0]
                     if abs(d_x) > settings.move_tolerance / math.sqrt(2):
@@ -292,11 +379,10 @@ class Move(Command):
                         if settings.record_layout:
                             config.layout.add(*config.player_pos)
                         counter -= 1
-                        if i < len(path) - 1:
-                            time.sleep(0.15)
+                        time.sleep(0.05)
                 else:
                     d_y = point[1] - config.player_pos[1]
-                    if abs(d_y) > settings.move_tolerance / math.sqrt(2):
+                    if abs(d_y) > settings.move_tolerance / 2:
                         if d_y < 0:
                             key = 'up'
                         else:
@@ -306,8 +392,7 @@ class Move(Command):
                         if settings.record_layout:
                             config.layout.add(*config.player_pos)
                         counter -= 1
-                        if i < len(path) - 1:
-                            time.sleep(0.05)
+                        time.sleep(0.05)
                 local_error = utils.distance(config.player_pos, point)
                 global_error = utils.distance(config.player_pos, self.target)
                 toggle = not toggle

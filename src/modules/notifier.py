@@ -1,5 +1,6 @@
 """A module for detecting and notifying the user of dangerous in-game events."""
 
+from msilib.schema import Component
 from src.common import config, utils
 import time
 import os
@@ -48,6 +49,7 @@ class Notifier:
 
         self.room_change_threshold = 0.9
         self.rune_alert_delay = 270         # 4.5 minutes
+        self.notifier_delay = 0.06
 
     def start(self):
         """Starts this Notifier's thread."""
@@ -85,6 +87,12 @@ class Notifier:
                         self._ping('ding')
                     prev_others = others
 
+                # Check for skill cd
+                command_book = config.bot.command_book
+                for key in command_book:
+                    if hasattr(command_book[key],"get_is_skill_ready"):
+                        command_book[key].get_is_skill_ready()
+
                 # Check for rune
                 now = time.time()
                 if not config.bot.rune_active:
@@ -103,7 +111,7 @@ class Notifier:
                 elif now - rune_start_time > self.rune_alert_delay:     # Alert if rune hasn't been solved
                     config.bot.rune_active = False
                     self._alert('siren')
-            time.sleep(0.05)
+            time.sleep(self.notifier_delay)
 
     def _alert(self, name, volume=0.6):
         """
