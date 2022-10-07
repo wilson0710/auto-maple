@@ -303,6 +303,10 @@ class Command(Component):
         config.is_skill_ready_collector[self.id] = False
 
     @classmethod
+    def set_is_skill_ready(cls,is_ready):
+        config.is_skill_ready_collector[cls.__name__] = is_ready
+
+    @classmethod
     def get_is_skill_ready(cls):
         if not cls.__name__ in config.is_skill_ready_collector:
             config.is_skill_ready_collector[cls.__name__] = False

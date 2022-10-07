@@ -49,7 +49,7 @@ class Notifier:
 
         self.room_change_threshold = 0.9
         self.rune_alert_delay = 270         # 4.5 minutes
-        self.notifier_delay = 0.06
+        self.notifier_delay = 0.1
 
     def start(self):
         """Starts this Notifier's thread."""
@@ -89,9 +89,18 @@ class Notifier:
 
                 # Check for skill cd
                 command_book = config.bot.command_book
+                image_matched = False
                 for key in command_book:
                     if hasattr(command_book[key],"get_is_skill_ready"):
                         command_book[key].get_is_skill_ready()
+                    if hasattr(command_book[key],"skill_image") and image_matched == False:
+                        SKILL_TEMPLATE = cv2.imread(command_book[key].skill_image, 0)
+                        is_ready_region = frame[height-280:height-124, width-188:width-132]
+                        skill_match = utils.multi_match(is_ready_region, SKILL_TEMPLATE, threshold=0.9)
+                        if len(skill_match) > 0:
+                            print(command_book[key]._display_name , " skill_match")
+                            image_matched = True
+                            command_book[key].set_is_skill_ready(True)
 
                 # Check for rune
                 now = time.time()

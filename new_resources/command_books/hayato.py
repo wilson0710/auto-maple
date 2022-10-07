@@ -357,7 +357,7 @@ class Skill_33(Command):
         for _ in range(self.repetitions):
             press(Key.SKILL_33, self.attacks, up_time=0.05)
         key_up(self.direction)
-        time.sleep(utils.rand_float(0.15, 0.2))
+        time.sleep(utils.rand_float(0.2, 0.25))
 
 # 神速無雙
 class Skill_4(Command):
@@ -526,6 +526,6 @@ class Skill_11(Command):
         # utils.wait_for_is_standing(2000)
         press(Key.SKILL_11, 1)
         if self.combo:
-            time.sleep(utils.rand_float(0.2, 0.3))
+            time.sleep(utils.rand_float(0.3, 0.4))
         else:
             time.sleep(utils.rand_float(1.1, 1.3))
