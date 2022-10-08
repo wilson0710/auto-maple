@@ -183,7 +183,9 @@ def key_down(key):
     """
 
     key = key.lower()
-    if key not in KEY_MAP.keys():
+    if key == '':
+        return
+    elif key not in KEY_MAP.keys():
         print(f"Invalid keyboard input: '{key}'.")
     else:
         x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[key]))
@@ -199,7 +201,9 @@ def key_up(key):
     """
 
     key = key.lower()
-    if key not in KEY_MAP.keys():
+    if key == '':
+        return 
+    elif key not in KEY_MAP.keys():
         print(f"Invalid keyboard input: '{key}'.")
     else:
         x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[key], dwFlags=KEYEVENTF_KEYUP))
@@ -218,6 +222,8 @@ def press(key, n, down_time=0.12, up_time=0.1):
     """
 
     for _ in range(n):
+        if key == '':
+            break
         key_down(key)
         time.sleep(down_time * (0.8 + 0.4 * random()))
         key_up(key)
