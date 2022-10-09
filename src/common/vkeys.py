@@ -211,7 +211,7 @@ def key_up(key):
 
 
 @utils.run_if_enabled
-def press(key, n, down_time=0.12, up_time=0.1):
+def press(key, n, down_time=0.1, up_time=0.08):
     """
     Presses KEY N times, holding it for DOWN_TIME seconds, and releasing for UP_TIME seconds.
     :param key:         The keyboard input to press.
@@ -225,7 +225,7 @@ def press(key, n, down_time=0.12, up_time=0.1):
         if key == '':
             break
         key_down(key)
-        time.sleep(down_time * (0.8 + 0.4 * random()))
+        time.sleep(down_time * (0.8 + 0.5 * random()))
         key_up(key)
         time.sleep(up_time * (0.8 + 0.4 * random()))
 

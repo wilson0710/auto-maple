@@ -60,7 +60,7 @@ def step(direction, target):
                 time.sleep(utils.rand_float(0.05, 0.08))
                 press(Key.FLASH_JUMP, 1,up_time=0.08)
             time.sleep(utils.rand_float(0.1, 0.15))
-            press(Key.MAIN_GROUP_ATTACK_SKILL,1)
+            press(Key.MAIN_GROUP_ATTACK_SKILL,2)
             time.sleep(utils.rand_float(0.05, 0.08))
             utils.wait_for_is_standing(300)
     
@@ -184,14 +184,14 @@ class FlashJump(Command):
         key_down(self.direction)
         time.sleep(utils.rand_float(0.03, 0.06))
         press(Key.JUMP, 1)
-        time.sleep(utils.rand_float(0.05, 0.08)) # test flash jump gap
+        time.sleep(utils.rand_float(0.03, 0.05)) # test flash jump gap
         if self.direction == 'up':
             press(Key.FLASH_JUMP, 1)
         else:
             press(Key.FLASH_JUMP, 1,up_time=0.05)
             if self.triple_jump:
-                time.sleep(utils.rand_float(0.05, 0.08))
-                press(Key.FLASH_JUMP, 1,up_time=0.05) # if this job can do triple jump
+                time.sleep(utils.rand_float(0.06, 0.08))
+                press(Key.FLASH_JUMP, 1,down_time=0.05,up_time=0.03) # if this job can do triple jump
         key_up(self.direction)
         time.sleep(utils.rand_float(0.03, 0.05))
 			
@@ -213,11 +213,11 @@ class UpJump(Command):
         if self.jump:
             press(Key.JUMP, 1)
             time.sleep(utils.rand_float(0.05, 0.07))
-        press(Key.UP_JUMP, 1)
-        press(Key.SKILL_4, 1) # eliminate delay of up_jump
+        press(Key.UP_JUMP, 1,up_time=0.05)
+        press(Key.SKILL_4, 1,up_time=0.05) # eliminate delay of up_jump
         key_up(self.direction)
         if self.combo:
-            time.sleep(utils.rand_float(0.05, 0.08))
+            time.sleep(utils.rand_float(0.03, 0.05))
         else:
             time.sleep(utils.rand_float(0.4, 0.6))
 
@@ -244,20 +244,20 @@ class MainGroupAttackSkill(Command):
             key_down(self.direction)
         time.sleep(utils.rand_float(0.03, 0.05))
         for _ in range(self.repetitions):
-            press(Key.MAIN_GROUP_ATTACK_SKILL, self.attacks, up_time=0.08)
+            press(Key.MAIN_GROUP_ATTACK_SKILL, self.attacks,down_time=0.08, up_time=0.1)
         # if config.stage_fright and utils.bernoulli(0.7):
         #     time.sleep(utils.rand_float(0.1, 0.2))
         key_up(self.direction)
         if self.combo:
-            if self.attacks == 3:
+            if self.attacks >= 3:
                 time.sleep(utils.rand_float(0.1, 0.15))
             else:
                 time.sleep(utils.rand_float(0.1, 0.15))
         else:
             if self.attacks == 3:
-                time.sleep(utils.rand_float(0.35, 0.45))
+                time.sleep(utils.rand_float(0.33, 0.4))
             else:
-                time.sleep(utils.rand_float(0.3, 0.35))
+                time.sleep(utils.rand_float(0.33, 0.38))
 
 # 曉月大太刀
 class Skill_1(Command):
@@ -284,7 +284,7 @@ class Skill_1(Command):
             key_up(self.direction)
             self.set_my_last_cooldown(time.time())
             if self.combo:
-                time.sleep(utils.rand_float(0.2, 0.3))
+                time.sleep(utils.rand_float(0.25, 0.35))
             else:
                 time.sleep(utils.rand_float(1.5, 1.8))
              
@@ -417,7 +417,7 @@ class Skill_7(Command):
     def main(self):
         if self.check_is_skill_ready():
             utils.wait_for_is_standing(2000)
-            press(Key.SKILL_7, 2,down_time=0.25, up_time=0.1)
+            press(Key.SKILL_7, 1,down_time=0.2, up_time=0.1)
             self.set_my_last_cooldown(time.time())
             if self.combo:
                 time.sleep(utils.rand_float(0.3, 0.5))
@@ -461,7 +461,7 @@ class Skill_9(Command):
             time.sleep(utils.rand_float(0.05, 0.08))
             press(Key.SKILL_9, 1, up_time=0.1)
             key_up(self.direction)
-            time.sleep(utils.rand_float(1.8, 2))
+            time.sleep(utils.rand_float(1.6, 1.8))
             self.set_my_last_cooldown(time.time())
 
 # 一閃角
@@ -490,7 +490,7 @@ class Skill_12(Command):
           if self.combo:
               time.sleep(utils.rand_float(0.3, 0.5))
           else:
-              time.sleep(utils.rand_float(1, 1.1))
+              time.sleep(utils.rand_float(0.8, 1))
 
 # 斷空閃
 class Skill_10(Command):
@@ -528,4 +528,4 @@ class Skill_11(Command):
         if self.combo:
             time.sleep(utils.rand_float(0.3, 0.4))
         else:
-            time.sleep(utils.rand_float(1.1, 1.3))
+            time.sleep(utils.rand_float(1, 1.2))

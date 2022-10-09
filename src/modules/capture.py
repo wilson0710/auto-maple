@@ -7,7 +7,7 @@ import ctypes
 import mss
 import mss.windows
 import numpy as np
-from src.common import config, utils
+from src.common import config, utils, settings
 from ctypes import wintypes
 from ctypes import windll, byref, c_ubyte
 from ctypes.wintypes import RECT, HWND
@@ -58,7 +58,7 @@ class Capture:
         """Initializes this Capture object's main thread."""
 
         config.capture = self
-        self.capture_gap_sec = 0.03
+        self.capture_gap_sec = 0.02
         self.frame = None
         self.minimap = None
         self.minimap_ratio = 1
@@ -142,14 +142,22 @@ class Capture:
                     # check is_standing
                     last_player_pos = config.player_pos
                     config.player_pos = utils.convert_to_relative(player[0], minimap)
-                    # print("player pos : ",config.player_pos)
+                    done_check_is_standing = False
+                    # check is_standing by settins.platforms
+                    if settings.platforms != '':
+                        temp_platforms = settings.platforms.split("|")
+                        for platform_y in temp_platforms:
+                            if abs(int(platform_y) - int(last_player_pos[1])) <= 0:
+                                config.player_states['is_standing'] = True
+                                done_check_is_standing = True
+                                break
                     if last_player_pos[1] == config.player_pos[1] and not config.player_states['is_standing']:
                         self.check_is_standing_count += 1
                         if self.check_is_standing_count >= 7:
                             config.player_states['is_standing'] = True
                             self.check_is_standing_count = 0
                             print('back to ground')
-                    elif last_player_pos[1] != config.player_pos[1]:
+                    elif last_player_pos[1] != config.player_pos[1] and done_check_is_standing == False:
                         self.check_is_standing_count = 0
                         config.player_states['is_standing'] = False
                 else:

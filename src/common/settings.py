@@ -43,7 +43,7 @@ def validate_arrows(key):
 
     if isinstance(key, str):
         key = key.lower()
-        if key in ['up', 'down', 'left', 'right']:
+        if key in ['up', 'down', 'left', 'right','']:
             return key
     raise ValueError(f"'{key}' is not a valid arrow key.")
 
@@ -57,7 +57,7 @@ def validate_horizontal_arrows(key):
 
     if isinstance(key, str):
         key = key.lower()
-        if key in ['left', 'right']:
+        if key in ['left', 'right','']:
             return key
     raise ValueError(f"'{key}' is not a valid horizontal arrow key.")
 
@@ -70,7 +70,8 @@ SETTING_VALIDATORS = {
     'move_tolerance': float,
     'adjust_tolerance': float,
     'record_layout': validate_boolean,
-    'buff_cooldown': validate_nonnegative_int
+    'buff_cooldown': validate_nonnegative_int,
+    'platforms':str
 }
 
 
@@ -95,5 +96,7 @@ record_layout = False
 
 # The amount of time (in seconds) to wait between each call to the 'buff' command
 buff_cooldown = 180
+
+platforms = ""
 
 reset()

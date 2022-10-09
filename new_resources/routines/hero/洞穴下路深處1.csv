@@ -1,0 +1,30 @@
+$, target=move_tolerance, value=14
+$, target=platforms, value=16|39
+*, x=110, y=39.000, frequency=8, skip=true, adjust=False, active_if_skill_ready=, active_if_skill_cd=
+    Skill_W
+    Rope, jump=false
+    Skill_1, direction=left, jump=false
+    Skill_X, direction=left, jump=false
+    FlashJump, direction=left, triple_jump=False
+    Skill_1, direction=left, jump=false
+*, x=110, y=39.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=
+    Skill_3, direction=right, jump=true
+    FlashJump, direction=left, triple_jump=False
+    Skill_1, direction=left, jump=false
+*, x=81, y=39, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=
+    FlashJump, direction=left, triple_jump=False
+    Skill_W
+    Skill_1, direction=left, jump=true
+*, x=50.000, y=39.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=
+    Skill_X, direction=left, jump=false
+    Skill_2, direction=right
+    FlashJump, direction=right, triple_jump=False
+    Skill_1, direction=, jump=false
+*, x=74.000, y=39.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=skill_a
+    FlashJump, direction=right, triple_jump=False
+    Skill_1, direction=right, jump=false
+*, x=74, y=39, frequency=1, skip=False, adjust=False, active_if_skill_ready=skill_a, active_if_skill_cd=
+    FlashJump, direction=right, triple_jump=False
+    Skill_A, direction=right, jump=false
+*, x=102, y=39, frequency=1, skip=False, adjust=False, active_if_skill_ready=skill_3, active_if_skill_cd=
+    Skill_3, direction=right, jump=true

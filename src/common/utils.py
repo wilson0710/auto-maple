@@ -79,11 +79,18 @@ def wait_for_is_standing(ms=2000):
     :param ms:   The maximun waiting time
     :return:    is_standing or not
     """
-    for i in range(int(2000 / 20)): # maximum time : 2s
+    for i in range(int(ms / 10)): # maximum time : 2s
         if config.player_states['is_standing']:
             return True
-        time.sleep(0.02)
+        time.sleep(0.01)
     return False
+
+def check_is_jumping():
+    """
+    check if player state is not standing
+    :return:    is jumping or not
+    """
+    return not config.player_states['is_standing']
 
 def separate_args(arguments):
     """
