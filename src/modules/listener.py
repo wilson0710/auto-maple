@@ -6,6 +6,7 @@ import winsound
 import keyboard as kb
 from src.common.interfaces import Configurable
 from src.common import config, utils
+from src.common.vkeys import release_unreleased_key
 from datetime import datetime
 
 
@@ -83,6 +84,7 @@ class Listener(Configurable):
             winsound.Beep(784, 333)     # G5
         else:
             winsound.Beep(523, 333)     # C5
+            release_unreleased_key()
         time.sleep(0.267)
 
     @staticmethod

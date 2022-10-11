@@ -9,6 +9,8 @@ import pygame
 import threading
 import numpy as np
 import keyboard as kb
+import requests
+from src.common.vkeys import key_down, key_up, press
 from src.routine.components import Point
 
 
@@ -70,12 +72,14 @@ class Notifier:
                 # Check for unexpected black screen
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 if np.count_nonzero(gray < 15) / height / width > self.room_change_threshold:
+                    self._send_msg_to_line_notify("畫面黑屏")
                     self._alert('siren')
 
                 # Check for elite warning
                 elite_frame = frame[height // 4:3 * height // 4, width // 4:3 * width // 4]
                 elite = utils.multi_match(elite_frame, ELITE_TEMPLATE, threshold=0.9)
                 if len(elite) > 0:
+                    self._send_msg_to_line_notify("黑王出沒")
                     self._alert('siren')
 
                 # Check for other players entering the map
@@ -119,8 +123,21 @@ class Notifier:
                         self._ping('rune_appeared', volume=0.75)
                 elif now - rune_start_time > self.rune_alert_delay:     # Alert if rune hasn't been solved
                     config.bot.rune_active = False
+                    self._send_msg_to_line_notify("多次解輪失敗")
                     self._alert('siren')
             time.sleep(self.notifier_delay)
+
+    def _send_msg_to_line_notify(self,msg,file=None):
+        url = "https://notify-api.line.me/api/notify"
+        token = "gOgNCkc4PLinHFzJSbqQZHQyLotFuu0skBCFmHicKoZ"
+        my_headers = {'Authorization': 'Bearer ' + token }
+        data = {"message" : msg }
+        if file:
+            image = open(file, 'rb')    # 以二進位方式開啟圖片
+            imageFile = {'imageFile' : image}   # 設定圖片資訊
+            r = requests.post(url,headers = my_headers, data = data, files=imageFile)
+        else:
+            r = requests.post(url,headers = my_headers, data = data)
 
     def _alert(self, name, volume=0.6):
         """
@@ -132,7 +149,9 @@ class Notifier:
         config.listener.enabled = False
         self.mixer.load(get_alert_path(name))
         self.mixer.set_volume(volume)
-        self.mixer.play(-1)
+        self.mixer.play()
+        # use go home scroll
+        press("f9",1)
         while not kb.is_pressed(config.listener.config['Start/stop']):
             time.sleep(0.1)
         self.mixer.stop()

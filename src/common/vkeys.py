@@ -22,6 +22,9 @@ KEYEVENTF_SCANCODE = 0x0008
 
 MAPVK_VK_TO_VSC = 0
 
+# record unreleased key for stopping script
+unreleased_key = []
+
 # https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes?redirectedfrom=MSDN
 KEY_MAP = {
     'left': 0x25,   # Arrow keys
@@ -187,7 +190,8 @@ def key_down(key):
         return
     elif key not in KEY_MAP.keys():
         print(f"Invalid keyboard input: '{key}'.")
-    else:
+    elif not key in unreleased_key:
+        unreleased_key.append(key)
         x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[key]))
         user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
 
@@ -203,13 +207,18 @@ def key_up(key):
     key = key.lower()
     if key == '':
         return 
-    elif key not in KEY_MAP.keys():
+    elif key not in KEY_MAP.keys() :
         print(f"Invalid keyboard input: '{key}'.")
-    else:
+    elif key in unreleased_key:
         x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[key], dwFlags=KEYEVENTF_KEYUP))
         user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+        unreleased_key.remove(key)
 
-
+def release_unreleased_key():
+    print("release ",unreleased_key)
+    for key in unreleased_key:
+        key_up(key)
+    
 @utils.run_if_enabled
 def press(key, n, down_time=0.1, up_time=0.08):
     """

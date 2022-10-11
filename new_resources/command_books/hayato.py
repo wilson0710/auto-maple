@@ -1,10 +1,13 @@
 """A collection of all commands that Adele can use to interact with the game. 	"""
 
+from sqlalchemy import true
 from src.common import config, settings, utils
 import time
 import math
 from src.routine.components import Command
 from src.common.vkeys import press, key_down, key_up
+
+IMAGE_DIR = config.RESOURCES_DIR + '/command_books/hayato/'
 
 # List of key mappings
 class Key:
@@ -34,6 +37,7 @@ class Key:
     SKILL_10 = 'x' # 斷空閃
     SKILL_11 = '1' # 瞬殺斬
     SKILL_12 = 'f' # 一閃角
+    SKILL_V = 'v' # 鷹爪閃
 
 
 #########################
@@ -45,41 +49,40 @@ def step(direction, target):
     Should not press any arrow keys, as those are handled by Auto Maple.
     """
 
-    num_presses = 2
-    if direction == 'up' or direction == 'down':
-        num_presses = 1
-    # if config.stage_fright and direction != 'up' and utils.bernoulli(0.75):
-    #     time.sleep(utils.rand_float(0.1, 0.3))
     d_y = target[1] - config.player_pos[1]
     d_x = target[0] - config.player_pos[0]
     
-    if abs(d_x) > 15:
-        if direction == 'left' or direction == 'right':
-            press(Key.FLASH_JUMP, num_presses,up_time=0.08)
-            if abs(d_x) > 25:
-                time.sleep(utils.rand_float(0.05, 0.08))
-                press(Key.FLASH_JUMP, 1,up_time=0.08)
-            time.sleep(utils.rand_float(0.1, 0.15))
-            press(Key.MAIN_GROUP_ATTACK_SKILL,2)
-            time.sleep(utils.rand_float(0.05, 0.08))
-            utils.wait_for_is_standing(300)
+    if direction == 'left' or direction == 'right':
+        if abs(d_x) > 24:
+            if abs(d_x) >= 30:
+                Skill_10(direction='',combo='true').execute()
+                MainGroupAttackSkill(direction='',attacks='1').execute()
+            else:
+                FlashJump(direction='',triple_jump='false',fast_jump='true').execute()
+                MainGroupAttackSkill(direction='',attacks='3').execute()
+                time.sleep(utils.rand_float(0.2, 0.25))
+        elif abs(d_x) > 10:
+            press(Key.JUMP, 1)
+            time.sleep(0.3+0.1*((24-abs(d_x))/13)) # add delay according to distance, max=0.1sec
+            press(Key.JUMP, 1)
+            MainGroupAttackSkill(direction='',attacks='1').execute()
+        utils.wait_for_is_standing(300)
     
     if direction == 'up':
         if abs(d_y) > 6 :
             if abs(d_y) > 23:
-                press(Key.JUMP, 1)
-                time.sleep(utils.rand_float(0.1, 0.15))
-            press(Key.UP_JUMP, 1)
-            time.sleep(utils.rand_float(0.2, 0.3))
+                UpJump(direction='',jump='true').execute()
+            else:
+                UpJump(direction='',jump='false').execute()
             utils.wait_for_is_standing(300)
         else:
             press(Key.JUMP, 1)
             time.sleep(utils.rand_float(0.1, 0.15))
     if direction == 'down':
+        print("down stair")
         time.sleep(utils.rand_float(0.05, 0.07))
         press(Key.JUMP, 1)
         time.sleep(utils.rand_float(0.15, 0.25))
-        utils.wait_for_is_standing(200)
       
 
 class Adjust(Command):
@@ -174,24 +177,26 @@ class FlashJump(Command):
     """Performs a flash jump in the given direction."""
     _display_name = '二段跳'
 
-    def __init__(self, direction="left",triple_jump="False"):
+    def __init__(self, direction="left",triple_jump="False",fast_jump="false"):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.triple_jump = settings.validate_boolean(triple_jump)
+        self.fast_jump = settings.validate_boolean(fast_jump)
 
     def main(self):
         utils.wait_for_is_standing(2000)
         key_down(self.direction)
         time.sleep(utils.rand_float(0.03, 0.06))
-        press(Key.JUMP, 1)
-        time.sleep(utils.rand_float(0.03, 0.05)) # test flash jump gap
+        press(Key.JUMP, 1,up_time=0.06)
+        if not self.fast_jump:
+            time.sleep(utils.rand_float(0.1, 0.13)) # slow flash jump gap
         if self.direction == 'up':
             press(Key.FLASH_JUMP, 1)
         else:
-            press(Key.FLASH_JUMP, 1,up_time=0.05)
+            press(Key.FLASH_JUMP, 1,up_time=0.06)
             if self.triple_jump:
-                time.sleep(utils.rand_float(0.06, 0.08))
-                press(Key.FLASH_JUMP, 1,down_time=0.05,up_time=0.03) # if this job can do triple jump
+                time.sleep(utils.rand_float(0.05, 0.07))
+                press(Key.FLASH_JUMP, 1,down_time=0.08,up_time=0.02) # if this job can do triple jump
         key_up(self.direction)
         time.sleep(utils.rand_float(0.03, 0.05))
 			
@@ -255,9 +260,9 @@ class MainGroupAttackSkill(Command):
                 time.sleep(utils.rand_float(0.1, 0.15))
         else:
             if self.attacks == 3:
-                time.sleep(utils.rand_float(0.33, 0.4))
+                time.sleep(utils.rand_float(0.4, 0.45))
             else:
-                time.sleep(utils.rand_float(0.33, 0.38))
+                time.sleep(utils.rand_float(0.4, 0.45))
 
 # 曉月大太刀
 class Skill_1(Command):
@@ -293,6 +298,7 @@ class Skill_2(Command):
     """Uses '剎那斬' once."""
     _display_name = '剎那斬'
     skill_cool_down = 8.1
+    skill_image = IMAGE_DIR + 'skill_2.png'
 
     def __init__(self):
         super().__init__(locals())
@@ -372,6 +378,7 @@ class Skill_5(Command):
     """Press skill,Uses '曉月流奧義-劍神' once. """
     _display_name = '曉月流奧義-劍神'
     skill_cool_down = 120
+    skill_image = IMAGE_DIR + 'skill_5.png'
 
     def __init__(self, direction):
         super().__init__(locals())
@@ -393,6 +400,7 @@ class Skill_6(Command):
     """Press skill,Uses '集結曉之陣' once. """
     _display_name = '集結曉之陣'
     skill_cool_down = 120
+    skill_image = IMAGE_DIR + 'skill_6.png'
 
     def __init__(self):
         super().__init__(locals())
@@ -409,6 +417,7 @@ class Skill_7(Command):
     """Press skill,Uses '嘯月光斬' once. """
     _display_name = '嘯月光斬'
     skill_cool_down = 87
+    skill_image = IMAGE_DIR + 'skill_7.png'
 
     def __init__(self,combo="true"):
         super().__init__(locals())
@@ -429,6 +438,7 @@ class Skill_8(Command):
     """Press skill,Uses '百人一閃/疾風五月雨刃' once. """
     _display_name = '百人一閃/疾風五月雨刃'
     skill_cool_down = 120
+    skill_image = IMAGE_DIR + 'skill_8.png'
 
     def __init__(self,combo="true"):
         super().__init__(locals())
@@ -449,6 +459,7 @@ class Skill_9(Command):
     """Press skill,Uses '一閃' once. """
     _display_name = '一閃'
     skill_cool_down = 65
+    skill_image = IMAGE_DIR + 'skill_9.png'
 
     def __init__(self,direction):
         super().__init__(locals())
@@ -496,6 +507,7 @@ class Skill_12(Command):
 class Skill_10(Command):
     """Press skill,Uses '斷空閃' once. """
     _display_name = '斷空閃'
+    _distance = 30
 
     def __init__(self,direction,combo="true"):
         super().__init__(locals())

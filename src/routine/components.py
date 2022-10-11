@@ -350,6 +350,7 @@ class Move(Command):
 
     def _new_direction(self, new):
         key_down(new)
+        time.sleep(utils.rand_float(0.03, 0.05))
         if self.prev_direction and self.prev_direction != new:
             key_up(self.prev_direction)
         self.prev_direction = new
@@ -388,10 +389,12 @@ class Move(Command):
                     d_y = point[1] - config.player_pos[1]
                     if abs(d_y) > settings.move_tolerance / 2:
                         if d_y < 0:
-                            key = 'up'
+                            key = 'up' # if direction=up dont press up to avoid transporter
+                            if abs(d_x) < settings.move_tolerance / math.sqrt(2): # key up horizontal arrow if inside move_tolerance 
+                                self._new_direction('')
                         else:
                             key = 'down'
-                        self._new_direction(key)
+                            self._new_direction(key)
                         step(key, point)
                         if settings.record_layout:
                             config.layout.add(*config.player_pos)
