@@ -196,7 +196,7 @@ class FlashJump(Command):
             press(Key.FLASH_JUMP, 1,up_time=0.06)
             if self.triple_jump:
                 time.sleep(utils.rand_float(0.05, 0.07))
-                press(Key.FLASH_JUMP, 1,down_time=0.08,up_time=0.02) # if this job can do triple jump
+                press(Key.FLASH_JUMP, 1,down_time=0.08,up_time=0.05) # if this job can do triple jump
         key_up(self.direction)
         time.sleep(utils.rand_float(0.03, 0.05))
 			
@@ -249,7 +249,7 @@ class MainGroupAttackSkill(Command):
             key_down(self.direction)
         time.sleep(utils.rand_float(0.03, 0.05))
         for _ in range(self.repetitions):
-            press(Key.MAIN_GROUP_ATTACK_SKILL, self.attacks,down_time=0.08, up_time=0.1)
+            press(Key.MAIN_GROUP_ATTACK_SKILL, self.attacks,down_time=0.08, up_time=0.06)
         # if config.stage_fright and utils.bernoulli(0.7):
         #     time.sleep(utils.rand_float(0.1, 0.2))
         key_up(self.direction)

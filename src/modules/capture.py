@@ -130,7 +130,9 @@ class Capture:
                     break
                 # refresh whole game frame every 0.5s
                 if self.refresh_counting % 10 == 0:
-                  self.frame = self.screenshot_in_bg(self.handle,0,0,self.window['width'],self.window['height'])
+                    self.frame = self.screenshot_in_bg(self.handle,0,0,self.window['width'],self.window['height'])
+                    # print("window ",self.window)
+                    # cv2.imwrite('/test.png',self.frame)
                 # Take screenshot
                 minimap = self.screenshot_in_bg(self.handle,mm_tl[0],mm_tl[1],mm_br[0]-mm_tl[0],mm_br[1]-mm_tl[1])
                 if minimap is None:

@@ -168,6 +168,7 @@ Auto Maple has the ability to automatically solve "runes", or in-game arrow key 
 </h2>
 
 <ol>
+  conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0
   <li>
     Download and install <a href="https://www.python.org/downloads/">Python3</a>.
   </li>

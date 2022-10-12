@@ -189,7 +189,7 @@ class FlashJump(Command):
     def main(self):
         utils.wait_for_is_standing(2000)
         key_down(self.direction)
-        time.sleep(utils.rand_float(0.04, 0.08))
+        time.sleep(utils.rand_float(0.04, 0.06))
         press(Key.JUMP, 1,up_time=0.1)
         if self.direction == 'up':
             press(Key.FLASH_JUMP, 1)
