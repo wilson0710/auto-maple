@@ -533,6 +533,6 @@ class Skill_11(Command):
                 key_down(self.direction)
             press(Key.SKILL_11, 1)
             if self.combo:
-                time.sleep(utils.rand_float(0.3, 0.4))
+                time.sleep(utils.rand_float(0.1, 0.15))
             else:
                 time.sleep(utils.rand_float(1, 1.2))

@@ -1,0 +1,8 @@
+$, target=move_tolerance, value=11
+*, x=83.000, y=39.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=
+    FlashJump, direction=right, triple_jump=true, fast_jump=false
+    MainGroupAttackSkill, direction=, jump=false, attacks=3, repetitions=1, combo=false
+*, x=122.000, y=39.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=
+    FlashJump, direction=left, triple_jump=true, fast_jump=false
+    Skill_11, direction=, jump=false, combo=true
+    Skill_3, direction=, jump=false, attacks=1, repetitions=1
