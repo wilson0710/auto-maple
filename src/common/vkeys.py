@@ -178,7 +178,7 @@ user32.SendInput.argtypes = (wintypes.UINT, LPINPUT, ctypes.c_int)
 #           Functions           #
 #################################
 @utils.run_if_enabled
-def key_down(key):
+def key_down(key,down_time=0.05):
     """
     Simulates a key-down action. Can be cancelled by Bot.toggle_enabled.
     :param key:     The key to press.
@@ -194,9 +194,10 @@ def key_down(key):
         unreleased_key.append(key)
         x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[key]))
         user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+        time.sleep(down_time * (0.8 + 0.5 * random()))
 
 
-def key_up(key):
+def key_up(key,up_time=0.03):
     """
     Simulates a key-up action. Cannot be cancelled by Bot.toggle_enabled.
     This is to ensure no keys are left in the 'down' state when the program pauses.
@@ -213,6 +214,7 @@ def key_up(key):
         x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[key], dwFlags=KEYEVENTF_KEYUP))
         user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
         unreleased_key.remove(key)
+        time.sleep(up_time * (0.8 + 0.4 * random()))
 
 def release_unreleased_key():
     print("release ",unreleased_key)
@@ -233,10 +235,8 @@ def press(key, n, down_time=0.1, up_time=0.08):
     for _ in range(n):
         if key == '':
             break
-        key_down(key)
-        time.sleep(down_time * (0.8 + 0.5 * random()))
-        key_up(key)
-        time.sleep(up_time * (0.8 + 0.4 * random()))
+        key_down(key,down_time)
+        key_up(key, up_time)
 
 
 @utils.run_if_enabled

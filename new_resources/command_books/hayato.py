@@ -61,9 +61,16 @@ def step(direction, target):
                 FlashJump(direction='',triple_jump='false',fast_jump='true').execute()
                 MainGroupAttackSkill(direction='',attacks='3').execute()
                 time.sleep(utils.rand_float(0.2, 0.25))
-        elif abs(d_x) > 10:
-            press(Key.JUMP, 1)
-            time.sleep(0.3+0.1*((24-abs(d_x))/13)) # add delay according to distance, max=0.1sec
+        elif abs(d_x) > 12:
+            print("微調dis : ",abs(d_x))
+            press(Key.JUMP, 1,down_time=0.1,up_time=0.05)
+            # for i in range(10): # maximum time : 2s
+            #     if config.player_states['movement_state'] == config.MOVEMENT_STATE_JUMPING:
+            #         print("start jumping")
+            #         break
+            #     time.sleep(0.08)
+            #     press(Key.JUMP, 1,up_time=0.02)
+            time.sleep(0.42+(0.06*((24-abs(d_x))/13))) # add delay according to distance, max=0.1sec
             press(Key.JUMP, 1)
             MainGroupAttackSkill(direction='',attacks='1').execute()
         utils.wait_for_is_standing(300)
@@ -79,9 +86,10 @@ def step(direction, target):
             press(Key.JUMP, 1)
             time.sleep(utils.rand_float(0.1, 0.15))
     if direction == 'down':
-        print("down stair")
-        time.sleep(utils.rand_float(0.05, 0.07))
-        press(Key.JUMP, 1)
+        if not config.player_states['movement_state'] == config.MOVEMENT_STATE_FALLING:
+            print("down stair")
+            time.sleep(utils.rand_float(0.05, 0.07))
+            press(Key.JUMP, 1)
         time.sleep(utils.rand_float(0.15, 0.25))
       
 
@@ -186,18 +194,24 @@ class FlashJump(Command):
     def main(self):
         utils.wait_for_is_standing(2000)
         key_down(self.direction)
-        time.sleep(utils.rand_float(0.03, 0.06))
-        press(Key.JUMP, 1,up_time=0.06)
+        press(Key.JUMP, 1,up_time=0.02)
+        for i in range(10): # maximum time : 2s
+            if config.player_states['movement_state'] == config.MOVEMENT_STATE_JUMPING:
+                print("start jumping")
+                break
+            time.sleep(0.08)
+            press(Key.JUMP, 1,up_time=0.02)
+
         if not self.fast_jump:
-            time.sleep(utils.rand_float(0.1, 0.13)) # slow flash jump gap
+            time.sleep(utils.rand_float(0.1, 0.15)) # slow flash jump gap
         if self.direction == 'up':
             press(Key.FLASH_JUMP, 1)
         else:
             press(Key.FLASH_JUMP, 1,up_time=0.06)
+            key_up(self.direction,up_time=0.02)
             if self.triple_jump:
-                time.sleep(utils.rand_float(0.05, 0.07))
-                press(Key.FLASH_JUMP, 1,down_time=0.08,up_time=0.05) # if this job can do triple jump
-        key_up(self.direction)
+                time.sleep(utils.rand_float(0.02, 0.05))
+                press(Key.FLASH_JUMP, 1,down_time=0.07,up_time=0.04) # if this job can do triple jump
         time.sleep(utils.rand_float(0.03, 0.05))
 			
 
@@ -214,15 +228,20 @@ class UpJump(Command):
     def main(self):
         utils.wait_for_is_standing(2000)
         key_down(self.direction)
-        time.sleep(utils.rand_float(0.03, 0.05))
         if self.jump:
-            press(Key.JUMP, 1)
-            time.sleep(utils.rand_float(0.05, 0.07))
+            press(Key.JUMP, 1,up_time=0.08)
+            for i in range(10): # maximum time : 2s
+                if config.player_states['movement_state'] == config.MOVEMENT_STATE_JUMPING:
+                    print("start jumping")
+                    break
+                time.sleep(0.12)
+                press(Key.JUMP, 1,up_time=0.08)
+            time.sleep(utils.rand_float(0.04, 0.07))
         press(Key.UP_JUMP, 1,up_time=0.05)
         press(Key.SKILL_4, 1,up_time=0.05) # eliminate delay of up_jump
         key_up(self.direction)
         if self.combo:
-            time.sleep(utils.rand_float(0.03, 0.05))
+            time.sleep(utils.rand_float(0.04, 0.07))
         else:
             time.sleep(utils.rand_float(0.4, 0.6))
 
@@ -243,16 +262,14 @@ class MainGroupAttackSkill(Command):
         if self.jump:
             utils.wait_for_is_standing(2000)
             key_down(self.direction)
-            time.sleep(utils.rand_float(0.03, 0.05))
             press(Key.JUMP, 1)
         else:
             key_down(self.direction)
-        time.sleep(utils.rand_float(0.03, 0.05))
         for _ in range(self.repetitions):
             press(Key.MAIN_GROUP_ATTACK_SKILL, self.attacks,down_time=0.08, up_time=0.06)
         # if config.stage_fright and utils.bernoulli(0.7):
         #     time.sleep(utils.rand_float(0.1, 0.2))
-        key_up(self.direction)
+        key_up(self.direction,up_time=0.02)
         if self.combo:
             if self.attacks >= 3:
                 time.sleep(utils.rand_float(0.1, 0.15))
@@ -260,9 +277,9 @@ class MainGroupAttackSkill(Command):
                 time.sleep(utils.rand_float(0.1, 0.15))
         else:
             if self.attacks == 3:
-                time.sleep(utils.rand_float(0.4, 0.45))
+                time.sleep(utils.rand_float(0.45, 0.48))
             else:
-                time.sleep(utils.rand_float(0.4, 0.45))
+                time.sleep(utils.rand_float(0.45, 0.48))
 
 # 曉月大太刀
 class Skill_1(Command):
@@ -280,13 +297,11 @@ class Skill_1(Command):
             if self.jump:
                 utils.wait_for_is_standing(2000)
                 key_down(self.direction)
-                time.sleep(utils.rand_float(0.03, 0.05))
                 press(Key.JUMP, 1)
             else:
                 key_down(self.direction)
-            time.sleep(utils.rand_float(0.06, 0.1))
             press(Key.SKILL_1, 1)
-            key_up(self.direction)
+            key_up(self.direction,up_time=0.02)
             self.set_my_last_cooldown(time.time())
             if self.combo:
                 time.sleep(utils.rand_float(0.25, 0.35))
@@ -325,16 +340,12 @@ class Skill_3(Command):
         if self.jump:
             utils.wait_for_is_standing(2000)
             key_down(self.direction)
-            time.sleep(utils.rand_float(0.03, 0.05))
             press(Key.JUMP, 1)
         else:
             key_down(self.direction)
-        time.sleep(utils.rand_float(0.03, 0.05))
-        # if config.stage_fright and utils.bernoulli(0.7):
-        #     time.sleep(utils.rand_float(0.1, 0.2))
         for _ in range(self.repetitions):
             press(Key.SKILL_3, self.attacks, up_time=0.05)
-        key_up(self.direction)
+        key_up(self.direction,up_time=0.02)
         time.sleep(utils.rand_float(0.2, 0.25))
 		
 # 五影劍
@@ -353,16 +364,12 @@ class Skill_33(Command):
         if self.jump:
             utils.wait_for_is_standing(2000)
             key_down(self.direction)
-            time.sleep(utils.rand_float(0.03, 0.05))
             press(Key.JUMP, 1)
         else:
             key_down(self.direction)
-        time.sleep(utils.rand_float(0.03, 0.07))
-        # if config.stage_fright and utils.bernoulli(0.7):
-        #     time.sleep(utils.rand_float(0.1, 0.2))
         for _ in range(self.repetitions):
             press(Key.SKILL_33, self.attacks, up_time=0.05)
-        key_up(self.direction)
+        key_up(self.direction,up_time=0.02)
         time.sleep(utils.rand_float(0.2, 0.25))
 
 # 神速無雙
@@ -388,10 +395,9 @@ class Skill_5(Command):
         if self.check_is_skill_ready():
           utils.wait_for_is_standing(2000)
           key_down(self.direction)
-          time.sleep(utils.rand_float(0.05, 0.1))
           press(Key.SKILL_5, 1, up_time=0.05)
           time.sleep(utils.rand_float(0.1, 0.15))
-          key_up(self.direction)
+          key_up(self.direction,up_time=0.02)
           time.sleep(utils.rand_float(0.5, 0.6))
           self.set_my_last_cooldown(time.time())
 
@@ -469,9 +475,8 @@ class Skill_9(Command):
         if self.check_is_skill_ready():
             utils.wait_for_is_standing(2000)
             key_down(self.direction)
-            time.sleep(utils.rand_float(0.05, 0.08))
             press(Key.SKILL_9, 1, up_time=0.1)
-            key_up(self.direction)
+            key_up(self.direction,up_time=0.02)
             time.sleep(utils.rand_float(1.6, 1.8))
             self.set_my_last_cooldown(time.time())
 
@@ -493,10 +498,9 @@ class Skill_12(Command):
               utils.wait_for_is_standing(2000)
               press(Key.JUMP, 1)
           key_down(self.direction)
-          time.sleep(utils.rand_float(0.07, 0.09))
           press(Key.SKILL_9, 1, up_time=0.05)
           time.sleep(utils.rand_float(0.1, 0.12))
-          key_up(self.direction)
+          key_up(self.direction,up_time=0.02)
           self.set_my_last_cooldown(time.time())
           if self.combo:
               time.sleep(utils.rand_float(0.3, 0.5))
@@ -516,10 +520,9 @@ class Skill_10(Command):
 
     def main(self):
         key_down(self.direction)
-        time.sleep(utils.rand_float(0.03, 0.06))
         press(Key.SKILL_10, 1, up_time=0.1)
         time.sleep(utils.rand_float(0.05, 0.07))
-        key_up(self.direction)
+        key_up(self.direction,up_time=0.02)
         if self.combo:
             time.sleep(utils.rand_float(0.03, 0.05))
         else:

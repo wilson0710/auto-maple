@@ -72,7 +72,14 @@ class Capture:
             # 'width': 400, #only need small area at top left
             # 'height': 200,
         }
-
+        self.default_window_resolution = {
+            '1366':(1366,768),
+            '1280':(1280,720)
+        }
+        self.latest_positions = []
+        self.MAX_LATEST_POSITION_AMOUNT = 10
+        self.recording_frames = []
+        self.MAX_RECORDING_AMOUNT = 60
         self.ready = False
         self.calibrated = False
         self.refresh_counting = 0
@@ -105,6 +112,18 @@ class Capture:
             self.window['width'] = max(rect[2] - rect[0], MMT_WIDTH)
             self.window['height'] = max(rect[3] - rect[1], MMT_HEIGHT)
 
+            if abs(self.default_window_resolution['1366'][0] - self.window['width']) < \
+                    abs(self.default_window_resolution['1280'][0] - self.window['width']):
+                # self.window['left'] = rect[0] + (self.default_window_resolution['1366'][0] - self.window['width'])
+                self.window['top'] = rect[1] + abs(self.default_window_resolution['1366'][1] - self.window['height'])
+                self.window['width'] = self.default_window_resolution['1366'][0]
+                self.window['height'] = self.default_window_resolution['1366'][1]
+            else:
+                # self.window['left'] = rect[0] + (self.default_window_resolution['1280'][0] - self.window['width'])
+                self.window['top'] = rect[1] + abs(self.default_window_resolution['1280'][1] - self.window['height'])
+                self.window['width'] = self.default_window_resolution['1280'][0]
+                self.window['height'] = self.default_window_resolution['1280'][1]
+
             # Calibrate by finding the bottom right corner of the minimap
             self.frame = self.screenshot_in_bg(self.handle,0,0,self.window['width'],self.window['height'])
             if self.frame is None:
@@ -129,15 +148,23 @@ class Capture:
                     self.refresh_counting = 0
                     break
                 # refresh whole game frame every 0.5s
-                if self.refresh_counting % 10 == 0:
+                if self.refresh_counting % 5 == 0:
                     self.frame = self.screenshot_in_bg(self.handle,0,0,self.window['width'],self.window['height'])
-                    # print("window ",self.window)
-                    # cv2.imwrite('/test.png',self.frame)
+                    
+                # save pic every 1s, max 60 pic
+                if self.refresh_counting % 100 == 0 and config.enabled:
+                    self.recording_frames.append(self.frame)
+                    if len(self.recording_frames) > self.MAX_RECORDING_AMOUNT:
+                        self.recording_frames.pop(0)
+                elif not config.enabled and len(self.recording_frames) > 0:
+                    for index in range(len(self.recording_frames)):
+                        cv2.imwrite('./recording/' + str(index) + '.png',self.recording_frames[index])
+
                 # Take screenshot
                 minimap = self.screenshot_in_bg(self.handle,mm_tl[0],mm_tl[1],mm_br[0]-mm_tl[0],mm_br[1]-mm_tl[1])
                 if minimap is None:
                     continue
-
+                
                 # Determine the player's position
                 player = utils.multi_match(minimap, PLAYER_TEMPLATE, threshold=0.8)
                 if player:
@@ -145,27 +172,45 @@ class Capture:
                     last_player_pos = config.player_pos
                     config.player_pos = utils.convert_to_relative(player[0], minimap)
                     done_check_is_standing = False
+                    # print(config.player_pos)
+                    # record if latest postion has been changed
+                    if last_player_pos != config.player_pos or self.refresh_counting % 5 == 0:
+                        self.latest_positions.append(config.player_pos)
+                        if len(self.latest_positions) > self.MAX_LATEST_POSITION_AMOUNT:
+                            self.latest_positions.pop(0)
+
                     # check is_standing by settins.platforms
                     if settings.platforms != '':
                         temp_platforms = settings.platforms.split("|")
                         for platform_y in temp_platforms:
                             if abs(int(platform_y) - int(last_player_pos[1])) <= 0:
                                 config.player_states['is_standing'] = True
+                                config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
                                 done_check_is_standing = True
                                 break
                     if last_player_pos[1] == config.player_pos[1] and not config.player_states['is_standing']:
                         self.check_is_standing_count += 1
                         if self.check_is_standing_count >= 7:
                             config.player_states['is_standing'] = True
+                            config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
                             self.check_is_standing_count = 0
                             print('back to ground')
                     elif last_player_pos[1] != config.player_pos[1] and done_check_is_standing == False:
                         self.check_is_standing_count = 0
                         config.player_states['is_standing'] = False
+                        if last_player_pos[1] < config.player_pos[1]:
+                            config.player_states['movement_state'] = config.MOVEMENT_STATE_FALLING
+                        else:
+                            config.player_states['movement_state'] = config.MOVEMENT_STATE_JUMPING
                 else:
                     if config.player_pos != (0,0): # check is last player_pos near the border
-                      pass
-              
+                        if config.player_pos[1] < 10:
+                            config.player_states['movement_state'] = config.MOVEMENT_STATE_JUMPING
+                            config.player_pos = (config.player_pos[0],0)
+                        if config.player_pos[0] < 30:
+                            config.player_pos = (3,config.player_pos[1])
+                        elif int(minimap.shape[1]) - config.player_pos[0] < 30:
+                            config.player_pos = (int(minimap.shape[1]) - 3,config.player_pos[1])
                 
 
 

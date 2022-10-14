@@ -29,7 +29,7 @@ other_filtered = utils.filter_color(cv2.imread('assets/other_template.png'), OTH
 OTHER_TEMPLATE = cv2.cvtColor(other_filtered, cv2.COLOR_BGR2GRAY)
 
 # The Elite Boss's warning sign
-ELITE_TEMPLATE = cv2.imread('assets/elite_template.jpg', 0)
+ELITE_TEMPLATE = cv2.imread('assets/elite_template.png', 0)
 
 
 def get_alert_path(name):
@@ -52,6 +52,7 @@ class Notifier:
         self.room_change_threshold = 0.9
         self.rune_alert_delay = 270         # 4.5 minutes
         self.notifier_delay = 0.1
+        self.skill_template_cd_set = {}
 
     def start(self):
         """Starts this Notifier's thread."""
@@ -97,10 +98,14 @@ class Notifier:
                 for key in command_book:
                     if hasattr(command_book[key],"get_is_skill_ready"):
                         command_book[key].get_is_skill_ready()
-                    if hasattr(command_book[key],"skill_image") and image_matched == False:
-                        SKILL_TEMPLATE = cv2.imread(command_book[key].skill_image, 0)
-                        is_ready_region = frame[height-280:height-124, width-188:width-132]
-                        skill_match = utils.multi_match(is_ready_region, SKILL_TEMPLATE, threshold=0.9)
+                    if hasattr(command_book[key],"skill_image") and image_matched == False and not command_book[key].get_is_skill_ready():
+                        if not key in self.skill_template_cd_set:
+                            skill_template = cv2.imread(command_book[key].skill_image, 0)
+                            self.skill_template_cd_set[key] = skill_template
+                        else:
+                            skill_template = self.skill_template_cd_set[key]
+                        is_ready_region = frame[height-250:height-94, width-182:width-126]
+                        skill_match = utils.multi_match(is_ready_region, skill_template, threshold=0.9)
                         if len(skill_match) > 0:
                             print(command_book[key]._display_name , " skill_match")
                             image_matched = True

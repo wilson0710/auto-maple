@@ -85,6 +85,30 @@ def wait_for_is_standing(ms=2000):
         time.sleep(0.01)
     return False
 
+def wait_for_is_jumping(ms=2000):
+    """
+    Wait until player stand on the ground 
+    :param ms:   The maximun waiting time
+    :return:    is_standing or not
+    """
+    for i in range(int(ms / 10)): # maximum time : 2s
+        if config.player_states['movement_state'] == config.MOVEMENT_STATE_JUMPING:
+            return True
+        time.sleep(0.01)
+    return False
+
+def wait_for_is_falling(ms=2000):
+    """
+    Wait until player stand on the ground 
+    :param ms:   The maximun waiting time
+    :return:    is_standing or not
+    """
+    for i in range(int(ms / 10)): # maximum time : 2s
+        if config.player_states['movement_state'] == config.MOVEMENT_STATE_FALLING:
+            return True
+        time.sleep(0.01)
+    return False
+
 def check_is_jumping():
     """
     check if player state is not standing

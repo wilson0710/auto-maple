@@ -23,7 +23,12 @@ stage_fright = False
 player_states = {
   'is_standing':True,
   'fly_mode':True,
+  'movement_state':0,
 }
+
+MOVEMENT_STATE_STANDING = 0
+MOVEMENT_STATE_JUMPING = 1
+MOVEMENT_STATE_FALLING = 2
 
 # skill cd timer
 skill_cd_timer = {}
