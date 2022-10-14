@@ -292,6 +292,20 @@ class Command(Component):
                 result += f'\n        {key}={value}'
         return result
 
+    def player_jump(self,direction=""):
+        utils.wait_for_is_standing(1500)
+        key_down(direction)
+        press(config.jump_button, 1,up_time=0.05)
+        for i in range(100): # maximum time : 2s
+            if config.player_states['movement_state'] == config.MOVEMENT_STATE_JUMPING:
+                print("start jumping")
+                break
+            if i % 10 == 9:
+                press(config.jump_button, 1,up_time=0.05)
+            else:
+                time.sleep(0.02)
+            
+        
     def get_my_last_cooldown(self,id):
         if id in config.skill_cd_timer:
             return config.skill_cd_timer[id]
@@ -436,7 +450,8 @@ class Wait(Command):
         self.duration = float(duration)
 
     def main(self):
-        time.sleep(self.duration)
+        time.sleep(utils.rand_float(self.duration*0.8, self.duration*1.2))
+        
 
 
 class Walk(Command):
@@ -449,9 +464,8 @@ class Walk(Command):
 
     def main(self):
         key_down(self.direction)
-        time.sleep(self.duration)
+        time.sleep(utils.rand_float(self.duration*0.8, self.duration*1.2))
         key_up(self.direction)
-        time.sleep(0.05)
 
 
 class Fall(Command):
@@ -460,22 +474,15 @@ class Fall(Command):
     from their starting position.
     """
 
-    def __init__(self, distance=settings.move_tolerance / 2):
+    def __init__(self):
         super().__init__(locals())
-        self.distance = float(distance)
 
     def main(self):
-        start = config.player_pos
         key_down('down')
         time.sleep(utils.rand_float(0.05, 0.08))
         if config.stage_fright and utils.bernoulli(0.5):
             time.sleep(utils.rand_float(0.2, 0.4))
-        counter = 6
-        while config.enabled and \
-                counter > 0 and \
-                utils.distance(start, config.player_pos) < self.distance:
-            press('alt', 1, down_time=0.1)
-            counter -= 1
+        press(config.jump_button, 1, down_time=0.1)
         key_up('down')
         time.sleep(utils.rand_float(0.1, 0.3))
 

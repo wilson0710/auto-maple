@@ -69,13 +69,14 @@ class Bot(Configurable):
         :return:    None
         """
 
+        self.ready = True
+        config.listener.enabled = True
+        last_fed = time.time()
+
         print('\n[~] Initializing detection algorithm:\n')
         model = detection.load_model()
         print('\n[~] Initialized detection algorithm')
 
-        self.ready = True
-        config.listener.enabled = True
-        last_fed = time.time()
         while True:
             if config.enabled and len(config.routine) > 0:
                 # Buff and feed pets
@@ -213,12 +214,14 @@ class Bot(Configurable):
             self.module_name = module_name
             self.command_book = new_cb
             self.buff = new_cb['buff']()
+            config.jump_button = self.command_book['key'].JUMP
             # initialize skills ready state
             for key in self.command_book:
                 if hasattr(self.command_book[key],"get_is_skill_ready"):
                     self.command_book[key].get_is_skill_ready()
             print(config.is_skill_ready_collector)
             
+
             components.step = new_step
             config.gui.menu.file.enable_routine_state()
             config.gui.view.status.set_cb(basename(file))

@@ -194,7 +194,7 @@ def key_down(key,down_time=0.05):
         unreleased_key.append(key)
         x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[key]))
         user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
-        time.sleep(down_time * (0.8 + 0.5 * random()))
+        time.sleep(down_time * (0.8 + 0.6 * random()))
 
 
 def key_up(key,up_time=0.03):
