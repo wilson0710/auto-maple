@@ -194,7 +194,7 @@ class FlashJump(Command):
     def main(self):
         self.player_jump(self.direction)
         if not self.fast_jump:
-            time.sleep(utils.rand_float(0.1, 0.13)) # slow flash jump gap
+            time.sleep(utils.rand_float(0.05, 0.08)) # slow flash jump gap
         if self.direction == 'up':
             press(Key.FLASH_JUMP, 1)
         else:
