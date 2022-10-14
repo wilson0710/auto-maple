@@ -29,7 +29,7 @@ other_filtered = utils.filter_color(cv2.imread('assets/other_template.png'), OTH
 OTHER_TEMPLATE = cv2.cvtColor(other_filtered, cv2.COLOR_BGR2GRAY)
 
 # The Elite Boss's warning sign
-ELITE_TEMPLATE = cv2.imread('assets/elite_template.png', 0)
+ELITE_TEMPLATE = cv2.imread('assets/elite_template2.jpg', 0)
 
 
 def get_alert_path(name):
