@@ -156,7 +156,7 @@ class Notifier:
         self.mixer.set_volume(volume)
         self.mixer.play()
         # use go home scroll
-        press("f9",1)
+        kb.press("f9")
         while not kb.is_pressed(config.listener.config['Start/stop']):
             time.sleep(0.1)
         self.mixer.stop()
