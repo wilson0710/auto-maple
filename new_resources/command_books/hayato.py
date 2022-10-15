@@ -298,12 +298,20 @@ class Skill_2(Command):
     skill_cool_down = 8.1
     skill_image = IMAGE_DIR + 'skill_2.png'
 
-    def __init__(self):
+    def __init__(self, direction='',jump='false'):
         super().__init__(locals())
+        self.direction = settings.validate_horizontal_arrows(direction)
+        self.jump = settings.validate_boolean(jump)
 
     def main(self):
         if self.check_is_skill_ready():
+            if self.jump:
+                self.player_jump(self.direction)
+                time.sleep(utils.rand_float(0.02, 0.05))
+            else:
+                key_down(self.direction)
             press(Key.SKILL_2, 1, up_time=0.1)
+            key_up(self.direction,up_time=0.02)
             time.sleep(utils.rand_float(0.6, 0.75))
             self.set_my_last_cooldown(time.time())
         
@@ -311,13 +319,14 @@ class Skill_2(Command):
 class Skill_3(Command):
     """Attacks using '指令五影劍' in a given direction."""
     _display_name = '指令五影劍'
+    skill_cool_down = 10
 
-    def __init__(self, direction,jump='false', attacks=1, repetitions=1):
+    def __init__(self, direction='',jump='false', attacks=1, repetitions=1):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
+        self.jump = settings.validate_boolean(jump)
         self.attacks = int(attacks)
         self.repetitions = int(repetitions)
-        self.jump = settings.validate_boolean(jump)
 
     def main(self):
         if self.jump:
@@ -328,13 +337,14 @@ class Skill_3(Command):
         press(Key.SKILL_3, self.attacks, up_time=0.05)
         key_up(self.direction,up_time=0.02)
         time.sleep(utils.rand_float(0.2, 0.25))
+        self.set_my_last_cooldown(time.time())
 		
 # 五影劍
 class Skill_33(Command):
     """Attacks using '五影劍' in a given direction."""
     _display_name = '五影劍'
 
-    def __init__(self, direction,jump='false', attacks=1, repetitions=1):
+    def __init__(self, direction='',jump='false', attacks=1, repetitions=1):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.attacks = int(attacks)

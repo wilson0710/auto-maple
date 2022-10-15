@@ -479,12 +479,11 @@ class Fall(Command):
 
     def main(self):
         key_down('down')
-        time.sleep(utils.rand_float(0.05, 0.08))
         if config.stage_fright and utils.bernoulli(0.5):
             time.sleep(utils.rand_float(0.2, 0.4))
         press(config.jump_button, 1, down_time=0.1)
         key_up('down')
-        time.sleep(utils.rand_float(0.1, 0.3))
+        time.sleep(utils.rand_float(0.1, 0.2))
 
 
 class Buff(Command):
@@ -493,4 +492,34 @@ class Buff(Command):
     def main(self):
         print("\n[!] 'Buff' command not implemented in current command book, aborting process.")
         config.enabled = False
+
+class SkillCombination(Command):
+    """auto select skill in this combination"""
+
+    def __init__(self, direction='',jump='false',target_skills=''):
+        super().__init__(locals())
+        self.direction = settings.validate_horizontal_arrows(direction)
+        self.jump = jump
+        self.target_skills = target_skills
+
+    def main(self):
+        skills_array = self.target_skills.split("|")
+        for skill in skills_array:
+            skill = skill.lower()
+            if "+" in skill:
+                combo_skills = skill.split('+')
+                s = config.bot.command_book[combo_skills[0]]
+                if not s.get_is_skill_ready():
+                    continue
+                s(direction=self.direction,jump=self.jump,combo="true").execute()
+                s = config.bot.command_book[combo_skills[1]]
+                s(direction=self.direction,jump="false").execute()
+                break
+            else:
+                s = config.bot.command_book[skill]
+                if not s.get_is_skill_ready():
+                    continue
+                else:
+                    s(direction=self.direction,jump=self.jump).execute()
+                    break
 
