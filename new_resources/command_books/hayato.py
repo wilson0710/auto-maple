@@ -4,7 +4,7 @@ from sqlalchemy import true
 from src.common import config, settings, utils
 import time
 import math
-from src.routine.components import Command
+from src.routine.components import Command, SkillCombination
 from src.common.vkeys import press, key_down, key_up
 
 IMAGE_DIR = config.RESOURCES_DIR + '/command_books/hayato/'
@@ -54,12 +54,13 @@ def step(direction, target):
     
     if direction == 'left' or direction == 'right':
         if abs(d_x) > 24:
-            if abs(d_x) >= 30:
+            if abs(d_x) >= 33:
                 Skill_10(direction='',combo='true').execute()
                 MainGroupAttackSkill(direction='',attacks='1').execute()
             else:
                 FlashJump(direction='',triple_jump='false',fast_jump='true').execute()
-                MainGroupAttackSkill(direction='',attacks='3').execute()
+                # MainGroupAttackSkill(direction='',attacks='3').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|MainGroupAttackSkill').execute()
                 time.sleep(utils.rand_float(0.2, 0.25))
         elif abs(d_x) > 12:
             print("微調dis : ",abs(d_x))
@@ -70,7 +71,7 @@ def step(direction, target):
             #         break
             #     time.sleep(0.08)
             #     press(Key.JUMP, 1,up_time=0.02)
-            time.sleep(0.4+(0.06*((24-abs(d_x))/13))) # add delay according to distance, max=0.1sec
+            time.sleep(0.38+(0.06*((24-abs(d_x))/13))) # add delay according to distance, max=0.1sec
             press(Key.JUMP, 1)
             MainGroupAttackSkill(direction='',attacks='1').execute()
         utils.wait_for_is_standing(300)
@@ -86,7 +87,7 @@ def step(direction, target):
             press(Key.JUMP, 1)
             time.sleep(utils.rand_float(0.1, 0.15))
     if direction == 'down':
-        if not config.player_states['movement_state'] == config.MOVEMENT_STATE_FALLING:
+        if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING:
             print("down stair")
             time.sleep(utils.rand_float(0.05, 0.07))
             press(Key.JUMP, 1)

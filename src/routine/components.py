@@ -112,7 +112,7 @@ class Point(Component):
                 adjust(*self.location).execute()
             for command in self.commands:
                 command.execute()
-        time.sleep(utils.rand_float(0.05, 0.08))
+        time.sleep(utils.rand_float(0.02, 0.08))
         self._increment_counter()
 
     @utils.run_if_enabled
@@ -200,7 +200,7 @@ class Jump(Component):
                 command_book = config.bot.command_book
                 target_skill_name = None
                 for key in command_book:
-                    if key.lower() == self.active_if_skill_cd:
+                    if key.lower() == self.active_if_skill_ready:
                         target_skill_name = command_book[key].__name__
                         break
 
