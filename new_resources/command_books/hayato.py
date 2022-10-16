@@ -4,7 +4,7 @@ from sqlalchemy import true
 from src.common import config, settings, utils
 import time
 import math
-from src.routine.components import Command, SkillCombination
+from src.routine.components import Command, SkillCombination, Fall
 from src.common.vkeys import press, key_down, key_up
 
 IMAGE_DIR = config.RESOURCES_DIR + '/command_books/hayato/'
@@ -24,6 +24,7 @@ class Key:
 
     # Attack Skills
     MAIN_GROUP_ATTACK_SKILL = 'a' # 三連斬
+    SKILL_A = 'a' # 連接五影用三連斬
     SKILL_1 = 'd' # 曉月大太刀
     SKILL_2 = 'w' # 剎那斬
     SKILL_3 = 'e' # 指令五影劍
@@ -87,11 +88,13 @@ def step(direction, target):
             press(Key.JUMP, 1)
             time.sleep(utils.rand_float(0.1, 0.15))
     if direction == 'down':
-        if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING:
+        if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
             print("down stair")
             time.sleep(utils.rand_float(0.05, 0.07))
             press(Key.JUMP, 1)
-        time.sleep(utils.rand_float(0.15, 0.25))
+            time.sleep(utils.rand_float(0.03, 0.07))
+            MainGroupAttackSkill(direction='',attacks='1').execute()
+        time.sleep(utils.rand_float(0.05, 0.1))
       
 
 class Adjust(Command):
@@ -266,11 +269,48 @@ class MainGroupAttackSkill(Command):
             else:
                 time.sleep(utils.rand_float(0.45, 0.48))
 
+class Skill_A(Command):
+    """Attacks using '連接五影用三連斬' in a given direction."""
+    _display_name = '連接五影用三連斬'
+    skill_cool_down = 5
+
+    def __init__(self, direction,jump='false', attacks=3, repetitions=1,combo='false'):
+        super().__init__(locals())
+        self.direction = settings.validate_horizontal_arrows(direction)
+        self.attacks = int(attacks)
+        self.repetitions = int(repetitions)
+        self.jump = settings.validate_boolean(jump)
+        self.combo = settings.validate_boolean(combo)
+
+    def main(self):
+        if self.jump:
+            self.player_jump(self.direction)
+            time.sleep(utils.rand_float(0.02, 0.05))
+        else:
+            key_down(self.direction)
+        for _ in range(self.repetitions):
+            press(Key.SKILL_A, self.attacks,down_time=0.08, up_time=0.06)
+        # if config.stage_fright and utils.bernoulli(0.7):
+        #     time.sleep(utils.rand_float(0.1, 0.2))
+        self.set_my_last_cooldown(time.time())
+        key_up(self.direction,up_time=0.02)
+        if self.combo:
+            if self.attacks >= 3:
+                time.sleep(utils.rand_float(0.1, 0.15))
+            else:
+                time.sleep(utils.rand_float(0.1, 0.15))
+        else:
+            if self.attacks == 3:
+                time.sleep(utils.rand_float(0.45, 0.48))
+            else:
+                time.sleep(utils.rand_float(0.45, 0.48))
+
 # 曉月大太刀
 class Skill_1(Command):
     """Uses '曉月大太刀' once."""
     _display_name = '曉月大太刀'
     skill_cool_down = 8.1
+
     def __init__(self, direction='left',jump='false',combo="true"):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
@@ -320,7 +360,7 @@ class Skill_2(Command):
 class Skill_3(Command):
     """Attacks using '指令五影劍' in a given direction."""
     _display_name = '指令五影劍'
-    skill_cool_down = 20
+    skill_cool_down = 10
 
     def __init__(self, direction='',jump='false', attacks=1, repetitions=1):
         super().__init__(locals())
@@ -361,8 +401,10 @@ class Skill_33(Command):
             key_down(self.direction)
         press(Key.SKILL_33, self.attacks, up_time=0.05)
         key_up(self.direction,up_time=0.02)
-        time.sleep(utils.rand_float(0.2, 0.25))
         self.set_my_last_cooldown(time.time())
+        time.sleep(utils.rand_float(0.2, 0.25))
+        if self.jump:
+            time.sleep(utils.rand_float(0.15, 0.25))
 
 # 神速無雙
 class Skill_4(Command):
@@ -529,7 +571,7 @@ class Skill_10(Command):
 class Skill_11(Command):
     """Press skill,Uses '瞬殺斬' once. """
     _display_name = '瞬殺斬'
-    skill_cool_down = 6
+    skill_cool_down = 3
 
     def __init__(self, direction='',jump='false',combo="true"):
         super().__init__(locals())
@@ -545,6 +587,7 @@ class Skill_11(Command):
             else:
                 key_down(self.direction)
             press(Key.SKILL_11, 1)
+            self.set_my_last_cooldown(time.time())
             if self.combo:
                 time.sleep(utils.rand_float(0.1, 0.15))
             else:
