@@ -319,7 +319,7 @@ class Skill_2(Command):
 class Skill_3(Command):
     """Attacks using '指令五影劍' in a given direction."""
     _display_name = '指令五影劍'
-    skill_cool_down = 10
+    skill_cool_down = 20
 
     def __init__(self, direction='',jump='false', attacks=1, repetitions=1):
         super().__init__(locals())
@@ -343,7 +343,7 @@ class Skill_3(Command):
 class Skill_33(Command):
     """Attacks using '五影劍' in a given direction."""
     _display_name = '五影劍'
-    skill_cool_down = 20
+    skill_cool_down = 25
 
     def __init__(self, direction='',jump='false', attacks=1, repetitions=1):
         super().__init__(locals())
