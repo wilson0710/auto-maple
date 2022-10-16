@@ -172,6 +172,7 @@ class Capture:
                     last_player_pos = config.player_pos
                     config.player_pos = utils.convert_to_relative(player[0], minimap)
                     done_check_is_standing = False
+                    is_bottom = False
                     # print(config.player_pos)
                     # record if latest postion has been changed
                     if last_player_pos != config.player_pos or self.refresh_counting % 5 == 0:
@@ -183,11 +184,36 @@ class Capture:
                     if settings.platforms != '':
                         temp_platforms = settings.platforms.split("|")
                         for platform_y in temp_platforms:
-                            if abs(int(platform_y) - int(last_player_pos[1])) <= 0:
-                                config.player_states['is_standing'] = True
-                                config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
-                                done_check_is_standing = True
-                                break
+                            check_is_bottom = platform_y.split("b")
+                            if len(check_is_bottom) == 2:
+                                temp_xy = check_is_bottom[1].split("*")
+                                platform_y = check_is_bottom[1]
+                                is_bottom = True
+                            else:
+                                temp_xy = platform_y.split("*")
+                            if len(temp_xy) == 1:
+                                if abs(int(platform_y) - int(config.player_pos[1])) <= 0:
+                                    config.player_states['is_standing'] = True
+                                    config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
+                                    done_check_is_standing = True
+                                    if is_bottom:
+                                        config.player_states['in_bottom_platform'] = True
+                                    else:
+                                        config.player_states['in_bottom_platform'] = False
+                                    break
+                            else:
+                                temp_x_range = temp_xy[0].split("~")
+                                if abs(int(platform_y) - int(config.player_pos[1])) <= 0\
+                                        and (int(temp_x_range[1]) > config.player_pos[0] and int(temp_x_range[0]) < config.player_pos[0]): 
+                                    config.player_states['is_standing'] = True
+                                    config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
+                                    done_check_is_standing = True
+                                    if is_bottom:
+                                        config.player_states['in_bottom_platform'] = True
+                                    else:
+                                        config.player_states['in_bottom_platform'] = False
+                                    break
+                        config.player_states['in_bottom_platform'] = True
                     if last_player_pos[1] == config.player_pos[1] and not config.player_states['is_standing']:
                         self.check_is_standing_count += 1
                         if self.check_is_standing_count >= 7:

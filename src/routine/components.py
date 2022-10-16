@@ -366,7 +366,6 @@ class Move(Command):
 
     def _new_direction(self, new):
         key_down(new)
-        time.sleep(utils.rand_float(0.03, 0.05))
         if self.prev_direction and self.prev_direction != new:
             key_up(self.prev_direction)
         self.prev_direction = new
@@ -400,7 +399,7 @@ class Move(Command):
                         if settings.record_layout:
                             config.layout.add(*config.player_pos)
                         counter -= 1
-                        time.sleep(0.05)
+                        time.sleep(0.02)
                 else:
                     d_y = point[1] - config.player_pos[1]
                     if abs(d_y) > settings.move_tolerance / 2:
@@ -410,12 +409,13 @@ class Move(Command):
                                 self._new_direction('')
                         else:
                             key = 'down'
-                            self._new_direction(key)
+                            if config.player_states['in_bottom_platform'] == False:
+                                self._new_direction(key)
                         step(key, point)
                         if settings.record_layout:
                             config.layout.add(*config.player_pos)
                         counter -= 1
-                        time.sleep(0.05)
+                        time.sleep(0.02)
                 local_error = utils.distance(config.player_pos, point)
                 global_error = utils.distance(config.player_pos, self.target)
                 toggle = not toggle
@@ -480,6 +480,7 @@ class Fall(Command):
         super().__init__(locals())
 
     def main(self):
+        utils.wait_for_is_standing(500)
         key_down('down')
         if config.stage_fright and utils.bernoulli(0.5):
             time.sleep(utils.rand_float(0.2, 0.4))

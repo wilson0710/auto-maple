@@ -24,6 +24,7 @@ player_states = {
   'is_standing':True,
   'fly_mode':True,
   'movement_state':0,
+  'in_bottom_platform':False,
 }
 
 MOVEMENT_STATE_STANDING = 0
