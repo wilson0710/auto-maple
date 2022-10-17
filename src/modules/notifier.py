@@ -31,6 +31,8 @@ OTHER_TEMPLATE = cv2.cvtColor(other_filtered, cv2.COLOR_BGR2GRAY)
 # The Elite Boss's warning sign
 ELITE_TEMPLATE = cv2.imread('assets/elite_template2.jpg', 0)
 
+# check for unexpected conversation
+STOP_CONVERSTION_TEMPLATE = cv2.imread('assets/stop_conversation.jpg', 0)
 
 def get_alert_path(name):
     return os.path.join(Notifier.ALERTS_DIR, f'{name}.mp3')
@@ -91,7 +93,12 @@ class Notifier:
                     if others > prev_others:
                         self._ping('ding')
                     prev_others = others
-
+                # check for unexpected conversation
+                conversation = utils.multi_match(frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
+                if len(conversation) > 0:
+                    print("stop conversation")
+                    press("esc")
+                    time.sleep(0.1)
                 # Check for skill cd
                 command_book = config.bot.command_book
                 image_matched = False
