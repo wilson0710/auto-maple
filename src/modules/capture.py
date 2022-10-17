@@ -150,7 +150,8 @@ class Capture:
                 # refresh whole game frame every 0.5s
                 if self.refresh_counting % 5 == 0:
                     self.frame = self.screenshot_in_bg(self.handle,0,0,self.window['width'],self.window['height'])
-                    
+                    # cv2.imwrite('./test.png',self.frame)
+
                 # save pic every 1s, max 60 pic
                 if self.refresh_counting % 100 == 0 and config.enabled:
                     self.recording_frames.append(self.frame)
