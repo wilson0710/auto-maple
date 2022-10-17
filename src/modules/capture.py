@@ -203,7 +203,7 @@ class Capture:
                                     break
                             else:
                                 temp_x_range = temp_xy[0].split("~")
-                                if abs(int(platform_y) - int(config.player_pos[1])) <= 0\
+                                if abs(int(temp_xy[1]) - int(config.player_pos[1])) <= 0\
                                         and (int(temp_x_range[1]) > config.player_pos[0] and int(temp_x_range[0]) < config.player_pos[0]): 
                                     config.player_states['is_standing'] = True
                                     config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
@@ -213,7 +213,7 @@ class Capture:
                                     else:
                                         config.player_states['in_bottom_platform'] = False
                                     break
-                        config.player_states['in_bottom_platform'] = True
+                        config.player_states['in_bottom_platform'] = False
                     if last_player_pos[1] == config.player_pos[1] and not config.player_states['is_standing']:
                         self.check_is_standing_count += 1
                         if self.check_is_standing_count >= 7:
