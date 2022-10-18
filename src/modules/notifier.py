@@ -83,7 +83,7 @@ class Notifier:
                 elite = utils.multi_match(elite_frame, ELITE_TEMPLATE, threshold=0.9)
                 if len(elite) > 0:
                     self._send_msg_to_line_notify("黑王出沒")
-                    self._alert('siren')
+                    # self._alert('siren')
 
                 # Check for other players entering the map
                 filtered = utils.filter_color(minimap, OTHER_RANGES)
@@ -97,7 +97,7 @@ class Notifier:
                 conversation = utils.multi_match(frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
                 if len(conversation) > 0:
                     print("stop conversation")
-                    press("esc")
+                    press("esc",1)
                     time.sleep(0.1)
                 # Check for skill cd
                 command_book = config.bot.command_book

@@ -1,5 +1,6 @@
 """A collection of all commands that Adele can use to interact with the game. 	"""
 
+from turtle import right
 from sqlalchemy import true
 from src.common import config, settings, utils
 import time
@@ -18,7 +19,7 @@ class Key:
 
     # Buffs
     BUFF_1 = 'f1' #公主的加護
-    BUFF_2 = '6' #曉月勇者
+    BUFF_2 = '6' # 幻靈武具
 
     # Buffs Toggle
 
@@ -54,17 +55,22 @@ def step(direction, target):
     d_x = target[0] - config.player_pos[0]
     
     if direction == 'left' or direction == 'right':
-        if abs(d_x) > 24:
+        if abs(d_x) > 20:
             if abs(d_x) >= 33:
-                Skill_10(direction='',combo='true').execute()
-                MainGroupAttackSkill(direction='',attacks='1').execute()
+                if utils.bernoulli(0.2+0.3*(abs(d_x)-33)/100):
+                    Skill_10(direction='',combo='true').execute()
+                    MainGroupAttackSkill(direction='',attacks='1').execute()
+                else:
+                    FlashJump(direction='',triple_jump='true',fast_jump='false').execute()
+                    SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_a+skill_33|MainGroupAttackSkill').execute()
             else:
-                FlashJump(direction='',triple_jump='false',fast_jump='true').execute()
+                FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
                 # MainGroupAttackSkill(direction='',attacks='3').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|MainGroupAttackSkill').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_a+skill_33|MainGroupAttackSkill').execute()
                 time.sleep(utils.rand_float(0.2, 0.25))
         elif abs(d_x) > 12:
             print("微調dis : ",abs(d_x))
+            time.sleep(utils.rand_float(0.05, 0.1))
             press(Key.JUMP, 1,down_time=0.1,up_time=0.05)
             # for i in range(10): # maximum time : 2s
             #     if config.player_states['movement_state'] == config.MOVEMENT_STATE_JUMPING:
@@ -74,7 +80,7 @@ def step(direction, target):
             #     press(Key.JUMP, 1,up_time=0.02)
             time.sleep(0.38+(0.06*((24-abs(d_x))/13))) # add delay according to distance, max=0.1sec
             press(Key.JUMP, 1)
-            MainGroupAttackSkill(direction='',attacks='1').execute()
+            SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_3|skill_a').execute()
         utils.wait_for_is_standing(300)
     
     if direction == 'up':
@@ -83,6 +89,7 @@ def step(direction, target):
                 UpJump(direction='',jump='true').execute()
             else:
                 UpJump(direction='',jump='false').execute()
+            SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_a+skill_33|MainGroupAttackSkill').execute()
             utils.wait_for_is_standing(300)
         else:
             press(Key.JUMP, 1)
@@ -92,8 +99,18 @@ def step(direction, target):
             print("down stair")
             time.sleep(utils.rand_float(0.05, 0.07))
             press(Key.JUMP, 1)
-            time.sleep(utils.rand_float(0.03, 0.07))
-            MainGroupAttackSkill(direction='',attacks='1').execute()
+            time.sleep(utils.rand_float(0.08, 0.12))
+            key_up('down')
+            if abs(d_x) > 5:
+                if d_x > 0:
+                    key_down('right')
+                    press(Key.JUMP, 1)
+                    key_up('right')
+                else:
+                    key_down('left')
+                    press(Key.JUMP, 1)
+                    key_up('left')
+            MainGroupAttackSkill(direction='',attacks='2').execute()
         time.sleep(utils.rand_float(0.05, 0.1))
       
 
@@ -170,14 +187,14 @@ class Buff(Command):
             time.sleep(utils.rand_float(0.6, 0.8))
             self.cd120_buff_time = now
         if self.cd180_buff_time == 0 or now - self.cd180_buff_time > 180:
+            press(Key.BUFF_2, 2)
+            time.sleep(utils.rand_float(0.5, 0.7))
             self.cd180_buff_time = now
         if self.cd200_buff_time == 0 or now - self.cd200_buff_time > 200:
             self.cd200_buff_time = now
         if self.cd240_buff_time == 0 or now - self.cd240_buff_time > 240:
             self.cd240_buff_time = now
         if self.cd900_buff_time == 0 or now - self.cd900_buff_time > 900:
-            press(Key.BUFF_2, 2)
-            time.sleep(utils.rand_float(0.5, 0.7))
             self.cd900_buff_time = now
         # if self.decent_buff_time == 0 or now - self.decent_buff_time > settings.buff_cooldown:
         #     for key in buffs:
@@ -198,7 +215,7 @@ class FlashJump(Command):
     def main(self):
         self.player_jump(self.direction)
         if not self.fast_jump:
-            time.sleep(utils.rand_float(0.05, 0.08)) # slow flash jump gap
+            time.sleep(utils.rand_float(0.06, 0.09)) # slow flash jump gap
         if self.direction == 'up':
             press(Key.FLASH_JUMP, 1)
         else:
@@ -272,9 +289,9 @@ class MainGroupAttackSkill(Command):
 class Skill_A(Command):
     """Attacks using '連接五影用三連斬' in a given direction."""
     _display_name = '連接五影用三連斬'
-    skill_cool_down = 5
+    skill_cool_down = 2.5
 
-    def __init__(self, direction,jump='false', attacks=3, repetitions=1,combo='false'):
+    def __init__(self, direction,jump='false', attacks=2, repetitions=1,combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.attacks = int(attacks)
@@ -289,16 +306,16 @@ class Skill_A(Command):
         else:
             key_down(self.direction)
         for _ in range(self.repetitions):
-            press(Key.SKILL_A, self.attacks,down_time=0.08, up_time=0.06)
+            press(Key.SKILL_A, self.attacks,down_time=0.07, up_time=0.04)
         # if config.stage_fright and utils.bernoulli(0.7):
         #     time.sleep(utils.rand_float(0.1, 0.2))
         self.set_my_last_cooldown(time.time())
         key_up(self.direction,up_time=0.02)
         if self.combo:
             if self.attacks >= 3:
-                time.sleep(utils.rand_float(0.1, 0.15))
+                time.sleep(utils.rand_float(0.02, 0.04))
             else:
-                time.sleep(utils.rand_float(0.1, 0.15))
+                time.sleep(utils.rand_float(0.02, 0.04))
         else:
             if self.attacks == 3:
                 time.sleep(utils.rand_float(0.45, 0.48))
@@ -587,6 +604,7 @@ class Skill_11(Command):
             else:
                 key_down(self.direction)
             press(Key.SKILL_11, 1)
+            key_up(self.direction,up_time=0.02)
             self.set_my_last_cooldown(time.time())
             if self.combo:
                 time.sleep(utils.rand_float(0.1, 0.15))
