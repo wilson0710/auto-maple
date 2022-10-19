@@ -89,7 +89,7 @@ def step(direction, target):
                 UpJump(direction='',jump='true').execute()
             else:
                 UpJump(direction='',jump='false').execute()
-            SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_a+skill_33|MainGroupAttackSkill').execute()
+            SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|MainGroupAttackSkill').execute()
             utils.wait_for_is_standing(300)
         else:
             press(Key.JUMP, 1)
@@ -152,15 +152,16 @@ class Adjust(Command):
                 d_y = self.target[1] - config.player_pos[1]
                 if abs(d_y) > settings.adjust_tolerance:
                     if d_y < 0:
-                        utils.wait_for_is_standing(1000)
+                        utils.wait_for_is_standing(300)
                         UpJump('up').main()
                     else:
-                        utils.wait_for_is_standing(1000)
-                        key_down('down')
-                        time.sleep(utils.rand_float(0.05, 0.07))
-                        press(Key.JUMP, 2, down_time=0.1)
-                        key_up('down')
-                        time.sleep(utils.rand_float(0.17, 0.25))
+                        if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
+                            print("down stair")
+                            time.sleep(utils.rand_float(0.05, 0.07))
+                            press(Key.JUMP, 1)
+                            time.sleep(utils.rand_float(0.08, 0.12))
+                            key_up('down')
+                        time.sleep(utils.rand_float(0.1, 0.15))
                     counter -= 1
             error = utils.distance(config.player_pos, self.target)
             toggle = not toggle
@@ -215,16 +216,18 @@ class FlashJump(Command):
     def main(self):
         self.player_jump(self.direction)
         if not self.fast_jump:
-            time.sleep(utils.rand_float(0.06, 0.09)) # slow flash jump gap
+            time.sleep(utils.rand_float(0.03, 0.06)) # fast flash jump gap
+        else:
+            time.sleep(utils.rand_float(0.08, 0.12)) # slow flash jump gap
         if self.direction == 'up':
             press(Key.FLASH_JUMP, 1)
         else:
             press(Key.FLASH_JUMP, 1,up_time=0.05)
-            key_up(self.direction,up_time=0.03)
             if self.triple_jump:
-                time.sleep(utils.rand_float(0.02, 0.05))
+                time.sleep(utils.rand_float(0.05, 0.08))
                 press(Key.FLASH_JUMP, 1,down_time=0.07,up_time=0.04) # if this job can do triple jump
-        time.sleep(utils.rand_float(0.03, 0.05))
+        key_up(self.direction,up_time=0.01)
+        time.sleep(utils.rand_float(0.03, 0.06))
 			
 
 class UpJump(Command):
@@ -244,7 +247,6 @@ class UpJump(Command):
         else:
             key_down(self.direction)
         press(Key.UP_JUMP, 1,up_time=0.05)
-        press(Key.SKILL_4, 1,up_time=0.05) # eliminate delay of up_jump
         key_up(self.direction)
         if self.combo:
             time.sleep(utils.rand_float(0.04, 0.07))
@@ -289,7 +291,7 @@ class MainGroupAttackSkill(Command):
 class Skill_A(Command):
     """Attacks using '連接五影用三連斬' in a given direction."""
     _display_name = '連接五影用三連斬'
-    skill_cool_down = 2.5
+    skill_cool_down = 3
 
     def __init__(self, direction,jump='false', attacks=2, repetitions=1,combo='false'):
         super().__init__(locals())
@@ -353,7 +355,7 @@ class Skill_1(Command):
 class Skill_2(Command):
     """Uses '剎那斬' once."""
     _display_name = '剎那斬'
-    skill_cool_down = 8.1
+    skill_cool_down = 8.2
     skill_image = IMAGE_DIR + 'skill_2.png'
 
     def __init__(self, direction='',jump='false'):
@@ -473,7 +475,7 @@ class Skill_6(Command):
 class Skill_7(Command):
     """Press skill,Uses '嘯月光斬' once. """
     _display_name = '嘯月光斬'
-    skill_cool_down = 87
+    skill_cool_down = 88
     skill_image = IMAGE_DIR + 'skill_7.png'
 
     def __init__(self,combo="true"):
@@ -535,7 +537,7 @@ class Skill_9(Command):
 class Skill_12(Command):
     """Press skill,Uses '一閃角' once. """
     _display_name = '一閃角'
-    skill_cool_down = 6
+    skill_cool_down = 6.2
 
     def __init__(self, direction='left',jump='false',combo="false"):
         super().__init__(locals())
@@ -588,7 +590,7 @@ class Skill_10(Command):
 class Skill_11(Command):
     """Press skill,Uses '瞬殺斬' once. """
     _display_name = '瞬殺斬'
-    skill_cool_down = 3
+    skill_cool_down = 3.2
 
     def __init__(self, direction='',jump='false',combo="true"):
         super().__init__(locals())
