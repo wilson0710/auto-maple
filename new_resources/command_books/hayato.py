@@ -349,7 +349,7 @@ class Skill_1(Command):
             key_up(self.direction,up_time=0.02)
             self.set_my_last_cooldown(time.time())
             if self.combo:
-                time.sleep(utils.rand_float(0.25, 0.35))
+                time.sleep(utils.rand_float(0.3, 0.45))
             else:
                 time.sleep(utils.rand_float(1.5, 1.8))
              
