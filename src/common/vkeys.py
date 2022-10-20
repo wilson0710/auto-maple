@@ -197,7 +197,7 @@ def key_down(key,down_time=0.05):
         time.sleep(down_time * (0.9 + 0.7 * random()))
 
 
-def key_up(key,up_time=0.03):
+def key_up(key,up_time=0.05):
     """
     Simulates a key-up action. Cannot be cancelled by Bot.toggle_enabled.
     This is to ensure no keys are left in the 'down' state when the program pauses.
@@ -214,7 +214,7 @@ def key_up(key,up_time=0.03):
         x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[key], dwFlags=KEYEVENTF_KEYUP))
         user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
         unreleased_key.remove(key)
-        time.sleep(up_time * (0.7 + 0.6 * random()))
+        time.sleep(up_time * (0.7 + 0.8 * random()))
 
 def release_unreleased_key():
     print("release ",unreleased_key)

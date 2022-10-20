@@ -35,6 +35,7 @@ $, target=platforms, value=131~151*16|117~137*26|b131~151*35|b27~131*39|b5~26*35
     Skill_3, direction=, jump=false, attacks=1, repetitions=1
     Wait, duration=0.1
 *, x=74, y=39, frequency=7, skip=true, adjust=False, active_if_skill_ready=, active_if_skill_cd=
+    Wait, duration=0.3
     Skill_12, direction=left, jump=false, combo=false
     Fall
 >, label=right, frequency=1, skip=False, frequency_to_loop=False, active_if_skill_ready=skill_9, active_if_skill_cd=

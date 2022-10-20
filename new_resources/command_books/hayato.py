@@ -182,13 +182,15 @@ class Buff(Command):
     def main(self):
         # buffs = [Key.SPEED_INFUSION, Key.HOLY_SYMBOL, Key.SHARP_EYE, Key.COMBAT_ORDERS, Key.ADVANCED_BLESSING]
         now = time.time()
-        utils.wait_for_is_standing(2000)
-        if self.cd120_buff_time == 0 or now - self.cd120_buff_time > 120:
-            press(Key.BUFF_1, 2)
+        utils.wait_for_is_standing(1000)
+        if self.cd120_buff_time == 0 or now - self.cd120_buff_time > 121:
+            time.sleep(utils.rand_float(0.1, 0.3))
+            press(Key.BUFF_1, 1)
             time.sleep(utils.rand_float(0.6, 0.8))
             self.cd120_buff_time = now
-        if self.cd180_buff_time == 0 or now - self.cd180_buff_time > 180:
-            press(Key.BUFF_2, 2)
+        if self.cd180_buff_time == 0 or now - self.cd180_buff_time > 181:
+            time.sleep(utils.rand_float(0.1, 0.3))
+            press(Key.BUFF_2, 1)
             time.sleep(utils.rand_float(0.5, 0.7))
             self.cd180_buff_time = now
         if self.cd200_buff_time == 0 or now - self.cd200_buff_time > 200:
@@ -328,7 +330,7 @@ class Skill_A(Command):
 class Skill_1(Command):
     """Uses '曉月大太刀' once."""
     _display_name = '曉月大太刀'
-    skill_cool_down = 8.1
+    skill_cool_down = 8.2
 
     def __init__(self, direction='left',jump='false',combo="true"):
         super().__init__(locals())

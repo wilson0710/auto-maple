@@ -299,7 +299,6 @@ class Command(Component):
         press(config.jump_button, 1,up_time=0.05)
         for i in range(100): # maximum time : 2s
             if config.player_states['movement_state'] == config.MOVEMENT_STATE_JUMPING:
-                print("start jumping")
                 time.sleep(utils.rand_float(0.02, 0.04))
                 break
             if i % 10 == 9:

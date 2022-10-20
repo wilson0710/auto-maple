@@ -34,6 +34,9 @@ ELITE_TEMPLATE = cv2.imread('assets/elite_template2.jpg', 0)
 # check for unexpected conversation
 STOP_CONVERSTION_TEMPLATE = cv2.imread('assets/stop_conversation.jpg', 0)
 
+# fiona_lie_detector image
+FIONA_LIE_DETECTOR_TEMPLATE = cv2.imread('assets/fiona_lie_detector.png',0)
+
 def get_alert_path(name):
     return os.path.join(Notifier.ALERTS_DIR, f'{name}.mp3')
 
@@ -83,7 +86,7 @@ class Notifier:
                 elite = utils.multi_match(elite_frame, ELITE_TEMPLATE, threshold=0.9)
                 if len(elite) > 0:
                     self._send_msg_to_line_notify("黑王出沒")
-                    # self._alert('siren')
+                    self._alert('siren')
 
                 # Check for other players entering the map
                 filtered = utils.filter_color(minimap, OTHER_RANGES)
@@ -93,12 +96,22 @@ class Notifier:
                     if others > prev_others:
                         self._ping('ding')
                     prev_others = others
+
                 # check for unexpected conversation
                 conversation = utils.multi_match(frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
                 if len(conversation) > 0:
                     print("stop conversation")
                     press("esc",1)
                     time.sleep(0.1)
+
+                # check for unexpected conversation
+                fiona_lie_detector = utils.multi_match(frame, FIONA_LIE_DETECTOR_TEMPLATE, threshold=0.9)
+                if len(fiona_lie_detector) > 0:
+                    print("find fiona_lie_detector")
+                    self._send_msg_to_line_notify("菲歐娜測謊")
+                    self._alert('siren')
+                    time.sleep(0.1)
+
                 # Check for skill cd
                 command_book = config.bot.command_book
                 image_matched = False
@@ -163,7 +176,8 @@ class Notifier:
         self.mixer.set_volume(volume)
         self.mixer.play()
         # use go home scroll
-        kb.press("f9")
+        # kb.press("f9")
+
         while not kb.is_pressed(config.listener.config['Start/stop']):
             time.sleep(0.1)
         self.mixer.stop()
