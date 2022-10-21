@@ -20,6 +20,7 @@ class Key:
     # Buffs
     BUFF_1 = 'f1' #公主的加護
     BUFF_2 = '6' # 幻靈武具
+    BUFF_3 = 'ctrl' # 幻靈武具
 
     # Buffs Toggle
 
@@ -40,6 +41,7 @@ class Key:
     SKILL_11 = '1' # 瞬殺斬
     SKILL_12 = 'f' # 一閃角
     SKILL_V = 'v' # 鷹爪閃
+    SKILL_Z = 'z' # 連刃斬
 
 
 #########################
@@ -62,25 +64,15 @@ def step(direction, target):
                     MainGroupAttackSkill(direction='',attacks='1').execute()
                 else:
                     FlashJump(direction='',triple_jump='true',fast_jump='false').execute()
-                    SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_a+skill_33|MainGroupAttackSkill').execute()
+                    SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_a+skill_33|skill_3|MainGroupAttackSkill').execute()
             else:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
                 # MainGroupAttackSkill(direction='',attacks='3').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_a+skill_33|MainGroupAttackSkill').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_a+skill_33|skill_3|MainGroupAttackSkill').execute()
                 time.sleep(utils.rand_float(0.2, 0.25))
-        elif abs(d_x) > 12:
-            print("微調dis : ",abs(d_x))
-            time.sleep(utils.rand_float(0.05, 0.1))
-            press(Key.JUMP, 1,down_time=0.1,up_time=0.05)
-            # for i in range(10): # maximum time : 2s
-            #     if config.player_states['movement_state'] == config.MOVEMENT_STATE_JUMPING:
-            #         print("start jumping")
-            #         break
-            #     time.sleep(0.08)
-            #     press(Key.JUMP, 1,up_time=0.02)
-            time.sleep(0.38+(0.06*((24-abs(d_x))/13))) # add delay according to distance, max=0.1sec
-            press(Key.JUMP, 1)
-            SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_3|skill_a').execute()
+        elif abs(d_x) > 10:
+            Skill_Z().execute()
+            key_up(direction)
         utils.wait_for_is_standing(300)
     
     if direction == 'up':
@@ -110,7 +102,7 @@ def step(direction, target):
                     key_down('left')
                     press(Key.JUMP, 1)
                     key_up('left')
-            MainGroupAttackSkill(direction='',attacks='2').execute()
+            SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_a+skill_33|skill_3|MainGroupAttackSkill').execute()
         time.sleep(utils.rand_float(0.05, 0.1))
       
 
@@ -129,21 +121,18 @@ class Adjust(Command):
         while config.enabled and counter > 0 and error > settings.adjust_tolerance:
             if toggle:
                 d_x = self.target[0] - config.player_pos[0]
-                # threshold = settings.adjust_tolerance / math.sqrt(2)
                 threshold = settings.adjust_tolerance
                 if abs(d_x) > threshold:
                     walk_counter = 0
                     if d_x < 0:
-                        key_down('left')
+                        key_down('left',down_time=0.04)
                         while config.enabled and d_x < -1 * threshold and walk_counter < 60:
-                            time.sleep(utils.rand_float(0.04, 0.055))
                             walk_counter += 1
                             d_x = self.target[0] - config.player_pos[0]
                         key_up('left')
                     else:
-                        key_down('right')
+                        key_down('right',down_time=0.04)
                         while config.enabled and d_x > threshold and walk_counter < 60:
-                            time.sleep(utils.rand_float(0.04, 0.055))
                             walk_counter += 1
                             d_x = self.target[0] - config.player_pos[0]
                         key_up('right')
@@ -153,7 +142,7 @@ class Adjust(Command):
                 if abs(d_y) > settings.adjust_tolerance:
                     if d_y < 0:
                         utils.wait_for_is_standing(300)
-                        UpJump('up').main()
+                        UpJump('').main()
                     else:
                         if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
                             print("down stair")
@@ -173,6 +162,7 @@ class Buff(Command):
     def __init__(self):
         super().__init__(locals())
         self.cd120_buff_time = 0
+        self.cd150_buff_time = 0
         self.cd180_buff_time = 0
         self.cd200_buff_time = 0
         self.cd240_buff_time = 0
@@ -188,6 +178,11 @@ class Buff(Command):
             press(Key.BUFF_1, 1)
             time.sleep(utils.rand_float(0.6, 0.8))
             self.cd120_buff_time = now
+        if self.cd180_buff_time == 0 or now - self.cd150_buff_time > 151:
+            time.sleep(utils.rand_float(0.1, 0.3))
+            press(Key.BUFF_3, 1)
+            time.sleep(utils.rand_float(0.5, 0.7))
+            self.cd150_buff_time = now
         if self.cd180_buff_time == 0 or now - self.cd180_buff_time > 181:
             time.sleep(utils.rand_float(0.1, 0.3))
             press(Key.BUFF_2, 1)
@@ -381,7 +376,7 @@ class Skill_2(Command):
 class Skill_3(Command):
     """Attacks using '指令五影劍' in a given direction."""
     _display_name = '指令五影劍'
-    skill_cool_down = 10
+    skill_cool_down = 8.2
 
     def __init__(self, direction='',jump='false', attacks=1, repetitions=1):
         super().__init__(locals())
@@ -614,3 +609,50 @@ class Skill_11(Command):
                 time.sleep(utils.rand_float(0.1, 0.15))
             else:
                 time.sleep(utils.rand_float(1, 1.2))
+
+# 鷹爪閃
+class Skill_V(Command):
+    """Press skill,Uses '鷹爪閃' once. """
+    _display_name = '鷹爪閃'
+    _distance = 10
+
+    def __init__(self,direction,jump='false',combo="true"):
+        super().__init__(locals())
+        self.direction = settings.validate_horizontal_arrows(direction)
+        self.combo = settings.validate_boolean(combo)
+        self.jump = settings.validate_boolean(jump)
+
+    def main(self):
+        if self.jump:
+            self.player_jump(self.direction)
+            time.sleep(utils.rand_float(0.02, 0.05))
+        else:
+            key_down(self.direction)
+        press(Key.SKILL_V, 1, up_time=0.1)
+        time.sleep(utils.rand_float(0.05, 0.07))
+        key_up(self.direction,up_time=0.02)
+        if self.combo:
+            time.sleep(utils.rand_float(0.1, 0.3))
+        else:
+            time.sleep(utils.rand_float(1.1, 1.3))
+
+# 連刃斬
+class Skill_Z(Command):
+    """Press skill,Uses '連刃斬' once. """
+    _display_name = '連刃斬'
+    _distance = 10
+
+    def __init__(self,direction,jump='false',combo="false"):
+        super().__init__(locals())
+        self.direction = settings.validate_horizontal_arrows(direction)
+        self.combo = settings.validate_boolean(combo)
+
+    def main(self):
+        key_down(self.direction)
+        press(Key.SKILL_Z, 1, up_time=0.1)
+        time.sleep(utils.rand_float(0.05, 0.07))
+        key_up(self.direction,up_time=0.02)
+        if self.combo:
+            time.sleep(utils.rand_float(0.1, 0.3))
+        else:
+            time.sleep(utils.rand_float(0.4, 0.6))
