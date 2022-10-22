@@ -10,7 +10,7 @@ import threading
 import numpy as np
 import keyboard as kb
 import requests
-from src.common.vkeys import key_down, key_up, press
+from src.common.vkeys import key_down, key_up, press, click
 from src.routine.components import Point
 
 
@@ -33,6 +33,9 @@ ELITE_TEMPLATE = cv2.imread('assets/elite_template2.jpg', 0)
 
 # check for unexpected conversation
 STOP_CONVERSTION_TEMPLATE = cv2.imread('assets/stop_conversation.jpg', 0)
+
+# check for unexpected conversation
+REVIVE_CONFIRM_TEMPLATE = cv2.imread('assets/revive_confirm.png', 0)
 
 # fiona_lie_detector image
 FIONA_LIE_DETECTOR_TEMPLATE = cv2.imread('assets/fiona_lie_detector.png',0)
@@ -104,7 +107,19 @@ class Notifier:
                     press("esc",1)
                     time.sleep(0.1)
 
-                # check for unexpected conversation
+                # check for unexpected dead
+                revive_confirm = utils.multi_match(frame, REVIVE_CONFIRM_TEMPLATE, threshold=0.9)
+                if len(revive_confirm) > 0:
+                    print("revive confirm")
+                    revive_confirm_pos = min(revive_confirm, key=lambda p: p[0])
+                    target = (
+                        round(revive_confirm_pos[0] + config.capture.window['left']),
+                        round(revive_confirm_pos[1] + config.capture.window['top'])
+                    )
+                    click(target, button='left')
+                    time.sleep(3)
+
+                # check for fiona_lie_detector
                 fiona_lie_detector = utils.multi_match(frame, FIONA_LIE_DETECTOR_TEMPLATE, threshold=0.9)
                 if len(fiona_lie_detector) > 0:
                     print("find fiona_lie_detector")

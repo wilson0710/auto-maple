@@ -96,7 +96,8 @@ class Bot(Configurable):
                 # Execute next Point in the routine
                 element = config.routine[config.routine.index]
                 if self.rune_active and isinstance(element, Point) \
-                        and element.location == self.rune_closest_pos:
+                        and (element.location == self.rune_closest_pos \
+                        or utils.distance(config.bot.rune_pos, element.location) <= 30):
                     self._solve_rune(model)
                 element.execute()
                 config.routine.next_step()
@@ -117,36 +118,45 @@ class Bot(Configurable):
         adjust = self.command_book['adjust']
         adjust(*self.rune_pos).execute()
         time.sleep(0.2)
-        press(self.config['Interact'], 1, down_time=0.2)        # Inherited from Configurable
-
-        print('\nSolving rune:')
-        for _ in range(10):
-            frame = config.capture.frame
-            solution = detection.merge_detection(model, frame)
-            if solution:
-                print(', '.join(solution))
-                if len(solution) == 4:
-                    print('Solution found, entering result')
-                    for arrow in solution:
-                        press(arrow, 1, down_time=0.1)
-                    time.sleep(1)
-                    for _ in range(3):
-                        time.sleep(0.3)
-                        frame = config.capture.frame
-                        rune_buff = utils.multi_match(frame[:frame.shape[0] // 8, :],
-                                                      RUNE_BUFF_TEMPLATE,
-                                                      threshold=0.9)
-                        if rune_buff:
-                            rune_buff_pos = min(rune_buff, key=lambda p: p[0])
-                            target = (
-                                round(rune_buff_pos[0] + config.capture.window['left']),
-                                round(rune_buff_pos[1] + config.capture.window['top'])
-                            )
-                            click(target, button='right')
-                    self.rune_active = False
+        press(self.config['Interact'], 1, down_time=0.1)        # Inherited from Configurable
+        for ii in range(3):
+            if self.rune_active == False:
+                break
+            if ii == 1:
+                press("left", 1, down_time=0.1,up_time=0.2) 
+            elif ii == 2:
+                press("left", 1, down_time=0.2,up_time=0.2) 
+            press(self.config['Interact'], 1, down_time=0.1,up_time=0.3) 
+            print('\nSolving rune:')
+            for _ in range(3):
+                if self.rune_active == False:
                     break
-            else:
-              time.sleep(0.1)
+                frame = config.capture.frame
+                solution = detection.merge_detection(model, frame)
+                if solution:
+                    print(', '.join(solution))
+                    if len(solution) == 4:
+                        print('Solution found, entering result')
+                        for arrow in solution:
+                            press(arrow, 1, down_time=0.1)
+                        time.sleep(1)
+                        for _ in range(3):
+                            time.sleep(0.3)
+                            frame = config.capture.frame
+                            rune_buff = utils.multi_match(frame[:frame.shape[0] // 8, :],
+                                                        RUNE_BUFF_TEMPLATE,
+                                                        threshold=0.9)
+                            if rune_buff:
+                                rune_buff_pos = min(rune_buff, key=lambda p: p[0])
+                                target = (
+                                    round(rune_buff_pos[0] + config.capture.window['left']),
+                                    round(rune_buff_pos[1] + config.capture.window['top'])
+                                )
+                                click(target, button='right')
+                        self.rune_active = False
+                        break
+                else:
+                    time.sleep(0.1)
     
     def load_commands(self, file):
         """Prompts the user to select a command module to import. Updates config's command book."""
