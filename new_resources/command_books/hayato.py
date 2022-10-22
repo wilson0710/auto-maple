@@ -616,7 +616,7 @@ class Skill_V(Command):
     _display_name = '鷹爪閃'
     _distance = 10
 
-    def __init__(self,direction,jump='false',combo="true"):
+    def __init__(self,direction="",jump='false',combo="true"):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.combo = settings.validate_boolean(combo)
@@ -642,7 +642,7 @@ class Skill_Z(Command):
     _display_name = '連刃斬'
     _distance = 10
 
-    def __init__(self,direction,jump='false',combo="false"):
+    def __init__(self,direction="",jump='false',combo="false"):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.combo = settings.validate_boolean(combo)
