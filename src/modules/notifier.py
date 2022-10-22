@@ -1,7 +1,7 @@
 """A module for detecting and notifying the user of dangerous in-game events."""
 
 from msilib.schema import Component
-from src.common import config, utils
+from src.common import config, utils, settings
 import time
 import os
 import cv2
@@ -169,7 +169,10 @@ class Notifier:
 
     def _send_msg_to_line_notify(self,msg,file=None):
         url = "https://notify-api.line.me/api/notify"
-        token = "gOgNCkc4PLinHFzJSbqQZHQyLotFuu0skBCFmHicKoZ"
+        if settings.id == "veg":
+            token = "ezvoLebyYzo6yYlh1BbcF0pab4gU2pWBBG8S0QzkysA"
+        else:
+            token = "gOgNCkc4PLinHFzJSbqQZHQyLotFuu0skBCFmHicKoZ"
         my_headers = {'Authorization': 'Bearer ' + token }
         data = {"message" : msg }
         if file:

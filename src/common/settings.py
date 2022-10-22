@@ -67,6 +67,7 @@ def validate_horizontal_arrows(key):
 #########################
 # A dictionary that maps each setting to its validator function
 SETTING_VALIDATORS = {
+    'id': str,
     'move_tolerance': float,
     'adjust_tolerance': float,
     'record_layout': validate_boolean,
