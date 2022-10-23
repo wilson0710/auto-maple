@@ -7,6 +7,7 @@ of validator functions that can be used to enforce parameter types.
 #################################
 #      Validator Functions      #
 #################################
+
 def validate_nonnegative_int(value):
     """
     Checks whether VALUE can be a valid non-negative integer.
@@ -43,7 +44,9 @@ def validate_arrows(key):
 
     if isinstance(key, str):
         key = key.lower()
-        if key in ['up', 'down', 'left', 'right','']:
+        if key in ['','up', 'down', 'left', 'right' \
+                'up+left','up+right','down+left','down+right'
+            ]:
             return key
     raise ValueError(f"'{key}' is not a valid arrow key.")
 
@@ -72,18 +75,23 @@ SETTING_VALIDATORS = {
     'adjust_tolerance': float,
     'record_layout': validate_boolean,
     'buff_cooldown': validate_nonnegative_int,
-    'platforms':str
+    'platforms':str,
+    'rent_frenzy':validate_boolean,
 }
 
 
 def reset():
     """Resets all settings to their default values."""
 
-    global move_tolerance, adjust_tolerance, record_layout, buff_cooldown
+    global id, move_tolerance, adjust_tolerance, record_layout, buff_cooldown, rent_frenzy, platforms
+    id = ""
     move_tolerance = 9
     adjust_tolerance = 2
     record_layout = False
     buff_cooldown = 180
+    platforms = ""
+    rent_frenzy = False
+    
 
 
 # The allowed error from the destination when moving towards a Point
@@ -99,5 +107,10 @@ record_layout = False
 buff_cooldown = 180
 
 platforms = ""
+
+rent_frenzy = False
+
+# user id
+id = ""
 
 reset()

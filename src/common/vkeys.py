@@ -2,6 +2,7 @@
 
 import ctypes
 import time
+from cv2 import split
 import win32con
 import win32api
 from src.common import utils
@@ -186,15 +187,25 @@ def key_down(key,down_time=0.05):
     """
 
     key = key.lower()
+    key_combination = []
+    if "+" in key:
+        key_combination = key.split("+")
+    else:
+        key_combination[0] = key
+
     if key == '':
         return
-    elif key not in KEY_MAP.keys():
-        print(f"Invalid keyboard input: '{key}'.")
-    elif not key in unreleased_key:
-        unreleased_key.append(key)
-        x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[key]))
-        user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
-        time.sleep(down_time * (0.9 + 0.7 * random()))
+    else: 
+        for k in key_combination:
+            if k not in KEY_MAP.keys():
+                print(f"Invalid keyboard input: '{key}'.")
+            elif not k in unreleased_key:
+                unreleased_key.append(k)
+                x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k]))
+                user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+                if len(key_combination) > 1:
+                    time.sleep(0.04 * (0.9 + 0.7 * random()))
+        time.sleep(down_time * (0.8 + 0.7 * random()))
 
 
 def key_up(key,up_time=0.05):
@@ -206,15 +217,35 @@ def key_up(key,up_time=0.05):
     """
 
     key = key.lower()
+    key_combination = []
+    if "+" in key:
+        key_combination = key.split("+")
+    else:
+        key_combination[0] = key
+
     if key == '':
-        return 
-    elif key not in KEY_MAP.keys() :
-        print(f"Invalid keyboard input: '{key}'.")
-    elif key in unreleased_key:
-        x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[key], dwFlags=KEYEVENTF_KEYUP))
-        user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
-        unreleased_key.remove(key)
+        return
+    else: 
+        for k in key_combination:
+            if k not in KEY_MAP.keys():
+                print(f"Invalid keyboard input: '{key}'.")
+            elif k in unreleased_key:
+                unreleased_key.remove(k)
+                x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k], dwFlags=KEYEVENTF_KEYUP))
+                user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+                if len(key_combination) > 1:
+                    time.sleep(0.04 * (0.9 + 0.7 * random()))
         time.sleep(up_time * (0.7 + 0.8 * random()))
+
+    # if key == '':
+    #     return 
+    # elif key not in KEY_MAP.keys() :
+    #     print(f"Invalid keyboard input: '{key}'.")
+    # elif key in unreleased_key:
+    #     x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[key], dwFlags=KEYEVENTF_KEYUP))
+    #     user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+    #     unreleased_key.remove(key)
+    #     time.sleep(up_time * (0.7 + 0.8 * random()))
 
 def release_unreleased_key():
     print("release ",unreleased_key)
