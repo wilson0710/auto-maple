@@ -221,7 +221,7 @@ def key_up(key,up_time=0.05):
     if "+" in key:
         key_combination = key.split("+")
     else:
-        key_combination[0] = key
+        key_combination.append(key)
 
     if key == '':
         return
