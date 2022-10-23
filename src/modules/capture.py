@@ -11,6 +11,7 @@ from src.common import config, utils, settings
 from ctypes import wintypes
 from ctypes import windll, byref, c_ubyte
 from ctypes.wintypes import RECT, HWND
+import win32gui
 user32 = ctypes.windll.user32
 user32.SetProcessDPIAware()
 
@@ -101,6 +102,7 @@ class Capture:
         while True:
             # Calibrate screen capture
             self.handle = user32.FindWindowW(None, "MapleStory")
+            
             # old version for front screenshot
             rect = wintypes.RECT()
             user32.GetWindowRect(self.handle, ctypes.pointer(rect))
@@ -111,6 +113,9 @@ class Capture:
             self.window['top'] = rect[1]
             self.window['width'] = max(rect[2] - rect[0], MMT_WIDTH)
             self.window['height'] = max(rect[3] - rect[1], MMT_HEIGHT)
+            # move game to foreground
+            win32gui.SetForegroundWindow(self.handle)
+            win32gui.MoveWindow(self.handle,0,0,self.window['width'],self.window['height'],True)
 
             if abs(self.default_window_resolution['1366'][0] - self.window['width']) < \
                     abs(self.default_window_resolution['1280'][0] - self.window['width']):
