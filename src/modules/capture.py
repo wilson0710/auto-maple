@@ -108,14 +108,21 @@ class Capture:
             user32.GetWindowRect(self.handle, ctypes.pointer(rect))
             rect = (rect.left, rect.top, rect.right, rect.bottom)
             rect = tuple(max(0, x) for x in rect)
+            
+            if settings.full_screen:
+                self.window['left'] = 0
+                self.window['top'] = 0
+                self.window['width'] = self.default_window_resolution['1366'][0]
+                self.window['height'] = self.default_window_resolution['1366'][1]
+            else:
+                self.window['left'] = rect[0]
+                self.window['top'] = rect[1]
+                self.window['width'] = max(rect[2] - rect[0], MMT_WIDTH)
+                self.window['height'] = max(rect[3] - rect[1], MMT_HEIGHT)
 
-            self.window['left'] = rect[0]
-            self.window['top'] = rect[1]
-            self.window['width'] = max(rect[2] - rect[0], MMT_WIDTH)
-            self.window['height'] = max(rect[3] - rect[1], MMT_HEIGHT)
             # move game to foreground
-            win32gui.SetForegroundWindow(self.handle)
-            win32gui.MoveWindow(self.handle,0,0,self.window['width'],self.window['height'],True)
+            # win32gui.SetForegroundWindow(self.handle)
+            # win32gui.MoveWindow(self.handle,0,0,self.window['width'],self.window['height'],True)
 
             if abs(self.default_window_resolution['1366'][0] - self.window['width']) < \
                     abs(self.default_window_resolution['1280'][0] - self.window['width']):
@@ -155,10 +162,11 @@ class Capture:
                 # refresh whole game frame every 0.5s
                 if self.refresh_counting % 5 == 0:
                     self.frame = self.screenshot_in_bg(self.handle,0,0,self.window['width'],self.window['height'])
-                    # cv2.imwrite('./test.png',self.frame)
+                    if self.refresh_counting % 20 == 0:
+                        cv2.imwrite('./test.png',self.frame)
 
                 # save pic every 1s, max 60 pic
-                if self.refresh_counting % 100 == 0 and config.enabled:
+                if self.refresh_counting % 80 == 0 and config.enabled:
                     self.recording_frames.append(self.frame)
                     if len(self.recording_frames) > self.MAX_RECORDING_AMOUNT:
                         self.recording_frames.pop(0)
@@ -226,7 +234,7 @@ class Capture:
                             config.player_states['is_standing'] = True
                             config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
                             self.check_is_standing_count = 0
-                            print('back to ground')
+                            # print('back to ground')
                     elif last_player_pos[1] != config.player_pos[1] and done_check_is_standing == False:
                         self.check_is_standing_count = 0
                         config.player_states['is_standing'] = False
@@ -265,13 +273,18 @@ class Capture:
                 time.sleep(self.capture_gap_sec)
                 
 
-    def screenshot(self, delay=1):
-        try:
-            return np.array(self.sct.grab(self.window))
-        except mss.exception.ScreenShotError:
-            print(f'\n[!] Error while taking screenshot, retrying in {delay} second'
-                  + ('s' if delay != 1 else ''))
-            time.sleep(delay)
+    def screenshot(self, tl_x = 0, tl_y = 0, width=0, height=0, delay=0.1):
+        start = time.time()
+        with mss.mss() as self.sct:
+            try:
+                frame = np.array(self.sct.grab(self.window))
+                frame = frame[tl_y:tl_y+height, tl_x:tl_x+width]
+                # print('use time : ',start - time.time())
+                return frame
+            except mss.exception.ScreenShotError:
+                print(f'\n[!] Error while taking screenshot, retrying in {delay} second'
+                    + ('s' if delay != 1 else ''))
+                time.sleep(delay)
     
     def screenshot_in_bg(self,handle: HWND, tl_x = 0, tl_y = 0, width=0, height=0):
         """窗口客户区截图
@@ -282,6 +295,8 @@ class Capture:
         Returns:
             numpy.ndarray: 截图数据
         """
+        if settings.full_screen:
+            return self.screenshot(tl_x,tl_y,width,height)
 
         if width == 0 or height == 0:
           # get target window size
