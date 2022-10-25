@@ -5,10 +5,12 @@ import time
 from cv2 import split
 import win32con
 import win32api
-from src.common import utils
+# from src.common import utils
 from ctypes import wintypes
 from random import random
-
+from pynput.keyboard import Key, Controller
+import win32gui, win32ui, win32con, win32api
+import win32process
 
 user32 = ctypes.WinDLL('user32', use_last_error=True)
 
@@ -174,11 +176,11 @@ def err_check(result, _, args):
 user32.SendInput.errcheck = err_check
 user32.SendInput.argtypes = (wintypes.UINT, LPINPUT, ctypes.c_int)
 
-
+nput_keyboard = Controller()
 #################################
 #           Functions           #
 #################################
-@utils.run_if_enabled
+# @utils.run_if_enabled
 def key_down(key,down_time=0.05):
     """
     Simulates a key-down action. Can be cancelled by Bot.toggle_enabled.
@@ -201,12 +203,20 @@ def key_down(key,down_time=0.05):
                 print(f"Invalid keyboard input: '{key}'.")
             elif not k in unreleased_key:
                 unreleased_key.append(k)
-                x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k]))
-                user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+                # default input method
+                # x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k]))
+                # user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+                # try new input method 
+                pynput_key_down(k)
                 if len(key_combination) > 1:
-                    time.sleep(0.04 * (0.9 + 0.7 * random()))
+                    time.sleep(0.06 * (0.9 + 0.7 * random()))
         time.sleep(down_time * (0.8 + 0.7 * random()))
 
+def pynput_key_down(key):
+    if len(key) > 1:
+        nput_keyboard.press(Key[key])
+    else:
+        nput_keyboard.press(key)
 
 def key_up(key,up_time=0.05):
     """
@@ -231,8 +241,11 @@ def key_up(key,up_time=0.05):
                 print(f"Invalid keyboard input: '{key}'.")
             elif k in unreleased_key:
                 unreleased_key.remove(k)
-                x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k], dwFlags=KEYEVENTF_KEYUP))
-                user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+                # default input method
+                # x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k], dwFlags=KEYEVENTF_KEYUP))
+                # user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+                # try new input method 
+                pynput_key_up(k)
                 if len(key_combination) > 1:
                     time.sleep(0.04 * (0.9 + 0.7 * random()))
         time.sleep(up_time * (0.7 + 0.8 * random()))
@@ -247,13 +260,19 @@ def key_up(key,up_time=0.05):
     #     unreleased_key.remove(key)
     #     time.sleep(up_time * (0.7 + 0.8 * random()))
 
+def pynput_key_up(key):
+    if len(key) > 1:
+        nput_keyboard.release(Key[key])
+    else:
+        nput_keyboard.release(key)
+
 def release_unreleased_key():
     print("release ",unreleased_key)
     for key in unreleased_key:
         key_up(key)
     
-@utils.run_if_enabled
-def press(key, n, down_time=0.1, up_time=0.08):
+# @utils.run_if_enabled
+def press(key, n=1, down_time=0.1, up_time=0.08):
     """
     Presses KEY N times, holding it for DOWN_TIME seconds, and releasing for UP_TIME seconds.
     :param key:         The keyboard input to press.
@@ -268,26 +287,29 @@ def press(key, n, down_time=0.1, up_time=0.08):
             break
         key_down(key,down_time)
         key_up(key, up_time)
+        
+def type(word):
+    nput_keyboard.type(word)
 
-
-@utils.run_if_enabled
-def click(position, button='left'):
+def click(position, button='left',click_time=1):
     """
     Simulate a mouse click with BUTTON at POSITION.
     :param position:    The (x, y) position at which to click.
     :param button:      Either the left or right mouse button.
     :return:            None
     """
-
+    
     if button not in ['left', 'right']:
         print(f"'{button}' is not a valid mouse button.")
     else:
-        if button == 'left':
-            down_event = win32con.MOUSEEVENTF_LEFTDOWN
-            up_event = win32con.MOUSEEVENTF_LEFTUP
-        else:
-            down_event = win32con.MOUSEEVENTF_RIGHTDOWN
-            up_event = win32con.MOUSEEVENTF_RIGHTUP
-        win32api.SetCursorPos(position)
-        win32api.mouse_event(down_event, position[0], position[1], 0, 0)
-        win32api.mouse_event(up_event, position[0], position[1], 0, 0)
+        for _ in range(click_time):
+            time.sleep(0.2 * (0.9 + 0.7 * random()))
+            if button == 'left':
+                down_event = win32con.MOUSEEVENTF_LEFTDOWN
+                up_event = win32con.MOUSEEVENTF_LEFTUP
+            else:
+                down_event = win32con.MOUSEEVENTF_RIGHTDOWN
+                up_event = win32con.MOUSEEVENTF_RIGHTUP
+            win32api.SetCursorPos(position)
+            win32api.mouse_event(down_event, position[0], position[1], 0, 0)
+            win32api.mouse_event(up_event, position[0], position[1], 0, 0)

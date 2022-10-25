@@ -7,4 +7,6 @@ opencv-contrib-python
 Pillow
 pygame
 pywin32
+pywinauto
 tensorflow-gpu
+pynput
