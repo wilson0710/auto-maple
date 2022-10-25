@@ -79,17 +79,20 @@ class Notifier:
                 minimap = config.capture.minimap['minimap']
 
                 # Check for unexpected black screen
-                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                if np.count_nonzero(gray < 15) / height / width > self.room_change_threshold:
-                    self._send_msg_to_line_notify("畫面黑屏")
-                    self._alert('siren')
+                if not config.map_changing:
+                    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                    if np.count_nonzero(gray < 15) / height / width > self.room_change_threshold:
+                        self._send_msg_to_line_notify("畫面黑屏")
+                        if settings.rent_frenzy == False:
+                            self._alert('siren')
 
                 # Check for elite warning
                 elite_frame = frame[height // 4:3 * height // 4, width // 4:3 * width // 4]
                 elite = utils.multi_match(elite_frame, ELITE_TEMPLATE, threshold=0.9)
                 if len(elite) > 0:
                     self._send_msg_to_line_notify("黑王出沒")
-                    self._alert('siren')
+                    if settings.rent_frenzy == False:
+                        self._alert('siren')
 
                 # Check for other players entering the map
                 filtered = utils.filter_color(minimap, OTHER_RANGES)
@@ -110,7 +113,7 @@ class Notifier:
                 # check for unexpected dead
                 revive_confirm = utils.multi_match(frame, REVIVE_CONFIRM_TEMPLATE, threshold=0.9)
                 if len(revive_confirm) > 0:
-                    print("revive confirm")
+                    self._send_msg_to_line_notify("角色死亡")
                     revive_confirm_pos = min(revive_confirm, key=lambda p: p[0])
                     target = (
                         round(revive_confirm_pos[0] + config.capture.window['left']),
@@ -124,8 +127,9 @@ class Notifier:
                 if len(fiona_lie_detector) > 0:
                     print("find fiona_lie_detector")
                     self._send_msg_to_line_notify("菲歐娜測謊")
-                    self._alert('siren')
-                    time.sleep(0.1)
+                    if settings.rent_frenzy == False:
+                        self._alert('siren')
+                        time.sleep(0.1)
 
                 # Check for skill cd
                 command_book = config.bot.command_book
@@ -139,7 +143,7 @@ class Notifier:
                             self.skill_template_cd_set[key] = skill_template
                         else:
                             skill_template = self.skill_template_cd_set[key]
-                        is_ready_region = frame[height-250:height-94, width-182:width-126]
+                        is_ready_region = frame[height-300:height-100, width-182:width-126]
                         skill_match = utils.multi_match(is_ready_region, skill_template, threshold=0.9)
                         if len(skill_match) > 0:
                             print(command_book[key]._display_name , " skill_match")
@@ -148,23 +152,24 @@ class Notifier:
 
                 # Check for rune
                 now = time.time()
-                if not config.bot.rune_active:
-                    filtered = utils.filter_color(minimap, RUNE_RANGES)
-                    matches = utils.multi_match(filtered, RUNE_TEMPLATE, threshold=0.9)
-                    rune_start_time = now
-                    if matches and config.routine.sequence:
-                        abs_rune_pos = (matches[0][0], matches[0][1])
-                        config.bot.rune_pos = utils.convert_to_relative(abs_rune_pos, minimap)
-                        print('rune pos : ',config.bot.rune_pos)
-                        distances = list(map(distance_to_rune, config.routine.sequence))
-                        index = np.argmin(distances)
-                        config.bot.rune_closest_pos = config.routine[index].location
-                        config.bot.rune_active = True
-                        self._ping('rune_appeared', volume=0.75)
-                elif now - rune_start_time > self.rune_alert_delay:     # Alert if rune hasn't been solved
-                    config.bot.rune_active = False
-                    self._send_msg_to_line_notify("多次解輪失敗")
-                    self._alert('siren')
+                if settings.rent_frenzy == False:
+                    if not config.bot.rune_active:
+                        filtered = utils.filter_color(minimap, RUNE_RANGES)
+                        matches = utils.multi_match(filtered, RUNE_TEMPLATE, threshold=0.9)
+                        rune_start_time = now
+                        if matches and config.routine.sequence:
+                            abs_rune_pos = (matches[0][0], matches[0][1])
+                            config.bot.rune_pos = utils.convert_to_relative(abs_rune_pos, minimap)
+                            print('rune pos : ',config.bot.rune_pos)
+                            distances = list(map(distance_to_rune, config.routine.sequence))
+                            index = np.argmin(distances)
+                            config.bot.rune_closest_pos = config.routine[index].location
+                            config.bot.rune_active = True
+                            self._ping('rune_appeared', volume=0.75)
+                    elif now - rune_start_time > self.rune_alert_delay:     # Alert if rune hasn't been solved
+                        config.bot.rune_active = False
+                        self._send_msg_to_line_notify("多次解輪失敗")
+                        self._alert('siren')
             time.sleep(self.notifier_delay)
 
     def _send_msg_to_line_notify(self,msg,file=None):

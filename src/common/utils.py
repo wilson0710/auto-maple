@@ -10,7 +10,7 @@ from src.common import config, settings
 from random import random
 from ctypes import windll
 from ctypes.wintypes import RECT, HWND
-
+from src.common.vkeys import click
 
 def move_window(handle: HWND, x: int, y: int):
     """移動視窗到座標(x, y)
@@ -72,6 +72,17 @@ def distance(a, b):
 
     return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
+def game_window_click(point=(0,0),button='left',click_time=1,delay=0.4):
+    if not config.enabled:
+        return
+        
+    target = (
+        round(point[0] + config.capture.window['left']),
+        round(point[1] + config.capture.window['top'])
+    )
+    print(target)
+    click(target, button=button,click_time=click_time)
+    time.sleep(rand_float(delay,delay*1.5))
 
 def wait_for_is_standing(ms=2000):
     """

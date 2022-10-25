@@ -4,8 +4,9 @@ import math
 from pickle import FALSE
 import time
 from src.common import config, settings, utils
-from src.common.vkeys import key_down, key_up, press
-
+from src.common.vkeys import click, key_down, key_up, press
+from src.routine.maps import WorldMap
+from src.modules.listener import Listener
 
 #################################
 #       Routine Components      #
@@ -25,8 +26,10 @@ class Component:
             raise TypeError("Component superclass __init__ only accepts arguments of type 'dict'.")
         else:
             self.kwargs = args[0].copy()
-            self.kwargs.pop('__class__')
-            self.kwargs.pop('self')
+            if '__class__' in self.kwargs:
+                self.kwargs.pop('__class__')
+            if 'self' in self.kwargs:
+                self.kwargs.pop('self')
 
     @utils.run_if_enabled
     def execute(self):
@@ -105,11 +108,12 @@ class Point(Component):
 
         """Executes the set of actions associated with this Point."""
         if self.counter == 0:
-            move = config.bot.command_book['move']
-            move(*self.location).execute()
-            if self.adjust:
-                adjust = config.bot.command_book.get('adjust')      # TODO: adjust using step('up')?
-                adjust(*self.location).execute()
+            if self.location != (-1,-1):
+                move = config.bot.command_book['move']
+                move(*self.location).execute()
+                if self.adjust:
+                    adjust = config.bot.command_book.get('adjust')      # TODO: adjust using step('up')?
+                    adjust(*self.location).execute()
             for command in self.commands:
                 command.execute()
         time.sleep(utils.rand_float(0.02, 0.08))
@@ -271,17 +275,14 @@ SYMBOLS = {
 class Command(Component):
     id = 'Command Superclass'
     _display_name = ""
+    _custom_id = ""
     skill_cool_down = 0
     last_cool_down = 0
 
     def __init__(self, *args):
         super().__init__(*args)
         self.id = self.__class__.__name__
-        
-        # print(self.__dict__)
-        # if 'name' in self.__dict__:
-        #   print(self.__dict__['name'])
-        #   self.id = self.__dict__['name']
+        self._custom_id = self.id
 
     def __str__(self):
         variables = self.__dict__
@@ -314,8 +315,8 @@ class Command(Component):
             return 0
 
     def set_my_last_cooldown(self,last_time=time.time()):
-        config.skill_cd_timer[self.id] = last_time
-        config.is_skill_ready_collector[self.id] = False
+        config.skill_cd_timer[self._custom_id] = last_time
+        config.is_skill_ready_collector[self._custom_id] = False
 
     @classmethod
     def set_is_skill_ready(cls,is_ready):
@@ -340,17 +341,17 @@ class Command(Component):
             return False
 
     def check_is_skill_ready(self):
-        if config.is_skill_ready_collector[self.id] == True:
+        if config.is_skill_ready_collector[self._custom_id] == True:
             return True
 
-        last_cool_down = self.get_my_last_cooldown(self.id)
+        last_cool_down = self.get_my_last_cooldown(self._custom_id)
         now = time.time()
         if now - last_cool_down > self.skill_cool_down:
-            config.is_skill_ready_collector[self.id] = True
-            print(self.id,self._display_name," is ready to use")
+            config.is_skill_ready_collector[self._custom_id] = True
+            print(self._custom_id,self._display_name," is ready to use")
             return True
         else:
-            config.is_skill_ready_collector[self.id] = False
+            config.is_skill_ready_collector[self._custom_id] = False
             return False
 
 
@@ -382,6 +383,9 @@ class Move(Command):
             global_error = utils.distance(config.player_pos, self.target)
             d_x = point[0] - config.player_pos[0]
             d_y = point[1] - config.player_pos[1]
+            # prevent change map error
+            if config.player_pos[0] == 0:
+                step("left", (-30,30))
             while config.enabled and counter > 0 and \
                     local_error > settings.move_tolerance and \
                     global_error > settings.move_tolerance or \
@@ -495,15 +499,60 @@ class Buff(Command):
         print("\n[!] 'Buff' command not implemented in current command book, aborting process.")
         config.enabled = False
 
+class CustomKey(Command):
+    """users define their custom function of target key """
+    _display_name = '自定義按鍵'
+    # skill_cool_down = 0
+
+    def __init__(self,name='',key='', direction='',jump='false',delay='0.5',rep='1',rep_interval='0.3',duration='0',cool_down='0',ground_skill='true'):
+        super().__init__(locals())
+        self._display_name = name
+        self.key = key
+        self._custom_id = 'custom_key_' + key
+        self.direction = settings.validate_arrows(direction)
+        self.jump = settings.validate_boolean(jump)
+        self.delay = float(delay)
+        self.rep = settings.validate_nonnegative_int(rep)
+        self.rep_interval = float(rep_interval)
+        self.duration = float(duration)
+        self.skill_cool_down = float(cool_down)
+        self.ground_skill = settings.validate_boolean(ground_skill)
+        config.is_skill_ready_collector[self._custom_id] = True
+
+    def main(self):
+        if self.skill_cool_down == 0 or self.check_is_skill_ready():
+            if self.ground_skill:
+                utils.wait_for_is_standing(1000)
+
+            if self.jump:
+                self.player_jump(self.direction)
+                # time.sleep(utils.rand_float(0.02, 0.05))
+            else:
+                key_down(self.direction)
+            time.sleep(utils.rand_float(0.03, 0.07))
+            for i in range(self.rep):
+                key_down(self.key)
+                if self.duration != 0:
+                    time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
+                if i == (self.rep - 1):
+                    key_up(self.key,up_time=0.05)
+                else:
+                    key_up(self.key,up_time=self.rep_interval)
+            key_up(self.direction,up_time=0.01)
+            if self.skill_cool_down != 0:
+                self.set_my_last_cooldown(time.time())
+            time.sleep(utils.rand_float(self.delay*0.8, self.delay*1.2))
+
 class SkillCombination(Command):
     """auto select skill in this combination"""
+    # _display_name = '自定義按鍵'
 
     def __init__(self, direction='',jump='false',target_skills=''):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.jump = jump
         self.target_skills = target_skills
-
+        
     def main(self):
         skills_array = self.target_skills.split("|")
         for skill in skills_array:
@@ -525,3 +574,36 @@ class SkillCombination(Command):
                     s(direction=self.direction,jump=self.jump).execute()
                     break
 
+class GoToMap(Command):
+    """ go to target map """
+    _display_name = '前往地圖'
+    # skill_cool_down = 0
+
+    def __init__(self,target_map=''):
+        super().__init__(locals())
+        self.target_map = target_map
+
+    def main(self):
+        press('n') # big map key
+        time.sleep(utils.rand_float(0.3*0.8, 0.3*1.2))
+        wm = WorldMap()
+        if self.target_map in wm.maps_info:
+            config.map_changing = True
+            target_map_info = wm.maps_info[self.target_map]
+            utils.game_window_click(wm.WORLD_MENU)
+            utils.game_window_click(target_map_info['world_selection_point'])
+            utils.game_window_click(wm.AREA_MENU)
+            utils.game_window_click(target_map_info['area_selection_point'])
+            time.sleep(utils.rand_float(0.3*0.8, 0.3*1.2))
+            utils.game_window_click(target_map_info['point'],click_time=2)
+            press('enter')
+            time.sleep(1)
+            for _ in range(10):
+                if wm.check_if_in_correct_map(self.target_map):
+                    break
+                time.sleep(0.3)
+            Listener.recalibrate_minimap()
+            time.sleep(0.2)
+            config.map_changing = False
+        else:
+            pass # use search to reach map

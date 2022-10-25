@@ -8,7 +8,7 @@ from src.common.interfaces import Configurable
 from src.common import config, utils
 from src.common.vkeys import release_unreleased_key
 from datetime import datetime
-
+import win32gui
 
 class Listener(Configurable):
     DEFAULT_CONFIG = {
@@ -76,6 +76,7 @@ class Listener(Configurable):
 
         if not config.enabled:
             Listener.recalibrate_minimap()      # Recalibrate only when being enabled.
+            time.sleep(0.05)
 
         config.enabled = not config.enabled
         utils.print_state()
@@ -99,6 +100,9 @@ class Listener(Configurable):
 
     @staticmethod
     def recalibrate_minimap():
+        window_name = "MapleStory"
+        hwnd = win32gui.FindWindow(None, window_name)
+        win32gui.SetForegroundWindow(hwnd)
         config.capture.calibrated = False
         while not config.capture.calibrated:
             time.sleep(0.01)

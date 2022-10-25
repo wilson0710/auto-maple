@@ -117,16 +117,15 @@ class Bot(Configurable):
         move(*self.rune_pos).execute()
         adjust = self.command_book['adjust']
         adjust(*self.rune_pos).execute()
-        time.sleep(0.2)
-        press(self.config['Interact'], 1, down_time=0.1)        # Inherited from Configurable
+        time.sleep(0.2)   
         for ii in range(3):
             if self.rune_active == False:
                 break
             if ii == 1:
                 press("left", 1, down_time=0.1,up_time=0.2) 
             elif ii == 2:
-                press("left", 1, down_time=0.2,up_time=0.2) 
-            press(self.config['Interact'], 1, down_time=0.1,up_time=0.3) 
+                press("right", 1, down_time=0.2,up_time=0.2) 
+            press(self.config['Interact'], 1, down_time=0.1,up_time=0.3) # Inherited from Configurable
             print('\nSolving rune:')
             for _ in range(3):
                 if self.rune_active == False:
@@ -171,7 +170,7 @@ class Bot(Configurable):
 
         new_step = components.step
         new_cb = {}
-        for c in (components.Wait, components.Walk, components.Fall, components.SkillCombination):
+        for c in (components.Wait, components.Walk, components.Fall, components.SkillCombination, components.GoToMap, components.CustomKey):
             new_cb[c.__name__.lower()] = c
 
         # Import the desired command book file
