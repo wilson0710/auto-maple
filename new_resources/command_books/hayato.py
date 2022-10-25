@@ -20,7 +20,8 @@ class Key:
     # Buffs
     BUFF_1 = 'f1' #公主的加護
     BUFF_2 = '6' # 幻靈武具
-    BUFF_3 = 'ctrl' # 幻靈武具
+    BUFF_3 = 'ctrl' # 露希達寶珠
+    BUFF_4 = 'f2' # 紋櫻公主的祝福
 
     # Buffs Toggle
 
@@ -109,7 +110,7 @@ def step(direction, target):
 class Adjust(Command):
     """Fine-tunes player position using small movements."""
 
-    def __init__(self, x, y, max_steps=5):
+    def __init__(self, x, y, max_steps=5,direction="",jump='false',combo='false'):
         super().__init__(locals())
         self.target = (float(x), float(y))
         self.max_steps = settings.validate_nonnegative_int(max_steps)
@@ -125,13 +126,13 @@ class Adjust(Command):
                 if abs(d_x) > threshold:
                     walk_counter = 0
                     if d_x < 0:
-                        key_down('left',down_time=0.04)
+                        key_down('left',down_time=0.02)
                         while config.enabled and d_x < -1 * threshold and walk_counter < 60:
                             walk_counter += 1
                             d_x = self.target[0] - config.player_pos[0]
                         key_up('left')
                     else:
-                        key_down('right',down_time=0.04)
+                        key_down('right',down_time=0.02)
                         while config.enabled and d_x > threshold and walk_counter < 60:
                             walk_counter += 1
                             d_x = self.target[0] - config.player_pos[0]
@@ -191,6 +192,9 @@ class Buff(Command):
         if self.cd200_buff_time == 0 or now - self.cd200_buff_time > 200:
             self.cd200_buff_time = now
         if self.cd240_buff_time == 0 or now - self.cd240_buff_time > 240:
+            time.sleep(utils.rand_float(0.1, 0.3))
+            press(Key.BUFF_4, 1)
+            time.sleep(utils.rand_float(0.3, 0.5))
             self.cd240_buff_time = now
         if self.cd900_buff_time == 0 or now - self.cd900_buff_time > 900:
             self.cd900_buff_time = now
@@ -204,7 +208,7 @@ class FlashJump(Command):
     """Performs a flash jump in the given direction."""
     _display_name = '二段跳'
 
-    def __init__(self, direction="left",triple_jump="False",fast_jump="false"):
+    def __init__(self, direction="",jump='false',combo='',triple_jump="False",fast_jump="false"):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.triple_jump = settings.validate_boolean(triple_jump)
@@ -231,7 +235,7 @@ class UpJump(Command):
     """Performs a up jump in the given direction."""
     _display_name = '上跳'
 
-    def __init__(self, direction, jump='False',combo="false"):
+    def __init__(self, direction="", jump='False',combo="false"):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
@@ -255,7 +259,7 @@ class MainGroupAttackSkill(Command):
     """Attacks using '三連斬' in a given direction."""
     _display_name = '三連斬'
 
-    def __init__(self, direction,jump='false', attacks=3, repetitions=1,combo='false'):
+    def __init__(self, direction="",jump='false', attacks=3, repetitions=1,combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.attacks = int(attacks)
@@ -290,7 +294,7 @@ class Skill_A(Command):
     _display_name = '連接五影用三連斬'
     skill_cool_down = 3
 
-    def __init__(self, direction,jump='false', attacks=2, repetitions=1,combo='false'):
+    def __init__(self, direction="",jump='false', attacks=2, repetitions=1,combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.attacks = int(attacks)
@@ -327,7 +331,7 @@ class Skill_1(Command):
     _display_name = '曉月大太刀'
     skill_cool_down = 8.2
 
-    def __init__(self, direction='left',jump='false',combo="true"):
+    def __init__(self, direction='',jump='false',combo="true"):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.jump = settings.validate_boolean(jump)
@@ -355,7 +359,7 @@ class Skill_2(Command):
     skill_cool_down = 8.2
     skill_image = IMAGE_DIR + 'skill_2.png'
 
-    def __init__(self, direction='',jump='false'):
+    def __init__(self, direction='',jump='false',combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.jump = settings.validate_boolean(jump)
@@ -378,7 +382,7 @@ class Skill_3(Command):
     _display_name = '指令五影劍'
     skill_cool_down = 8.2
 
-    def __init__(self, direction='',jump='false', attacks=1, repetitions=1):
+    def __init__(self, direction='',jump='false', attacks=1, repetitions=1,combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.jump = settings.validate_boolean(jump)
@@ -402,7 +406,7 @@ class Skill_33(Command):
     _display_name = '五影劍'
     skill_cool_down = 25
 
-    def __init__(self, direction='',jump='false', attacks=1, repetitions=1):
+    def __init__(self, direction='',jump='false', attacks=1, repetitions=1,combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.attacks = int(attacks)
@@ -437,7 +441,7 @@ class Skill_5(Command):
     skill_cool_down = 120
     skill_image = IMAGE_DIR + 'skill_5.png'
 
-    def __init__(self, direction):
+    def __init__(self,direction="",jump='false',combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
 
@@ -458,7 +462,7 @@ class Skill_6(Command):
     skill_cool_down = 120
     skill_image = IMAGE_DIR + 'skill_6.png'
 
-    def __init__(self):
+    def __init__(self,direction="",jump='false',combo='false'):
         super().__init__(locals())
 
     def main(self):
@@ -475,7 +479,7 @@ class Skill_7(Command):
     skill_cool_down = 88
     skill_image = IMAGE_DIR + 'skill_7.png'
 
-    def __init__(self,combo="true"):
+    def __init__(self,direction="",jump='false',combo='true'):
         super().__init__(locals())
         self.combo = settings.validate_boolean(combo)
 
@@ -496,7 +500,7 @@ class Skill_8(Command):
     skill_cool_down = 120
     skill_image = IMAGE_DIR + 'skill_8.png'
 
-    def __init__(self,combo="true"):
+    def __init__(self,direction="",jump='false',combo='true'):
         super().__init__(locals())
         self.combo = settings.validate_boolean(combo)
 
@@ -517,7 +521,7 @@ class Skill_9(Command):
     skill_cool_down = 65
     skill_image = IMAGE_DIR + 'skill_9.png'
 
-    def __init__(self,direction):
+    def __init__(self,direction="",jump='false',combo='true'):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
 
@@ -563,7 +567,7 @@ class Skill_10(Command):
     _display_name = '斷空閃'
     _distance = 30
 
-    def __init__(self,direction,jump='false',combo="true"):
+    def __init__(self,direction="",jump='false',combo="true"):
         super().__init__(locals())
         self.direction = settings.validate_horizontal_arrows(direction)
         self.combo = settings.validate_boolean(combo)

@@ -44,7 +44,7 @@ def validate_arrows(key):
 
     if isinstance(key, str):
         key = key.lower()
-        if key in ['','up', 'down', 'left', 'right' \
+        if key in ['','up', 'down', 'left', 'right', \
                 'up+left','up+right','down+left','down+right'
             ]:
             return key
@@ -71,6 +71,7 @@ def validate_horizontal_arrows(key):
 # A dictionary that maps each setting to its validator function
 SETTING_VALIDATORS = {
     'id': str,
+    'full_screen':validate_boolean,
     'move_tolerance': float,
     'adjust_tolerance': float,
     'record_layout': validate_boolean,
@@ -109,6 +110,8 @@ buff_cooldown = 180
 platforms = ""
 
 rent_frenzy = False
+
+full_screen = False
 
 # user id
 id = ""
