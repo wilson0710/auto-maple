@@ -127,15 +127,15 @@ class Notifier:
                 if len(fiona_lie_detector) > 0:
                     print("find fiona_lie_detector")
                     self._send_msg_to_line_notify("菲歐娜測謊")
-                    if settings.rent_frenzy == False:
-                        self._alert('siren')
-                        time.sleep(0.1)
+                    # if settings.rent_frenzy == False:
+                    self._alert('siren')
+                    time.sleep(0.1)
 
                 # Check for skill cd
                 command_book = config.bot.command_book
                 image_matched = False
                 for key in command_book:
-                    if hasattr(command_book[key],"get_is_skill_ready"):
+                    if hasattr(command_book[key],"skill_cool_down"):
                         command_book[key].get_is_skill_ready()
                     if hasattr(command_book[key],"skill_image") and image_matched == False and not command_book[key].get_is_skill_ready():
                         if not key in self.skill_template_cd_set:
@@ -143,7 +143,7 @@ class Notifier:
                             self.skill_template_cd_set[key] = skill_template
                         else:
                             skill_template = self.skill_template_cd_set[key]
-                        is_ready_region = frame[height-300:height-100, width-182:width-126]
+                        is_ready_region = frame[height-500:height-90, width-182:width-126]
                         skill_match = utils.multi_match(is_ready_region, skill_template, threshold=0.9)
                         if len(skill_match) > 0:
                             print(command_book[key]._display_name , " skill_match")

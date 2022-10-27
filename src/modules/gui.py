@@ -15,7 +15,7 @@ class GUI:
         'Edit': '900x630'
     }
 
-    def __init__(self):
+    def __init__(self,cb="",rt=""):
         config.gui = self
 
         self.root = tk.Tk()
@@ -41,6 +41,8 @@ class GUI:
         self.navigation.pack(expand=True, fill='both')
         self.navigation.bind('<<NotebookTabChanged>>', self._resize_window)
         self.root.focus()
+        self.cb = cb
+        self.rt = rt
 
     def set_routine(self, arr):
         self.routine_var.set(arr)
@@ -82,6 +84,12 @@ class GUI:
         layout_thread = threading.Thread(target=self._save_layout)
         layout_thread.daemon = True
         layout_thread.start()
+
+        if self.cb:
+            print(config.RESOURCES_DIR+'/command_books/'+self.cb+'.py')
+            config.bot.load_commands(config.RESOURCES_DIR+'/command_books/'+self.cb+'.py')
+            if self.rt:
+                config.routine.load(config.RESOURCES_DIR+'/routines/'+self.cb+'/'+self.rt+'.csv')
 
         self.root.mainloop()
 

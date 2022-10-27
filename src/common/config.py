@@ -39,6 +39,9 @@ skill_cd_timer = {}
 # is_skill_ready
 is_skill_ready_collector = {}
 
+# skill buff time timer
+skill_buff_timer = {}
+
 # Represents the current shortest path that the bot is taking
 path = []
 

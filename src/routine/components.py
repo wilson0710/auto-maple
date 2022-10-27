@@ -30,6 +30,8 @@ class Component:
                 self.kwargs.pop('__class__')
             if 'self' in self.kwargs:
                 self.kwargs.pop('self')
+            # if not 'active_if_skill_ready' in self.kwargs:
+            #     self.kwargs['active_if_skill_ready'] = ""
 
     @utils.run_if_enabled
     def execute(self):
@@ -283,6 +285,7 @@ class Command(Component):
         super().__init__(*args)
         self.id = self.__class__.__name__
         self._custom_id = self.id
+        self.set_my_last_cooldown(0)
 
     def __str__(self):
         variables = self.__dict__
@@ -307,7 +310,25 @@ class Command(Component):
             else:
                 time.sleep(0.02)
             
-        
+    def check_should_active(self):
+        '''
+            check should active command if pass all conditions
+        '''
+        if self.active_if_skill_ready:
+            if not utils.get_if_skill_ready(self.active_if_skill_ready):
+                return False
+        if self.active_if_skill_cd:
+            if utils.get_if_skill_ready(self.active_if_skill_cd):
+                return False
+        if self.active_if_in_skill_buff:
+            if not utils.get_is_in_skill_buff(self.active_if_in_skill_buff):
+                return False
+        if self.active_if_not_in_skill_buff:
+            if utils.get_is_in_skill_buff(self.active_if_not_in_skill_buff):
+                print("check_should_active false")
+                return False
+        return True
+
     def get_my_last_cooldown(self,id):
         if id in config.skill_cd_timer:
             return config.skill_cd_timer[id]
@@ -316,7 +337,8 @@ class Command(Component):
 
     def set_my_last_cooldown(self,last_time=time.time()):
         config.skill_cd_timer[self._custom_id] = last_time
-        config.is_skill_ready_collector[self._custom_id] = False
+        if self.skill_cool_down != 0:
+            config.is_skill_ready_collector[self._custom_id] = False
 
     @classmethod
     def set_is_skill_ready(cls,is_ready):
@@ -326,6 +348,9 @@ class Command(Component):
     def get_is_skill_ready(cls):
         if not cls.__name__ in config.is_skill_ready_collector:
             config.is_skill_ready_collector[cls.__name__] = False
+
+        if not cls.__name__ in config.skill_cd_timer:
+            config.skill_cd_timer[cls.__name__] = 0
 
         if config.is_skill_ready_collector[cls.__name__] == True:
             return True
@@ -348,7 +373,7 @@ class Command(Component):
         now = time.time()
         if now - last_cool_down > self.skill_cool_down:
             config.is_skill_ready_collector[self._custom_id] = True
-            print(self._custom_id,self._display_name," is ready to use")
+            # print(self._custom_id,self._display_name," is ready to use")
             return True
         else:
             config.is_skill_ready_collector[self._custom_id] = False
@@ -487,7 +512,7 @@ class Fall(Command):
         key_down('down')
         if config.stage_fright and utils.bernoulli(0.5):
             time.sleep(utils.rand_float(0.2, 0.4))
-        press(config.jump_button, 1, down_time=0.1)
+        press(config.jump_button, 2, down_time=0.1)
         key_up('down')
         time.sleep(utils.rand_float(0.1, 0.2))
 
@@ -504,7 +529,7 @@ class CustomKey(Command):
     _display_name = '自定義按鍵'
     # skill_cool_down = 0
 
-    def __init__(self,name='',key='', direction='',jump='false',delay='0.5',rep='1',rep_interval='0.3',duration='0',cool_down='0',ground_skill='true'):
+    def __init__(self,name='',key='', direction='',jump='false',delay='0.5',rep='1',rep_interval='0.3',duration='0',cool_down='0',ground_skill='true',buff_time='',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
         super().__init__(locals())
         self._display_name = name
         self.key = key
@@ -518,8 +543,15 @@ class CustomKey(Command):
         self.skill_cool_down = float(cool_down)
         self.ground_skill = settings.validate_boolean(ground_skill)
         config.is_skill_ready_collector[self._custom_id] = True
+        self.buff_time = buff_time
+        self.active_if_skill_ready = active_if_skill_ready
+        self.active_if_skill_cd = active_if_skill_cd
+        self.active_if_in_skill_buff = active_if_in_skill_buff
+        self.active_if_not_in_skill_buff = active_if_not_in_skill_buff
 
     def main(self):
+        if not self.check_should_active():
+            return
         if self.skill_cool_down == 0 or self.check_is_skill_ready():
             if self.ground_skill:
                 utils.wait_for_is_standing(1000)
@@ -531,7 +563,7 @@ class CustomKey(Command):
                 key_down(self.direction)
             time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
-                key_down(self.key)
+                key_down(self.key,down_time=0.07)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
                 if i == (self.rep - 1):
@@ -539,9 +571,63 @@ class CustomKey(Command):
                 else:
                     key_up(self.key,up_time=self.rep_interval)
             key_up(self.direction,up_time=0.01)
-            if self.skill_cool_down != 0:
-                self.set_my_last_cooldown(time.time())
+            # if self.skill_cool_down != 0:
+            self.set_my_last_cooldown(time.time())
             time.sleep(utils.rand_float(self.delay*0.8, self.delay*1.2))
+
+class BaseSkill(Command):
+    """pre define base skill class """
+    _display_name = ""
+    key=''
+    delay=0.5
+    rep_interval=0.3
+    skill_cool_down=0
+    ground_skill=True
+    buff_time=0
+    combo_delay = 0.1
+    rep_interval_increase = 0
+
+    def __init__(self, direction='',jump='false',rep='1',duration='0',combo='false',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
+        super().__init__(locals())
+        self.direction = settings.validate_arrows(direction)
+        self.jump = settings.validate_boolean(jump)
+        self.rep = settings.validate_nonnegative_int(rep)
+        self.duration = float(duration)
+        config.is_skill_ready_collector[self._custom_id] = True
+        self.combo = settings.validate_boolean(combo)
+        self.active_if_skill_ready = active_if_skill_ready
+        self.active_if_skill_cd = active_if_skill_cd
+        self.active_if_in_skill_buff = active_if_in_skill_buff
+        self.active_if_not_in_skill_buff = active_if_not_in_skill_buff
+
+    def main(self):
+        if not self.check_should_active():
+            return
+        if self.skill_cool_down == 0 or self.check_is_skill_ready():
+            if self.ground_skill:
+                utils.wait_for_is_standing(1000)
+
+            if self.jump:
+                self.player_jump(self.direction)
+                time.sleep(utils.rand_float(0.02, 0.05))
+            else:
+                key_down(self.direction)
+            # time.sleep(utils.rand_float(0.03, 0.07))
+            for i in range(self.rep):
+                key_down(self.key,down_time=0.1)
+                if self.duration != 0:
+                    time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
+                if i == (self.rep - 1):
+                    key_up(self.key,up_time=0.05)
+                else:
+                    key_up(self.key,up_time=self.rep_interval+self.rep_interval_increase*i)
+            key_up(self.direction,up_time=0.01)
+            # if self.skill_cool_down != 0:
+            self.set_my_last_cooldown(time.time())
+            if self.combo:
+                time.sleep(utils.rand_float(self.combo_delay*0.9, self.combo_delay*1.2))
+            else:
+                time.sleep(utils.rand_float(self.delay*0.9, self.delay*1.15))
 
 class SkillCombination(Command):
     """auto select skill in this combination"""
@@ -584,6 +670,9 @@ class GoToMap(Command):
         self.target_map = target_map
 
     def main(self):
+        wm = WorldMap()
+        if wm.check_if_in_correct_map(self.target_map):
+            return
         press('n') # big map key
         time.sleep(utils.rand_float(0.3*0.8, 0.3*1.2))
         wm = WorldMap()

@@ -10,7 +10,7 @@ from src.common import config, settings
 from random import random
 from ctypes import windll
 from ctypes.wintypes import RECT, HWND
-from src.common.vkeys import click
+
 
 def move_window(handle: HWND, x: int, y: int):
     """移動視窗到座標(x, y)
@@ -73,6 +73,7 @@ def distance(a, b):
     return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
 def game_window_click(point=(0,0),button='left',click_time=1,delay=0.4):
+    from src.common.vkeys import click
     if not config.enabled:
         return
         
@@ -126,6 +127,45 @@ def check_is_jumping():
     :return:    is jumping or not
     """
     return not config.player_states['is_standing']
+
+def get_if_skill_ready(skill):
+    """
+    check if skill is ready
+    :return: True or False
+    """
+    command_book = config.bot.command_book
+    target_skill_name = None
+    for key in command_book:
+        if key.lower() == skill:
+            target_skill_name = command_book[skill].__name__
+            break
+
+    if target_skill_name and config.is_skill_ready_collector[target_skill_name]:
+        return True
+    else:
+        return False
+
+def get_is_in_skill_buff(skill):
+    """
+    check if in skill buff time
+    :return: True or False
+    """
+    command_book = config.bot.command_book
+    target_skill_name = None
+    for key in command_book:
+        if key.lower() == skill:
+            target_skill_name = command_book[key].__name__
+            if not config.skill_cd_timer[target_skill_name]:
+                config.skill_cd_timer[target_skill_name] = 0
+            break
+    # print(config.skill_cd_timer[target_skill_name])
+    # print(command_book[target_skill_name].buff_time)
+    if target_skill_name and time.time() - float(config.skill_cd_timer[target_skill_name]) < int(command_book[key].buff_time):
+        print("in skill buff : ",skill)
+        return True
+    else:
+        print("not in skill buff : ",skill)
+        return False
 
 def separate_args(arguments):
     """

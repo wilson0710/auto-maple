@@ -1,5 +1,6 @@
 """An interpreter that reads and executes user-created routines."""
 
+from genericpath import exists
 import threading
 import time
 import git
@@ -8,11 +9,11 @@ import inspect
 import importlib
 import traceback
 from os.path import splitext, basename
-from src.common import config, utils
+from src.common import config, utils, settings
 from src.detection import detection
 from src.routine import components
 from src.routine.routine import Routine
-from src.routine.components import Point
+from src.routine.components import Point, Setting
 from src.common.vkeys import press, click
 from src.common.interfaces import Configurable
 
@@ -69,13 +70,15 @@ class Bot(Configurable):
         :return:    None
         """
 
-        self.ready = True
         config.listener.enabled = True
         last_fed = time.time()
 
-        print('\n[~] Initializing detection algorithm:\n')
-        model = detection.load_model()
-        print('\n[~] Initialized detection algorithm')
+        if not settings.rent_frenzy:
+            print('\n[~] Initializing detection algorithm:\n')
+            model = detection.load_model()
+            print('\n[~] Initialized detection algorithm')
+        
+        self.ready = True
 
         while True:
             if config.enabled and len(config.routine) > 0:
@@ -98,6 +101,8 @@ class Bot(Configurable):
                 if self.rune_active and isinstance(element, Point) \
                         and (element.location == self.rune_closest_pos \
                         or utils.distance(config.bot.rune_pos, element.location) <= 30):
+                    if not model:
+                        model = detection.load_model()
                     self._solve_rune(model)
                 element.execute()
                 config.routine.next_step()
@@ -125,6 +130,7 @@ class Bot(Configurable):
                 press("left", 1, down_time=0.1,up_time=0.2) 
             elif ii == 2:
                 press("right", 1, down_time=0.2,up_time=0.2) 
+            time.sleep(3) 
             press(self.config['Interact'], 1, down_time=0.1,up_time=0.3) # Inherited from Configurable
             print('\nSolving rune:')
             for _ in range(3):
@@ -153,6 +159,7 @@ class Bot(Configurable):
                                 )
                                 click(target, button='right')
                         self.rune_active = False
+                        click((config.capture.window['left']+700,config.capture.window['top']+120), button='right')
                         break
                 else:
                     time.sleep(0.1)

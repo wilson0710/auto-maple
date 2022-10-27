@@ -5,7 +5,7 @@ import time
 from cv2 import split
 import win32con
 import win32api
-# from src.common import utils
+from src.common import utils
 from ctypes import wintypes
 from random import random
 from pynput.keyboard import Key, Controller
@@ -44,8 +44,8 @@ KEY_MAP = {
     'caps lock': 0x14,
     'esc': 0x1B,
     'space': 0x20,
-    'page up': 0x21,
-    'page down': 0x22,
+    'pageup': 0x21,
+    'pagedown': 0x22,
     'end': 0x23,
     'home': 0x24,
     'insert': 0x2D,
@@ -180,7 +180,7 @@ nput_keyboard = Controller()
 #################################
 #           Functions           #
 #################################
-# @utils.run_if_enabled
+@utils.run_if_enabled
 def key_down(key,down_time=0.05):
     """
     Simulates a key-down action. Can be cancelled by Bot.toggle_enabled.
@@ -204,12 +204,12 @@ def key_down(key,down_time=0.05):
             elif not k in unreleased_key:
                 unreleased_key.append(k)
                 # default input method
-                # x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k]))
-                # user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+                x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k]))
+                user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
                 # try new input method 
-                pynput_key_down(k)
+                # pynput_key_down(k)
                 if len(key_combination) > 1:
-                    time.sleep(0.06 * (0.9 + 0.7 * random()))
+                    time.sleep(0.02 * (0.9 + 0.7 * random()))
         time.sleep(down_time * (0.8 + 0.7 * random()))
 
 def pynput_key_down(key):
@@ -242,13 +242,13 @@ def key_up(key,up_time=0.05):
             elif k in unreleased_key:
                 unreleased_key.remove(k)
                 # default input method
-                # x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k], dwFlags=KEYEVENTF_KEYUP))
-                # user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+                x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k], dwFlags=KEYEVENTF_KEYUP))
+                user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
                 # try new input method 
-                pynput_key_up(k)
+                # pynput_key_up(k)
                 if len(key_combination) > 1:
                     time.sleep(0.04 * (0.9 + 0.7 * random()))
-        time.sleep(up_time * (0.7 + 0.8 * random()))
+        time.sleep(up_time * (0.8 + 0.5 * random()))
 
     # if key == '':
     #     return 
@@ -271,7 +271,7 @@ def release_unreleased_key():
     for key in unreleased_key:
         key_up(key)
     
-# @utils.run_if_enabled
+@utils.run_if_enabled
 def press(key, n=1, down_time=0.1, up_time=0.08):
     """
     Presses KEY N times, holding it for DOWN_TIME seconds, and releasing for UP_TIME seconds.

@@ -142,8 +142,8 @@ class Buff(Command):
         now = time.time()
         utils.wait_for_is_standing(2000)
         if self.cd120_buff_time == 0 or now - self.cd120_buff_time > 120:
-            press(Key.BUFF_1, 2)
-            time.sleep(utils.rand_float(0.6, 0.8))
+            # press(Key.BUFF_1, 2)
+            # time.sleep(utils.rand_float(0.6, 0.8))
             self.cd120_buff_time = now
         if self.cd180_buff_time == 0 or now - self.cd180_buff_time > 180:
             self.cd180_buff_time = now
@@ -152,8 +152,8 @@ class Buff(Command):
         if self.cd240_buff_time == 0 or now - self.cd240_buff_time > 240:
             self.cd240_buff_time = now
         if self.cd900_buff_time == 0 or now - self.cd900_buff_time > 900:
-            press(Key.BUFF_2, 2)
-            time.sleep(utils.rand_float(0.5, 0.7))
+            # press(Key.BUFF_2, 2)
+            # time.sleep(utils.rand_float(0.5, 0.7))
             self.cd900_buff_time = now
         # if self.decent_buff_time == 0 or now - self.decent_buff_time > settings.buff_cooldown:
         #     for key in buffs:

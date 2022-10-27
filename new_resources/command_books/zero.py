@@ -3,7 +3,7 @@ from sqlalchemy import true
 from src.common import config, settings, utils
 import time
 import math
-from src.routine.components import Command, CustomKey, SkillCombination, Fall
+from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill
 from src.common.vkeys import press, key_down, key_up
 
 IMAGE_DIR = config.RESOURCES_DIR + '/command_books/zero/'
@@ -17,14 +17,38 @@ class Key:
 
     # Buffs
     BUFF_8 = '8' # 集中時間
-
+    BUFF_F1 = 'f1' # 武公寶珠
+    BUFF_PAGEUP = 'pageup' # 掌握時間
+    BUFF_F5 = 'f5' # 優伊娜的心願
+    
     # Buffs Toggle
 
     # Attack Skills
+    SKILL_Q = 'q' # 狂風千刃(a4)
+    SKILL_S = 's'# 瞬閃斬擊(a2)
     SKILL_A = 'a' # 月之降臨(a1)
+    SKILL_R = 'r' # 巨力重擊(b4)
+    SKILL_W = 'w' # 趨前砍擊(b2)
+    SKILL_E = 'e' # 迴旋突進(b3)
+    SKILL_F = 'f' # 暗影瞬閃
+    SKILL_F2 = 'f2' # 終焉之時
+    SKILL_2 = '2' # 蜘蛛之鏡
+    SKILL_3 = '3' # 暗影之雨
 
     # special Skills
     SP_F12 = 'f12' # 輪迴
+
+def check_current_tag(tag):
+    if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
+        if config.player_states['current_tag'] == tag:
+            return True
+        else:
+            return False
+    else:
+        config.player_states['beta_tag'] = time.time()-3
+        config.player_states['alpha_tag'] = time.time()
+        config.player_states['current_tag'] = 'alpha'
+    return False
 
 def step(direction, target):
     """
@@ -34,12 +58,16 @@ def step(direction, target):
 
     d_y = target[1] - config.player_pos[1]
     d_x = target[0] - config.player_pos[0]
-    
+
+    # if not check_current_tag('alpha'):
+    #     utils.wait_for_is_standing(1000)
+    #     Skill_A().execute()
+
     if direction == 'left' or direction == 'right':
         if abs(d_x) > 20:
             if abs(d_x) >= 40:
                 Teleport(direction=direction).execute()
-                FlashJump().execute()
+                FlashJump(direction=direction).execute()
             else:
                 if utils.bernoulli(0.3+0.4*(abs(d_x)-10)/100):
                     FlashJump(direction=direction).execute()
@@ -47,10 +75,10 @@ def step(direction, target):
                     Teleport(direction=direction).execute()
         elif abs(d_x) > 10:
             time.sleep(utils.rand_float(0.1, 0.15))
-        utils.wait_for_is_standing(500)
+        utils.wait_for_is_standing(1000)
     
     if direction == 'up':
-        if abs(d_y) > 6 :
+        if abs(d_y) > 3 :
             if abs(d_y) >= 22:
                 Teleport(direction=direction,jump='true').execute()
             else:
@@ -63,6 +91,15 @@ def step(direction, target):
         # if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
         print("down stair")
         Teleport(direction=direction).execute()
+        if abs(d_x) > 3:
+            if d_x > 0:
+                key_down('right')
+                press(Key.JUMP, 1)
+                key_up('right')
+            else:
+                key_down('left')
+                press(Key.JUMP, 1)
+                key_up('left')
         time.sleep(utils.rand_float(0.05, 0.08))
 
 class Adjust(Command):
@@ -134,10 +171,10 @@ class Buff(Command):
         if self.cd200_buff_time == 0 or now - self.cd200_buff_time > 200:
             self.cd200_buff_time = now
         if self.cd240_buff_time == 0 or now - self.cd240_buff_time > 240:
-            time.sleep(utils.rand_float(0.1, 0.3))
-            press(Key.BUFF_8, 1)
             self.cd240_buff_time = now
         if self.cd900_buff_time == 0 or now - self.cd900_buff_time > 900:
+            time.sleep(utils.rand_float(0.1, 0.3))
+            press(Key.BUFF_8, 1)
             self.cd900_buff_time = now
         # if self.decent_buff_time == 0 or now - self.decent_buff_time > settings.buff_cooldown:
         #     for key in buffs:
@@ -148,7 +185,7 @@ class FlashJump(Command):
     """Performs a flash jump in the given direction."""
     _display_name = '二段跳'
 
-    def __init__(self, direction="",jump='false',combo='',triple_jump="False",fast_jump="false"):
+    def __init__(self, direction="",jump='false',combo='False',triple_jump="False",fast_jump="false"):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.triple_jump = settings.validate_boolean(triple_jump)
@@ -170,14 +207,294 @@ class FlashJump(Command):
         key_up(self.direction,up_time=0.01)
         time.sleep(utils.rand_float(0.03, 0.06))
 
-class Teleport(Command):
+class Teleport(BaseSkill):
     _display_name ='爆裂衝刺'
     _distance = 27
+    key=Key.TELEPORT
+    delay=0.2
+    rep_interval=0.3
+    skill_cool_down=0
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.1
 
-    def __init__(self, direction = '',jump='false'):
-        super().__init__(locals())
-        self.direction = direction
-        self.jump = jump
+    # def main(self):
+    #     CustomKey(name=self._display_name,key=Key.TELEPORT,direction=self.direction,jump=self.jump,delay=0.095).execute()
+
+class Skill_Q(BaseSkill):
+    _display_name ='狂風千刃(a4)'
+    key=Key.SKILL_Q
+    delay=0.6
+    rep_intexrval=0.25
+    skill_cool_down=3
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3
+    skill_image = IMAGE_DIR + 'skill_q.png'
+    
+    def main(self):
+        if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
+            latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
+            if latest_beta_tag_duration > 3.2 and config.player_states['current_tag'] == 'beta':
+                config.player_states['alpha_tag'] = time.time()
+            elif latest_beta_tag_duration < 3.2 and config.player_states['current_tag'] == 'beta':
+                time.sleep(3.2-(time.time() - config.player_states['beta_tag']))
+                config.player_states['alpha_tag'] = time.time()
+            config.player_states['current_tag'] = 'alpha'
+        else:
+            config.player_states['beta_tag'] = time.time()-3
+            config.player_states['alpha_tag'] = time.time()
+            config.player_states['current_tag'] = 'alpha'
+        super().main()
+
+class Skill_A(BaseSkill):
+    _display_name ='月之降臨(a1)'
+    key=Key.SKILL_A
+    delay=0.3
+    rep_intexrval=0.2
+    skill_cool_down=0
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3
+    
+    def main(self):
+        if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
+            latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
+            if latest_beta_tag_duration > 3.2 and config.player_states['current_tag'] == 'beta':
+                config.player_states['alpha_tag'] = time.time()
+            elif latest_beta_tag_duration < 3.2 and config.player_states['current_tag'] == 'beta':
+                time.sleep(3.2-(time.time() - config.player_states['beta_tag']))
+                config.player_states['alpha_tag'] = time.time()
+            config.player_states['current_tag'] = 'alpha'
+        else:
+            config.player_states['beta_tag'] = time.time()-3
+            config.player_states['alpha_tag'] = time.time()
+            config.player_states['current_tag'] = 'alpha'
+        super().main()
+
+class Skill_S(BaseSkill):
+    _display_name ='瞬閃斬擊(a2)'
+    key=Key.SKILL_S
+    delay=0.45
+    rep_interval=0.2
+    skill_cool_down=2
+    ground_skill=True
+    buff_time=0
+    combo_delay = 0.3
+    skill_image = IMAGE_DIR + 'skill_s.png'
 
     def main(self):
-        CustomKey(name=self._display_name,key=Key.TELEPORT,direction=self.direction,jump=self.jump,delay=0.095).execute()
+        if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
+            latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
+            if latest_beta_tag_duration > 3.2 and config.player_states['current_tag'] == 'beta':
+                config.player_states['alpha_tag'] = time.time()
+            elif latest_beta_tag_duration < 3.2 and config.player_states['current_tag'] == 'beta':
+                time.sleep(3.2-(time.time() - config.player_states['beta_tag']))
+                config.player_states['alpha_tag'] = time.time()
+            config.player_states['current_tag'] = 'alpha'
+        else:
+            config.player_states['beta_tag'] = time.time()-3
+            config.player_states['alpha_tag'] = time.time()
+            config.player_states['current_tag'] = 'alpha'
+        super().main()
+
+class Skill_R(BaseSkill):
+    _display_name ='巨力重擊(b4)'
+    key=Key.SKILL_R
+    delay=1
+    rep_interval=0.25
+    rep_interval_increase = 0.3
+    skill_cool_down=3
+    ground_skill=True
+    buff_time=0
+    combo_delay = 1
+
+    def main(self):
+        if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
+            latest_alpha_tag_duration = time.time() - config.player_states['alpha_tag']
+            if latest_alpha_tag_duration > 3.2 and config.player_states['current_tag'] == 'alpha':
+                config.player_states['beta_tag'] = time.time()
+            elif latest_alpha_tag_duration < 3.2 and config.player_states['current_tag'] == 'alpha':
+                time.sleep(3.2-(time.time() - config.player_states['alpha_tag']))
+                config.player_states['beta_tag'] = time.time()
+            config.player_states['current_tag'] = 'beta'
+        else:
+            config.player_states['beta_tag'] = time.time()
+            config.player_states['alpha_tag'] = time.time()-3
+            config.player_states['current_tag'] = 'beta'
+        super().main()
+
+class Skill_W(BaseSkill):
+    _display_name ='趨前砍擊'
+    key=Key.SKILL_W
+    delay=0.5
+    rep_interval=0.25
+    skill_cool_down=2
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3
+
+    def main(self):
+        if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
+            latest_alpha_tag_duration = time.time() - config.player_states['alpha_tag']
+            if latest_alpha_tag_duration > 3.2 and config.player_states['current_tag'] == 'alpha':
+                config.player_states['beta_tag'] = time.time()
+            elif latest_alpha_tag_duration < 3.2 and config.player_states['current_tag'] == 'alpha':
+                time.sleep(3.2-(time.time() - config.player_states['alpha_tag']))
+                config.player_states['beta_tag'] = time.time()
+            config.player_states['current_tag'] = 'beta'
+        else:
+            config.player_states['beta_tag'] = time.time()
+            config.player_states['alpha_tag'] = time.time()-3
+            config.player_states['current_tag'] = 'beta'
+        super().main()
+
+class Skill_E(BaseSkill):
+    _display_name ='迴旋突進'
+    key=Key.SKILL_E
+    delay=0.3
+    rep_interval=0.2
+    skill_cool_down=2
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.2
+
+    def main(self):
+        if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
+            latest_alpha_tag_duration = time.time() - config.player_states['alpha_tag']
+            if latest_alpha_tag_duration > 3.2 and config.player_states['current_tag'] == 'alpha':
+                config.player_states['beta_tag'] = time.time()
+            elif latest_alpha_tag_duration < 3.2 and config.player_states['current_tag'] == 'alpha':
+                time.sleep(3.2-(time.time() - config.player_states['alpha_tag']))
+                config.player_states['beta_tag'] = time.time()
+            config.player_states['current_tag'] = 'beta'
+        else:
+            config.player_states['beta_tag'] = time.time()
+            config.player_states['alpha_tag'] = time.time()-3
+            config.player_states['current_tag'] = 'beta'
+        super().main()
+
+class Buff_F1(BaseSkill):
+    _display_name ='武公寶珠'
+    key=Key.BUFF_F1
+    delay=0.8
+    rep_interval=0.25
+    skill_cool_down=150
+    ground_skill=True
+    buff_time=60
+    combo_delay = 0.3
+    skill_image = IMAGE_DIR + 'buff_f1.png'
+
+class Skill_FA1(BaseSkill):
+    _display_name ='暗影瞬閃a1'
+    key=Key.SKILL_F
+    delay=0.6
+    rep_interval=0.25
+    skill_cool_down=40
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3
+    skill_image = IMAGE_DIR + 'skill_fa.png'
+
+    def main(self):
+        if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'alpha':
+            return
+        super().main()
+
+class Skill_FA2(BaseSkill):
+    _display_name ='暗影瞬閃a2'
+    key=Key.SKILL_F
+    delay=0.8
+    rep_interval=0.25
+    skill_cool_down=3
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3
+
+    def main(self):
+        if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'alpha':
+            return
+        super().main()
+
+class Skill_FB1(BaseSkill):
+    _display_name ='暗影瞬閃b1'
+    key=Key.SKILL_F
+    delay=0.6
+    rep_interval=0.25
+    skill_cool_down=40
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3
+    skill_image = IMAGE_DIR + 'skill_fb.png'
+
+    def main(self):
+        if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'beta':
+            return
+        super().main()
+
+class Skill_FB2(BaseSkill):
+    _display_name ='暗影瞬閃b2'
+    key=Key.SKILL_F
+    delay=0.8
+    rep_interval=0.25
+    skill_cool_down=3
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3
+
+    def main(self):
+        if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'beta':
+            return
+        super().main()
+
+class Skill_F2(BaseSkill):
+    _display_name ='終焉之時'
+    key=Key.SKILL_F2
+    delay=0.55
+    rep_interval=0.25
+    skill_cool_down=230
+    ground_skill=True
+    buff_time=0
+    combo_delay = 0.3
+
+class Skill_2(BaseSkill):
+    _display_name ='蜘蛛之鏡'
+    key=Key.SKILL_2
+    delay=0.8
+    rep_interval=0.25
+    skill_cool_down=240
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3
+
+class Skill_3(BaseSkill):
+    _display_name ='暗影之雨'
+    key=Key.SKILL_3
+    delay=4.3
+    rep_interval=0.25
+    skill_cool_down=300
+    ground_skill=True
+    buff_time=0
+    combo_delay = 0.3
+    skill_image = IMAGE_DIR + 'skill_3.png'
+
+class Buff_Pageup(BaseSkill):
+    _display_name ='掌握時間'
+    key=Key.BUFF_PAGEUP
+    delay=0.5
+    rep_interval=0.25
+    skill_cool_down=180
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3
+    skill_image = IMAGE_DIR + 'buff_pageup.png'
+
+class Buff_F5(BaseSkill):
+    _display_name ='優伊娜的心願'
+    key=Key.BUFF_F5
+    delay=0.45
+    rep_interval=0.25
+    skill_cool_down=230
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3
