@@ -19,9 +19,9 @@ if __name__ == '__main__':
     print(args)
     if args.full_screen:
         settings.full_screen = True
-    if args.rent_frenzy:
+    if args.rent:
         settings.rent_frenzy = True
-        
+
     bot = Bot()
     capture = Capture()
     notifier = Notifier()
