@@ -1,4 +1,6 @@
 $, target=move_tolerance, value=8
+$, target=adjust_tolerance, value=3
+$, target=platforms, value=b63|54~92*52|12~50*46|24~42*34|35~65*23|63~99*36|92~138*21|100~137*46
 
 @, label=center
 *, x=73, y=52.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=skill_1, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
@@ -29,7 +31,7 @@ $, target=move_tolerance, value=8
 *, x=70, y=52.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     FlashJump, direction=right, jump=false, combo=, triple_jump=False, fast_jump=false
     MainGroupAttackSkill, direction=, jump=false, attacks=3, repetitions=1, combo=true
-    Wait, duration=0.2
+    Wait, duration=0.3
 *, x=104, y=63.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_10, direction=left, jump=false, combo=true
     MainGroupAttackSkill, direction=, jump=false, attacks=1, repetitions=1, combo=false

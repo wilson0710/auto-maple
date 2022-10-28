@@ -595,10 +595,10 @@ class Skill_10(Command):
         else:
             key_down(self.direction)
         press(Key.SKILL_10, 1, up_time=0.1)
-        time.sleep(utils.rand_float(0.05, 0.07))
-        key_up(self.direction,up_time=0.02)
+        # time.sleep(utils.rand_float(0.05, 0.07))
+        key_up(self.direction,up_time=0.01)
         if self.combo:
-            time.sleep(utils.rand_float(0.03, 0.05))
+            time.sleep(utils.rand_float(0.02, 0.05))
         else:
             time.sleep(utils.rand_float(0.8, 0.9))
 
