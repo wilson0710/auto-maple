@@ -296,17 +296,16 @@ class Command(Component):
             check should active command if pass all conditions
         '''
         if self.active_if_skill_ready:
-            if not utils.get_if_skill_ready(self.active_if_skill_ready):
+            if not utils.get_if_skill_ready(self.active_if_skill_ready.lower()):
                 return False
         if self.active_if_skill_cd:
-            if utils.get_if_skill_ready(self.active_if_skill_cd):
+            if utils.get_if_skill_ready(self.active_if_skill_cd.lower()):
                 return False
         if self.active_if_in_skill_buff:
-            if not utils.get_is_in_skill_buff(self.active_if_in_skill_buff):
+            if not utils.get_is_in_skill_buff(self.active_if_in_skill_buff.lower()):
                 return False
         if self.active_if_not_in_skill_buff:
-            if utils.get_is_in_skill_buff(self.active_if_not_in_skill_buff):
-                print("check_should_active false")
+            if utils.get_is_in_skill_buff(self.active_if_not_in_skill_buff.lower()):
                 return False
         return True
 
