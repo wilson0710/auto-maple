@@ -5,7 +5,7 @@ from sqlalchemy import true
 from src.common import config, settings, utils
 import time
 import math
-from src.routine.components import Command, SkillCombination, Fall
+from src.routine.components import Command, SkillCombination, Fall, BaseSkill
 from src.common.vkeys import press, key_down, key_up
 
 IMAGE_DIR = config.RESOURCES_DIR + '/command_books/hayato/'
@@ -30,6 +30,7 @@ class Key:
     SKILL_A = 'a' # 連接五影用三連斬
     SKILL_1 = 'd' # 曉月大太刀
     SKILL_2 = 'w' # 剎那斬
+    SKILL_22 = '2' # 幽暗戒指
     SKILL_3 = 'e' # 指令五影劍
     SKILL_33 = 's' # 五影劍
     SKILL_4 = 'q' # 神速無雙
@@ -79,9 +80,11 @@ def step(direction, target):
     if direction == 'up':
         if abs(d_y) > 6 :
             if abs(d_y) > 23:
-                UpJump(direction='',jump='true').execute()
+                UpJump(direction='',jump='true',combo='true').execute()
             else:
-                UpJump(direction='',jump='false').execute()
+                UpJump(direction='',jump='false',combo='true').execute()
+            # MainGroupAttackSkill(direction='',attacks='1').execute()
+            Skill_4().execute()
             SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|MainGroupAttackSkill').execute()
             utils.wait_for_is_standing(300)
         else:
@@ -348,7 +351,7 @@ class Skill_1(Command):
             key_up(self.direction,up_time=0.02)
             self.set_my_last_cooldown(time.time())
             if self.combo:
-                time.sleep(utils.rand_float(0.3, 0.45))
+                time.sleep(utils.rand_float(0.4, 0.6))
             else:
                 time.sleep(utils.rand_float(1.5, 1.8))
              
@@ -373,9 +376,18 @@ class Skill_2(Command):
                 key_down(self.direction)
             press(Key.SKILL_2, 1, up_time=0.1)
             key_up(self.direction,up_time=0.02)
-            time.sleep(utils.rand_float(0.6, 0.75))
             self.set_my_last_cooldown(time.time())
-        
+            time.sleep(utils.rand_float(0.3, 0.4))
+
+class Skill_22(BaseSkill):
+    _display_name ='幽暗戒指'
+    key=Key.SKILL_22
+    delay=0.8
+    rep_interval=0.25
+    skill_cool_down=3
+    ground_skill=False
+    combo_delay = 0.3
+
 # 指令五影劍
 class Skill_3(Command):
     """Attacks using '指令五影劍' in a given direction."""
@@ -397,7 +409,7 @@ class Skill_3(Command):
             key_down(self.direction)
         press(Key.SKILL_3, self.attacks, up_time=0.05)
         key_up(self.direction,up_time=0.02)
-        time.sleep(utils.rand_float(0.2, 0.25))
+        time.sleep(utils.rand_float(0.25, 0.35))
         self.set_my_last_cooldown(time.time())
 		
 # 五影劍
@@ -424,7 +436,7 @@ class Skill_33(Command):
         self.set_my_last_cooldown(time.time())
         time.sleep(utils.rand_float(0.2, 0.25))
         if self.jump:
-            time.sleep(utils.rand_float(0.15, 0.25))
+            time.sleep(utils.rand_float(0.2, 0.3))
 
 # 神速無雙
 class Skill_4(Command):
@@ -440,6 +452,7 @@ class Skill_5(Command):
     _display_name = '曉月流奧義-劍神'
     skill_cool_down = 120
     skill_image = IMAGE_DIR + 'skill_5.png'
+    buff_time=30
 
     def __init__(self,direction="",jump='false',combo='false'):
         super().__init__(locals())
@@ -456,16 +469,16 @@ class Skill_5(Command):
             self.set_my_last_cooldown(time.time())
 
 # 集結曉之陣
-class Skill_6(Command):
+class Skill_6(BaseSkill):
     """Press skill,Uses '集結曉之陣' once. """
     _display_name = '集結曉之陣'
     skill_cool_down = 120
     skill_image = IMAGE_DIR + 'skill_6.png'
-
-    def __init__(self,direction="",jump='false',combo='false'):
-        super().__init__(locals())
+    buff_time=30
 
     def main(self):
+        if not self.check_should_active():
+            return
         if self.check_is_skill_ready():
             utils.wait_for_is_standing(2000)
             press(Key.SKILL_6, 1, up_time=0.05)
@@ -518,7 +531,8 @@ class Skill_8(Command):
 class Skill_9(Command):
     """Press skill,Uses '一閃' once. """
     _display_name = '一閃'
-    skill_cool_down = 65
+    skill_cool_down = 56
+    buff_time=54
     skill_image = IMAGE_DIR + 'skill_9.png'
 
     def __init__(self,direction="",jump='false',combo='true'):
@@ -535,18 +549,19 @@ class Skill_9(Command):
             self.set_my_last_cooldown(time.time())
 
 # 一閃角
-class Skill_12(Command):
+class Skill_12(BaseSkill):
     """Press skill,Uses '一閃角' once. """
     _display_name = '一閃角'
     skill_cool_down = 6.2
-
-    def __init__(self, direction='left',jump='false',combo="false"):
-        super().__init__(locals())
-        self.jump = settings.validate_boolean(jump)
-        self.direction = settings.validate_arrows(direction)
-        self.combo = settings.validate_boolean(combo)
+    active_if_skill_ready = ''
+    active_if_skill_cd = ''
+    active_if_in_skill_buff = ''
+    active_if_not_in_skill_buff = ''
 
     def main(self):
+        self.active_if_skill_cd = 'skill_9'
+        if not self.check_should_active():
+            return
         if self.check_is_skill_ready():
             if self.jump:
                 utils.wait_for_is_standing(2000)
@@ -659,4 +674,4 @@ class Skill_Z(Command):
         if self.combo:
             time.sleep(utils.rand_float(0.1, 0.3))
         else:
-            time.sleep(utils.rand_float(0.4, 0.6))
+            time.sleep(utils.rand_float(0.3, 0.4))

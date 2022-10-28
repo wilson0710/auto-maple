@@ -63,6 +63,25 @@ class Component:
                 arr.append(f'{key}={value}')
         return ', '.join(arr)
 
+    def check_should_active(self):
+        '''
+            check should active command if pass all conditions
+        '''
+        if self.active_if_skill_ready:
+            if not utils.get_if_skill_ready(self.active_if_skill_ready):
+                return False
+        if self.active_if_skill_cd:
+            if utils.get_if_skill_ready(self.active_if_skill_cd):
+                return False
+        if self.active_if_in_skill_buff:
+            if not utils.get_is_in_skill_buff(self.active_if_in_skill_buff):
+                return False
+        if self.active_if_not_in_skill_buff:
+            if utils.get_is_in_skill_buff(self.active_if_not_in_skill_buff):
+                print("check_should_active false")
+                return False
+        return True
+
 
 class Point(Component):
     """Represents a location in a user-defined routine."""
@@ -70,7 +89,7 @@ class Point(Component):
     id = '*'
 
     def __init__(self, x, y, frequency=1, skip='False', adjust='False'\
-        , active_if_skill_ready = '', active_if_skill_cd=''):
+        , active_if_skill_ready = '', active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=""):
         super().__init__(locals())
         self.x = float(x)
         self.y = float(y)
@@ -82,31 +101,12 @@ class Point(Component):
         self.active_if_skill_cd = active_if_skill_cd
         if not hasattr(self, 'commands'):       # Updating Point should not clear commands
             self.commands = []
+        self.active_if_in_skill_buff = active_if_in_skill_buff
+        self.active_if_not_in_skill_buff = active_if_not_in_skill_buff
 
     def main(self):
-        """ return if these condition are not satisfied  """
-        if self.active_if_skill_cd != '':
-            # check if target skill name exist, if not continue next steps 
-            command_book = config.bot.command_book
-            target_skill_name = None
-            for key in command_book:
-                if key.lower() == self.active_if_skill_cd:
-                    target_skill_name = command_book[key].__name__
-                    break
-
-            if target_skill_name and config.is_skill_ready_collector[target_skill_name]:
-                return
-        elif self.active_if_skill_ready != '':
-            # check if target skill name exist, if not continue next steps 
-            command_book = config.bot.command_book
-            target_skill_name = None
-            for key in command_book:
-                if key.lower() == self.active_if_skill_ready:
-                    target_skill_name = command_book[key].__name__
-                    break
-
-            if target_skill_name and not config.is_skill_ready_collector[target_skill_name]:
-                return
+        if not self.check_should_active():
+            return
 
         """Executes the set of actions associated with this Point."""
         if self.counter == 0:
@@ -173,7 +173,7 @@ class Jump(Component):
     id = '>'
 
     def __init__(self, label, frequency=1, skip='False'\
-        ,frequency_to_loop='False', active_if_skill_ready = '', active_if_skill_cd=''):
+        ,frequency_to_loop='False', active_if_skill_ready = '', active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
         super().__init__(locals())
         self.label = str(label)
         self.frequency = settings.validate_nonnegative_int(frequency)
@@ -184,34 +184,15 @@ class Jump(Component):
             self.counter = 1
         self.active_if_skill_ready = active_if_skill_ready
         self.active_if_skill_cd = active_if_skill_cd
+        self.active_if_in_skill_buff = active_if_in_skill_buff
+        self.active_if_not_in_skill_buff = active_if_not_in_skill_buff
 
     def main(self):
         if self.link is None:
             print(f"\n[!] Label '{self.label}' does not exist.")
         else:
-            """ return if these condition are not satisfied  """
-            if self.active_if_skill_cd != '':
-                # check if target skill name exist, if not continue next steps 
-                command_book = config.bot.command_book
-                target_skill_name = None
-                for key in command_book:
-                    if key.lower() == self.active_if_skill_cd:
-                        target_skill_name = command_book[key].__name__
-                        break
-
-                if target_skill_name and config.is_skill_ready_collector[target_skill_name]:
-                    return
-            elif self.active_if_skill_ready != '':
-                # check if target skill name exist, if not continue next steps 
-                command_book = config.bot.command_book
-                target_skill_name = None
-                for key in command_book:
-                    if key.lower() == self.active_if_skill_ready:
-                        target_skill_name = command_book[key].__name__
-                        break
-
-                if target_skill_name and not config.is_skill_ready_collector[target_skill_name]:
-                    return
+            if not self.check_should_active():
+                return
 
             if self.counter == 0 and not self.frequency_to_loop:
                 config.routine.index = self.link.index
@@ -390,7 +371,7 @@ class Move(Command):
         self.prev_direction = ''
 
     def _new_direction(self, new):
-        key_down(new)
+        key_down(new,down_time=0.05)
         if self.prev_direction and self.prev_direction != new:
             key_up(self.prev_direction)
         self.prev_direction = new
@@ -514,7 +495,7 @@ class Fall(Command):
             time.sleep(utils.rand_float(0.2, 0.4))
         press(config.jump_button, 2, down_time=0.1)
         key_up('down')
-        time.sleep(utils.rand_float(0.1, 0.2))
+        time.sleep(utils.rand_float(0.08, 0.12))
 
 
 class Buff(Command):
