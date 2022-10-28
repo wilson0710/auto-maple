@@ -121,6 +121,7 @@ class Notifier:
                     )
                     click(target, button='left')
                     time.sleep(3)
+                    click((700,100), button='right')
 
                 # check for fiona_lie_detector
                 fiona_lie_detector = utils.multi_match(frame, FIONA_LIE_DETECTOR_TEMPLATE, threshold=0.9)

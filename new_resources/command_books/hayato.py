@@ -72,9 +72,11 @@ def step(direction, target):
                 # MainGroupAttackSkill(direction='',attacks='3').execute()
                 SkillCombination(direction='',jump='false',target_skills='skill_1+skill_2|skill_a+skill_33|skill_3|MainGroupAttackSkill').execute()
                 time.sleep(utils.rand_float(0.2, 0.25))
-        elif abs(d_x) > 10:
+        elif abs(d_x) >= 13:
             Skill_Z().execute()
             key_up(direction)
+        else:
+            time.sleep(utils.rand_float(0.1, 0.15))
         utils.wait_for_is_standing(300)
     
     if direction == 'up':
