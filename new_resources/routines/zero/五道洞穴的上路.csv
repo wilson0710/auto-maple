@@ -17,7 +17,7 @@ $, target=move_tolerance, value=6
     Buff_F5, direction=, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=buff_f1, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Fall
     Skill_2, direction=, jump=false, rep=1, duration=0, combo=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-*, x=10, y=16, frequency=1, skip=False, adjust=False, active_if_skill_ready=SKILL_F2, active_if_skill_cd=buff_f1, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+*, x=10, y=16, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=buff_f1, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Walk, direction=right, duration=0.1
     Skill_R, direction=, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Teleport, direction=right, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
