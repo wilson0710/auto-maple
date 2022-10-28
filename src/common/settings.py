@@ -45,7 +45,8 @@ def validate_arrows(key):
     if isinstance(key, str):
         key = key.lower()
         if key in ['','up', 'down', 'left', 'right', \
-                'up+left','up+right','down+left','down+right'
+                'up+left','up+right','down+left','down+right',
+                'left+up','right+up','left+down','right+down'
             ]:
             return key
     raise ValueError(f"'{key}' is not a valid arrow key.")
@@ -99,7 +100,7 @@ def reset():
 move_tolerance = 9
 
 # The allowed error from a specific location while adjusting to that location
-adjust_tolerance = 2
+adjust_tolerance = 3
 
 # Whether the bot should save new player positions to the current layout
 record_layout = False
