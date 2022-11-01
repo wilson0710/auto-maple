@@ -35,7 +35,7 @@ $, target=platforms, value=b63|54~92*52|12~50*46|24~42*34|35~65*23|63~99*36|92~1
 *, x=104, y=63.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_10, direction=left, jump=false, combo=true
     MainGroupAttackSkill, direction=, jump=false, attacks=1, repetitions=1, combo=false
-    UpJump, direction=, jump=False, combo=true
+    UpJump, direction=left, jump=False, combo=true
     MainGroupAttackSkill, direction=, jump=false, attacks=1, repetitions=1, combo=true
     Wait, duration=0.2
     SkillCombination, direction=, jump=false, target_skills=skill_22+skill_3|skill_11+skill_3
