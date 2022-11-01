@@ -593,7 +593,7 @@ class BaseSkill(Command):
                 key_down(self.direction)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
-                key_down(self.key,down_time=0.1)
+                key_down(self.key,down_time=0.07)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
                 if i == (self.rep - 1):

@@ -78,6 +78,7 @@ SETTING_VALIDATORS = {
     'buff_cooldown': validate_nonnegative_int,
     'platforms':str,
     'rent_frenzy':validate_boolean,
+    'driver_key':validate_boolean,
 }
 
 
@@ -92,6 +93,7 @@ def reset():
     buff_cooldown = 180
     platforms = ""
     rent_frenzy = False
+    driver_key = False
     
 
 
@@ -113,6 +115,7 @@ rent_frenzy = False
 
 full_screen = False
 
+driver_key = False
 # user id
 id = ""
 

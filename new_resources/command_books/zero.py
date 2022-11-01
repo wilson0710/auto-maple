@@ -1,5 +1,4 @@
 from turtle import right
-from sqlalchemy import true
 from src.common import config, settings, utils
 import time
 import math
@@ -90,6 +89,7 @@ def step(direction, target):
     if direction == 'down':
         # if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
         print("down stair")
+        # if abs(d_y) > 3 :
         Teleport(direction=direction).execute()
         if abs(d_x) > 3:
             if d_x > 0:
@@ -301,7 +301,7 @@ class Skill_S(BaseSkill):
 class Skill_R(BaseSkill):
     _display_name ='巨力重擊(b4)'
     key=Key.SKILL_R
-    delay=1
+    delay=1.1
     rep_interval=0.25
     rep_interval_increase = 0.3
     skill_cool_down=3
