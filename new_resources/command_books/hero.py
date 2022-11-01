@@ -48,10 +48,10 @@ def step(direction, target):
         if abs(d_x) >= 16:
             if abs(d_x) >= 23:
                 FlashJump(direction='',triple_jump='false',fast_jump='true').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_w|skill_3|skill_a|skill_1').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_w|skill_a|skill_1').execute()
             else:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_w|skill_3|skill_a|skill_q').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_w|skill_a|skill_q').execute()
             # time.sleep(utils.rand_float(0.05, 0.12))
             if abs(d_x) <= 22:
                 key_up(direction)
@@ -163,7 +163,7 @@ class Buff(Command):
         now = time.time()
         utils.wait_for_is_standing(2000)
         if self.cd120_buff_time == 0 or now - self.cd120_buff_time > 120:
-            press(Key.BUFF_1, 2,up_time=0.3)
+            press(Key.BUFF_1, 2,up_time=0.5)
             time.sleep(utils.rand_float(0.1, 0.3))
             self.cd120_buff_time = now
         if self.cd180_buff_time == 0 or now - self.cd180_buff_time > 180:
@@ -212,16 +212,19 @@ class UpJump(Command):
     """Performs a up jump in the given direction."""
     _display_name = '上跳'
 
-    def __init__(self, direction):
+    def __init__(self,jump='false', direction='',combo='true'):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
 
     def main(self):
-        utils.wait_for_is_standing(2000)
-        key_down(self.direction)
+        utils.wait_for_is_standing(800)
         press(Key.UP_JUMP, 1)
-        key_up(self.direction)
+        key_down(self.direction)
         time.sleep(utils.rand_float(0.3, 0.5))
+        if 'left' in self.direction or 'right' in self.direction:
+            press(Key.JUMP, 1)
+        key_up(self.direction)
+        
 
 class Rope(Command):
     """Performs a up jump in the given direction."""
@@ -246,7 +249,7 @@ class Skill_Q(Command):
 
     def __init__(self, direction='',jump='false'):
         super().__init__(locals())
-        self.direction = settings.validate_horizontal_arrows(direction)
+        self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
 
     def main(self):
@@ -266,7 +269,7 @@ class Skill_1(Command):
 
     def __init__(self, direction='',jump='false'):
         super().__init__(locals())
-        self.direction = settings.validate_horizontal_arrows(direction)
+        self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
 
     def main(self):
@@ -287,7 +290,7 @@ class Skill_2(Command):
 
     def __init__(self, direction='',jump='false'):
         super().__init__(locals())
-        self.direction = settings.validate_horizontal_arrows(direction)
+        self.direction = settings.validate_arrows(direction)
 
     def main(self):
         if self.check_is_skill_ready():
@@ -306,7 +309,7 @@ class Skill_3(Command):
     _display_name = '靈氣之刃'
     skill_cool_down = 7
 
-    def __init__(self, direction='',jump='false'):
+    def __init__(self, direction='up',jump='false'):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
@@ -348,7 +351,7 @@ class Skill_W(Command):
             press(Key.SKILL_W, 1)
             key_up(self.direction,up_time=0.02)
             self.set_my_last_cooldown(time.time())
-            time.sleep(utils.rand_float(1.4, 1.6))
+            time.sleep(utils.rand_float(1.1, 1.3))
 
 # 劍之幻象
 class Skill_A(Command):

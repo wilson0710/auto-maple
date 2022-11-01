@@ -247,11 +247,11 @@ class Capture:
                         if config.player_pos[1] < 10:
                             config.player_states['movement_state'] = config.MOVEMENT_STATE_JUMPING
                             config.player_pos = (config.player_pos[0],0)
-                        if config.player_pos[0] < 30:
+                        if config.player_pos[0] < 50:
                             config.player_pos = (0,config.player_pos[1])
                             config.player_states['is_standing'] = True
                             config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
-                        elif int(minimap.shape[1]) - config.player_pos[0] < 30:
+                        elif int(minimap.shape[1]) - config.player_pos[0] < 50:
                             config.player_pos = (int(minimap.shape[1]),config.player_pos[1])
                             config.player_states['is_standing'] = True
                             config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING

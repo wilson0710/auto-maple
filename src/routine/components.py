@@ -388,7 +388,7 @@ class Move(Command):
             d_x = point[0] - config.player_pos[0]
             d_y = point[1] - config.player_pos[1]
             # prevent change map error
-            if config.player_pos[0] == 0:
+            if config.player_pos[0] == 0 and config.player_pos[1] == 0:
                 step("left", (-30,30))
             while config.enabled and counter > 0 and \
                     local_error > settings.move_tolerance and \
@@ -614,7 +614,7 @@ class SkillCombination(Command):
 
     def __init__(self, direction='',jump='false',target_skills=''):
         super().__init__(locals())
-        self.direction = settings.validate_horizontal_arrows(direction)
+        self.direction = settings.validate_arrows(direction)
         self.jump = jump
         self.target_skills = target_skills
         
