@@ -4,9 +4,9 @@ from time import sleep
 import os
 import threading
 
-driver_dir_path = r'./driver'
-kmclass_dll_path = 'C:\\Users\\sean8\\Documents\\auto-maple\\driver\\win10\\kmclassdll.dll'
-kmclass_driver_path = b'C:\\Users\\sean8\\Documents\\auto-maple\\driver\\win10\\kmclass.sys'
+driver_dir_path = r'driver'
+kmclass_dll_path = os.path.abspath(driver_dir_path+'/win10/kmclassdll.dll')
+kmclass_driver_path = os.path.abspath(driver_dir_path+'/win10/kmclass.sys')
 
 class DriverKey():
     def __init__(self) :
