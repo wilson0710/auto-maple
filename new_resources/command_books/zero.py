@@ -224,7 +224,7 @@ class Teleport(BaseSkill):
 class Skill_Q(BaseSkill):
     _display_name ='狂風千刃(a4)'
     key=Key.SKILL_Q
-    delay=0.6
+    delay=0.65
     rep_intexrval=0.25
     skill_cool_down=3
     ground_skill=False
@@ -276,7 +276,7 @@ class Skill_S(BaseSkill):
     _display_name ='瞬閃斬擊(a2)'
     key=Key.SKILL_S
     delay=0.45
-    rep_interval=0.2
+    rep_interval=0.13
     skill_cool_down=2
     ground_skill=True
     buff_time=0
@@ -301,9 +301,9 @@ class Skill_S(BaseSkill):
 class Skill_R(BaseSkill):
     _display_name ='巨力重擊(b4)'
     key=Key.SKILL_R
-    delay=1.1
-    rep_interval=0.25
-    rep_interval_increase = 0.3
+    delay=1.15
+    rep_interval=0.3
+    rep_interval_increase = 0.35
     skill_cool_down=3
     ground_skill=True
     buff_time=0
