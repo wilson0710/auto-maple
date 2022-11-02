@@ -5,12 +5,13 @@ import time
 from cv2 import split
 import win32con
 import win32api
-from src.common import utils, driver_key, settings
+from src.common import utils, driver_key, settings, winio_key
 from ctypes import wintypes
 from random import random
 from pynput.keyboard import Key, Controller
 import win32gui, win32ui, win32con, win32api
 import win32process
+import platform
 
 user32 = ctypes.WinDLL('user32', use_last_error=True)
 
@@ -122,7 +123,12 @@ KEY_MAP = {
 #     C Struct Definitions      #
 #################################
 wintypes.ULONG_PTR = wintypes.WPARAM
-d_key = driver_key.DriverKey()
+d_key = None
+if settings.driver_key == True:
+    # try new input method 
+    uname = platform.uname()
+    if uname[2] != '7': # platform release version
+        d_key = driver_key.DriverKey()
 
 class KeyboardInput(ctypes.Structure):
     _fields_ = (('wVk', wintypes.WORD),
@@ -206,7 +212,13 @@ def key_down(key,down_time=0.05):
                 unreleased_key.append(k)
                 if settings.driver_key == True:
                     # try new input method 
-                    d_key._key_down(KEY_MAP[k])
+                    uname = platform.uname()
+                    if uname[2] == '7': # platform release version
+                        winio_key.key_down(KEY_MAP[k])
+                    else:
+                        if not d_key:
+                            d_key = driver_key.DriverKey()
+                        d_key._key_down(KEY_MAP[k])
                 else:
                     # default input method
                     x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k]))
@@ -247,14 +259,20 @@ def key_up(key,up_time=0.05):
                 unreleased_key.remove(k)
                 if settings.driver_key == True:
                     # try new input method 
-                    d_key._key_up(KEY_MAP[k])
+                    uname = platform.uname()
+                    if uname[2] == '7': # platform release version
+                        winio_key.key_up(KEY_MAP[k])
+                    else:
+                        if not d_key:
+                            d_key = driver_key.DriverKey()
+                        d_key._key_up(KEY_MAP[k])
                 else:
                     # default input method
                     x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k], dwFlags=KEYEVENTF_KEYUP))
                     user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
                 if len(key_combination) > 1:
                     time.sleep(0.04 * (0.9 + 0.7 * random()))
-        time.sleep(up_time * (0.8 + 0.5 * random()))
+        time.sleep(up_time * (0.9 + 0.3 * random()))
 
     # if key == '':
     #     return 

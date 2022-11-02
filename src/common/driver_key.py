@@ -12,6 +12,7 @@ class DriverKey():
     def __init__(self) :
         self.thread = threading.Thread(target=self._main)
         self.thread.daemon = True
+        self.load_driver()
         self.start()
 
     def start(self):
@@ -21,7 +22,6 @@ class DriverKey():
         self.thread.start()
 
     def _main(self):
-        self.load_driver()
         self.key_down_queue = []
         self.key_up_queue = []
         while(True):
@@ -42,14 +42,14 @@ class DriverKey():
         self.key_up_queue.append(key)
 
     def _key_up(self,key): 
-        except_keys = [0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x2D,0x2E,]
+        except_keys = [0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x2D,0x2E]
         if key in except_keys:
             self._key_up_e1(key)
         else:
             self.driver.KeyUp(key)
 
     def _key_down(self,key):
-        except_keys = [0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x2D,0x2E,]
+        except_keys = [0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x2D,0x2E]
         if key in except_keys:
             self._key_down_e0(key)
         else:

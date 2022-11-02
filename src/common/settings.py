@@ -86,15 +86,15 @@ SETTING_VALIDATORS = {
 def reset():
     """Resets all settings to their default values."""
 
-    global id, move_tolerance, adjust_tolerance, record_layout, buff_cooldown, rent_frenzy, platforms
+    global id, move_tolerance, adjust_tolerance, record_layout, buff_cooldown, rent_frenzy, platforms, driver_key
     id = ""
     move_tolerance = 9
     adjust_tolerance = 2
     record_layout = False
     buff_cooldown = 180
     platforms = ""
-    rent_frenzy = False
-    driver_key = False
+    # rent_frenzy = False
+    # driver_key = False
     
 
 
