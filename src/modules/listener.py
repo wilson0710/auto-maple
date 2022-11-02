@@ -5,7 +5,7 @@ import threading
 import winsound
 import keyboard as kb
 from src.common.interfaces import Configurable
-from src.common import config, utils
+from src.common import config, utils, settings
 from src.common.vkeys import release_unreleased_key
 from datetime import datetime
 import win32gui
@@ -76,6 +76,8 @@ class Listener(Configurable):
 
         if not config.enabled:
             Listener.recalibrate_minimap()      # Recalibrate only when being enabled.
+            for k in settings:
+                print(k,' : ', settings[k])
             time.sleep(0.05)
 
         config.enabled = not config.enabled

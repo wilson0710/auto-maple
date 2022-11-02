@@ -604,9 +604,9 @@ class BaseSkill(Command):
             # if self.skill_cool_down != 0:
             self.set_my_last_cooldown(time.time())
             if self.combo:
-                time.sleep(utils.rand_float(self.combo_delay*0.9, self.combo_delay*1.2))
+                time.sleep(utils.rand_float(self.combo_delay*0.9, self.combo_delay*1.1))
             else:
-                time.sleep(utils.rand_float(self.delay*0.9, self.delay*1.15))
+                time.sleep(utils.rand_float(self.delay*0.9, self.delay*1.1))
 
 class SkillCombination(Command):
     """auto select skill in this combination"""

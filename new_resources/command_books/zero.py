@@ -224,12 +224,12 @@ class Teleport(BaseSkill):
 class Skill_Q(BaseSkill):
     _display_name ='狂風千刃(a4)'
     key=Key.SKILL_Q
-    delay=0.65
+    delay=0.75
     rep_intexrval=0.25
     skill_cool_down=3
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.25
     skill_image = IMAGE_DIR + 'skill_q.png'
     
     def main(self):
