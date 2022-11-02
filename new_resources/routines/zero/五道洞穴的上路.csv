@@ -3,7 +3,6 @@ $, target=move_tolerance, value=6
 
 @, label=regular
 *, x=-1, y=-1, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    GoToMap, target_map=���D�}�ު��W��
     CustomKey, name=���j, key=f12, direction=, jump=false, delay=0.7, rep=1, rep_interval=0, duration=0, cool_down=60, ground_skill=true, buff_time=, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 *, x=10, y=16, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=buff_f1, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_R, direction=right, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
