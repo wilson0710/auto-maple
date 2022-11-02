@@ -216,7 +216,8 @@ def key_down(key,down_time=0.05):
                     if uname[2] == '7': # platform release version
                         winio_key.key_down(KEY_MAP[k])
                     else:
-                        if not d_key:
+                        global d_key
+                        if d_key == None:
                             d_key = driver_key.DriverKey()
                         d_key._key_down(KEY_MAP[k])
                 else:
@@ -263,7 +264,8 @@ def key_up(key,up_time=0.05):
                     if uname[2] == '7': # platform release version
                         winio_key.key_up(KEY_MAP[k])
                     else:
-                        if not d_key:
+                        global d_key
+                        if d_key == None:
                             d_key = driver_key.DriverKey()
                         d_key._key_up(KEY_MAP[k])
                 else:
