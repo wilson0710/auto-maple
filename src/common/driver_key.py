@@ -12,6 +12,7 @@ class DriverKey():
     def __init__(self) :
         self.thread = threading.Thread(target=self._main)
         self.thread.daemon = True
+        self.load_driver()
         self.start()
 
     def start(self):
@@ -21,7 +22,6 @@ class DriverKey():
         self.thread.start()
 
     def _main(self):
-        self.load_driver()
         self.key_down_queue = []
         self.key_up_queue = []
         while(True):

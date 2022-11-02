@@ -123,6 +123,7 @@ KEY_MAP = {
 #     C Struct Definitions      #
 #################################
 wintypes.ULONG_PTR = wintypes.WPARAM
+d_key = None
 if settings.driver_key == True:
     # try new input method 
     uname = platform.uname()
@@ -215,6 +216,8 @@ def key_down(key,down_time=0.05):
                     if uname[2] == '7': # platform release version
                         winio_key.key_down(KEY_MAP[k])
                     else:
+                        if not d_key:
+                            d_key = driver_key.DriverKey()
                         d_key._key_down(KEY_MAP[k])
                 else:
                     # default input method
@@ -260,6 +263,8 @@ def key_up(key,up_time=0.05):
                     if uname[2] == '7': # platform release version
                         winio_key.key_up(KEY_MAP[k])
                     else:
+                        if not d_key:
+                            d_key = driver_key.DriverKey()
                         d_key._key_up(KEY_MAP[k])
                 else:
                     # default input method
