@@ -125,14 +125,14 @@ class Notifier:
                         time.sleep(0.1)
 
                     # check for unexpected dead
-                    revive_frame = frame[height//2-200:height//2+200, width //2-200:width//2+200]
+                    revive_frame = frame[height//2-100:height//2+200, width //2-150:width//2+150]
                     revive_confirm = utils.multi_match(revive_frame, REVIVE_CONFIRM_TEMPLATE, threshold=0.9)
                     if len(revive_confirm) > 0:
                         self._send_msg_to_line_notify("角色死亡")
                         revive_confirm_pos = min(revive_confirm, key=lambda p: p[0])
                         target = (
-                            round(revive_confirm_pos[0] + config.capture.window['left']),
-                            round(revive_confirm_pos[1] + config.capture.window['top'])
+                            round(revive_confirm_pos[0] + config.capture.window['left']+(width //2-150)),
+                            round(revive_confirm_pos[1] + config.capture.window['top']+(height//2-100))
                         )
                         click(target, button='left')
                         time.sleep(3)
