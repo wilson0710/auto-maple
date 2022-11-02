@@ -1,7 +1,6 @@
 """A collection of all commands that Adele can use to interact with the game. 	"""
 
 from turtle import right
-from sqlalchemy import true
 from src.common import config, settings, utils
 import time
 import math
