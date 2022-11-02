@@ -93,8 +93,8 @@ def reset():
     record_layout = False
     buff_cooldown = 180
     platforms = ""
-    rent_frenzy = False
-    driver_key = False
+    # rent_frenzy = False
+    # driver_key = False
     
 
 
