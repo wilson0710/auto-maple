@@ -123,7 +123,11 @@ KEY_MAP = {
 #     C Struct Definitions      #
 #################################
 wintypes.ULONG_PTR = wintypes.WPARAM
-d_key = driver_key.DriverKey()
+if settings.driver_key == True:
+    # try new input method 
+    uname = platform.uname()
+    if uname[2] != '7': # platform release version
+        d_key = driver_key.DriverKey()
 
 class KeyboardInput(ctypes.Structure):
     _fields_ = (('wVk', wintypes.WORD),
