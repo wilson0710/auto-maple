@@ -59,7 +59,7 @@ class Capture:
         """Initializes this Capture object's main thread."""
 
         config.capture = self
-        self.capture_gap_sec = 0.02
+        self.capture_gap_sec = 0.025
         self.frame = None
         self.minimap = None
         self.minimap_ratio = 1
@@ -271,7 +271,7 @@ class Capture:
                     self.ready = True
                 self.refresh_counting = self.refresh_counting + 1
                 if settings.rent_frenzy:
-                    time.sleep(self.capture_gap_sec*5)
+                    time.sleep(self.capture_gap_sec*10)
                 else:
                     time.sleep(self.capture_gap_sec)
                 

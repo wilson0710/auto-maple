@@ -3,11 +3,10 @@ $, target=move_tolerance, value=6
 
 @, label=regular
 *, x=-1, y=-1, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    GoToMap, target_map=¤­¹D¬}¥Þªº¤W¸ô
-    CustomKey, name=½ü°j, key=f12, direction=, jump=false, delay=0.7, rep=1, rep_interval=0, duration=0, cool_down=60, ground_skill=true, buff_time=, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    GoToMap, target_map=ï¿½ï¿½ï¿½Dï¿½}ï¿½Þªï¿½ï¿½Wï¿½ï¿½
+    CustomKey, name=ï¿½ï¿½ï¿½j, key=f12, direction=, jump=false, delay=0.7, rep=1, rep_interval=0, duration=0, cool_down=60, ground_skill=true, buff_time=, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 *, x=10, y=16, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=buff_f1, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    Walk, direction=right, duration=0.1
-    Skill_R, direction=, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Skill_R, direction=right, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Teleport, direction=right, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     FlashJump, direction=right, jump=false, combo=False, triple_jump=False, fast_jump=false
     Skill_W, direction=, jump=false, rep=2, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
@@ -18,8 +17,7 @@ $, target=move_tolerance, value=6
     Skill_Q, direction=left, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Fall
 *, x=10, y=16, frequency=1, skip=False, adjust=False, active_if_skill_ready=skill_3, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    Walk, direction=right, duration=0.1
-    Skill_R, direction=, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Skill_R, direction=right, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Teleport, direction=right, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_3, direction=, jump=false, rep=1, duration=0, combo=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Wait, duration=0.4
@@ -30,9 +28,8 @@ $, target=move_tolerance, value=6
     Skill_Q, direction=left, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Fall
 *, x=10, y=16, frequency=1, skip=False, adjust=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    Walk, direction=right, duration=0.1
     Buff_F1, direction=, jump=false, rep=1, duration=0, combo=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=buff_f1
-    Skill_R, direction=, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Skill_R, direction=right, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Teleport, direction=down, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Buff_Pageup, direction=, jump=false, rep=1, duration=0, combo=true, active_if_skill_ready=, active_if_skill_cd=buff_f1, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_Q, direction=right, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
@@ -57,13 +54,14 @@ $, target=move_tolerance, value=6
     Skill_S, direction=, jump=false, rep=2, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Teleport, direction=right, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     FlashJump, direction=right, jump=false, combo=true, triple_jump=False, fast_jump=false
-    Wait, duration=0.1
+    Wait, duration=0.2
     Teleport, direction=up, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_S, direction=right, jump=false, rep=2, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 *, x=120.000, y=16.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Buff_F1, direction=left, jump=false, rep=1, duration=0, combo=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=buff_f1
     Skill_R, direction=left, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Teleport, direction=left, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Wait, duration=0.2
     Skill_FB2, direction=, jump=false, rep=1, duration=0, combo=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 *, x=10, y=44, frequency=1, skip=False, adjust=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_Q, direction=right, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
@@ -73,6 +71,7 @@ $, target=move_tolerance, value=6
 
 @, label=up
 *, x=10, y=16, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Wait, duration=0.2
     Skill_FA1, direction=, jump=false, rep=1, duration=0, combo=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_E, direction=, jump=false, rep=2, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Teleport, direction=right, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
@@ -82,6 +81,6 @@ $, target=move_tolerance, value=6
     Teleport, direction=right, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Teleport, direction=down, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_Q, direction=left, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    Wait, duration=0.1
+    Wait, duration=0.15
     Skill_FA2, direction=, jump=false, rep=1, duration=0, combo=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 >, label=regular, frequency=1, skip=False, frequency_to_loop=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=

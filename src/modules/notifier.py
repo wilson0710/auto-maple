@@ -104,14 +104,16 @@ class Notifier:
                     prev_others = others
 
                 # check for unexpected conversation
-                conversation = utils.multi_match(frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
+                conversation_frame = frame[height//2-250:height//2+250, width //2-250:width//2+250]
+                conversation = utils.multi_match(conversation_frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
                 if len(conversation) > 0:
                     print("stop conversation")
                     press("esc",1)
                     time.sleep(0.1)
 
                 # check for unexpected dead
-                revive_confirm = utils.multi_match(frame, REVIVE_CONFIRM_TEMPLATE, threshold=0.9)
+                revive_frame = frame[height//2-200:height//2+200, width //2-200:width//2+200]
+                revive_confirm = utils.multi_match(revive_frame, REVIVE_CONFIRM_TEMPLATE, threshold=0.9)
                 if len(revive_confirm) > 0:
                     self._send_msg_to_line_notify("角色死亡")
                     revive_confirm_pos = min(revive_confirm, key=lambda p: p[0])
@@ -124,7 +126,8 @@ class Notifier:
                     click((700,100), button='right')
 
                 # check for fiona_lie_detector
-                fiona_lie_detector = utils.multi_match(frame, FIONA_LIE_DETECTOR_TEMPLATE, threshold=0.9)
+                fiona_frame = frame[height-400:height, width - 300:width]
+                fiona_lie_detector = utils.multi_match(fiona_frame, FIONA_LIE_DETECTOR_TEMPLATE, threshold=0.9)
                 if len(fiona_lie_detector) > 0:
                     print("find fiona_lie_detector")
                     self._send_msg_to_line_notify("菲歐娜測謊")

@@ -137,7 +137,9 @@ class Bot(Configurable):
                 if self.rune_active == False:
                     break
                 frame = config.capture.frame
-                solution = detection.merge_detection(model, frame)
+                height, width, _n = frame.shape
+                solution_frame = frame[height//2-300:height//2+30, width //2-300:width//2+300]
+                solution = detection.merge_detection(model, solution_frame)
                 if solution:
                     print(', '.join(solution))
                     if len(solution) == 4:
