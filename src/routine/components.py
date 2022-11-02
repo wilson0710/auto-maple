@@ -596,10 +596,9 @@ class BaseSkill(Command):
                 key_down(self.key,down_time=0.07)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
-                if i == (self.rep - 1):
-                    key_up(self.key,up_time=0.05)
-                else:
-                    key_up(self.key,up_time=self.rep_interval+self.rep_interval_increase*i)
+                key_up(self.key,up_time=0.05)
+                ret_interval = self.rep_interval+self.rep_interval_increase*i
+                time.sleep(utils.rand_float(ret_interval*0.92, ret_interval*1.08))
             key_up(self.direction,up_time=0.01)
             # if self.skill_cool_down != 0:
             self.set_my_last_cooldown(time.time())

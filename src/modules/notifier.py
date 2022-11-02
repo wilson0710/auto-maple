@@ -72,6 +72,7 @@ class Notifier:
         self.ready = True
         prev_others = 0
         rune_start_time = time.time()
+        detection_i = 0
         while True:
             if config.enabled:
                 frame = config.capture.frame
@@ -103,28 +104,6 @@ class Notifier:
                         self._ping('ding')
                     prev_others = others
 
-                # check for unexpected conversation
-                conversation_frame = frame[height//2-250:height//2+250, width //2-250:width//2+250]
-                conversation = utils.multi_match(conversation_frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
-                if len(conversation) > 0:
-                    print("stop conversation")
-                    press("esc",1)
-                    time.sleep(0.1)
-
-                # check for unexpected dead
-                revive_frame = frame[height//2-200:height//2+200, width //2-200:width//2+200]
-                revive_confirm = utils.multi_match(revive_frame, REVIVE_CONFIRM_TEMPLATE, threshold=0.9)
-                if len(revive_confirm) > 0:
-                    self._send_msg_to_line_notify("角色死亡")
-                    revive_confirm_pos = min(revive_confirm, key=lambda p: p[0])
-                    target = (
-                        round(revive_confirm_pos[0] + config.capture.window['left']),
-                        round(revive_confirm_pos[1] + config.capture.window['top'])
-                    )
-                    click(target, button='left')
-                    time.sleep(3)
-                    click((700,100), button='right')
-
                 # check for fiona_lie_detector
                 fiona_frame = frame[height-400:height, width - 300:width]
                 fiona_lie_detector = utils.multi_match(fiona_frame, FIONA_LIE_DETECTOR_TEMPLATE, threshold=0.9)
@@ -134,7 +113,32 @@ class Notifier:
                     # if settings.rent_frenzy == False:
                     self._alert('siren')
                     time.sleep(0.1)
+                    
+                # not urgen detection 
+                if detection_i % 5==0:
+                    # check for unexpected conversation
+                    conversation_frame = frame[height//2-250:height//2+250, width //2-250:width//2+250]
+                    conversation = utils.multi_match(conversation_frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
+                    if len(conversation) > 0:
+                        print("stop conversation")
+                        press("esc",1)
+                        time.sleep(0.1)
 
+                    # check for unexpected dead
+                    revive_frame = frame[height//2-200:height//2+200, width //2-200:width//2+200]
+                    revive_confirm = utils.multi_match(revive_frame, REVIVE_CONFIRM_TEMPLATE, threshold=0.9)
+                    if len(revive_confirm) > 0:
+                        self._send_msg_to_line_notify("角色死亡")
+                        revive_confirm_pos = min(revive_confirm, key=lambda p: p[0])
+                        target = (
+                            round(revive_confirm_pos[0] + config.capture.window['left']),
+                            round(revive_confirm_pos[1] + config.capture.window['top'])
+                        )
+                        click(target, button='left')
+                        time.sleep(3)
+                        click((700,100), button='right')
+
+                
                 # Check for skill cd
                 command_book = config.bot.command_book
                 image_matched = False
@@ -174,6 +178,7 @@ class Notifier:
                         config.bot.rune_active = False
                         self._send_msg_to_line_notify("多次解輪失敗")
                         self._alert('siren')
+                detection_i = detection_i + 1
             time.sleep(self.notifier_delay)
 
     def _send_msg_to_line_notify(self,msg,file=None):
