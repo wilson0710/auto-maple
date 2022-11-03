@@ -17,7 +17,8 @@ class DriverKey():
         self.key_up_list = []
         self.key_down_list = []
         self.uname = platform.uname()
-        self.load_driver()
+        if self.uname[2] != '7': # platform release version
+            self.load_driver()
         self.start()
         
         
