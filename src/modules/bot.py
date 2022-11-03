@@ -130,7 +130,7 @@ class Bot(Configurable):
                 press("left", 1, down_time=0.1,up_time=0.2) 
             elif ii == 2:
                 press("right", 1, down_time=0.2,up_time=0.2) 
-            time.sleep(2.5) 
+            time.sleep(3.1) 
             press(self.config['Interact'], 1, down_time=0.1,up_time=0.3) # Inherited from Configurable
             print('\nSolving rune:')
             for _ in range(5):

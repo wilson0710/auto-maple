@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from ctypes import CDLL
-from time import sleep
+from time import sleep,time
 import os
 import threading
+from src.common import winio_key
+import platform
 
 driver_dir_path = r'driver'
 kmclass_dll_path = os.path.abspath(driver_dir_path+'/win10/kmclassdll.dll')
@@ -12,9 +14,13 @@ class DriverKey():
     def __init__(self) :
         self.thread = threading.Thread(target=self._main)
         self.thread.daemon = True
+        self.key_up_list = []
+        self.key_down_list = []
+        self.uname = platform.uname()
         self.load_driver()
         self.start()
-
+        
+        
     def start(self):
         """Starts this DriverKey's thread."""
 
@@ -22,26 +28,53 @@ class DriverKey():
         self.thread.start()
 
     def _main(self):
-        self.key_down_queue = []
-        self.key_up_queue = []
+        self.key_down_objs = {}
+        self.key_up_objs = {}
         while(True):
-            for k in self.key_up_queue:
+            if len(self.key_up_list) > 0:
+                new_key = self.key_up_list.pop()
+                if not new_key in self.key_up_objs:
+                    self.key_up_objs[new_key] = time()
+
+            if len(self.key_down_list) > 0:
+                new_key = self.key_down_list.pop()
+                if not new_key in self.key_down_objs:
+                    self.key_down_objs[new_key] = {'last_t':time(),'count':0}
+
+            for k in self.key_up_objs:
                 self._key_up(k)
-                self.key_up_queue.remove(k)
-            for k in self.key_down_queue:
-                self._key_down(k)
-            sleep(0.03)
+                # self.key_up_objs.pop(k)
+                if k in self.key_down_objs:
+                    self.key_down_objs.pop(k)
+            self.key_up_objs = {}
+
+            for k in self.key_down_objs:
+                temp_key = self.key_down_objs[k]
+                if temp_key['count'] == 0:
+                    self._key_down(k)
+                    temp_key['count'] = temp_key['count'] + 1
+                    temp_key['last_t'] = time()
+                elif temp_key['count'] == 1:
+                    if time()-temp_key['last_t'] >= 0.25:
+                        self._key_down(k)
+                        temp_key['last_t'] = time()
+                        temp_key['count'] = temp_key['count'] + 1
+                elif time()-temp_key['last_t'] >= 0.03:
+                    self._key_down(k)
+                    temp_key['last_t'] = time()
+                    temp_key['count'] = temp_key['count'] + 1
+            sleep(0.002)
 
     def user_key_down(self,key):
-        if not key in self.key_down_queue:
-            self.key_down_queue.append(key)
+        self.key_down_list.append(key)
 
     def user_key_up(self,key):
-        if key in self.key_down_queue:
-            self.key_down_queue.remove(key)
-        self.key_up_queue.append(key)
+        self.key_up_list.append(key)
 
     def _key_up(self,key): 
+        if self.uname[2] == '7': # platform release version
+            winio_key.key_up(key)
+            return
         except_keys = [0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x2D,0x2E]
         if key in except_keys:
             self._key_up_e1(key)
@@ -49,6 +82,9 @@ class DriverKey():
             self.driver.KeyUp(key)
 
     def _key_down(self,key):
+        if self.uname[2] == '7': # platform release version
+            winio_key.key_down(key)
+            return
         except_keys = [0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x2D,0x2E]
         if key in except_keys:
             self._key_down_e0(key)

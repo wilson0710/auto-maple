@@ -481,7 +481,7 @@ class Skill_3(BaseSkill):
 class Buff_Pageup(BaseSkill):
     _display_name ='掌握時間'
     key=Key.BUFF_PAGEUP
-    delay=0.8
+    delay=1
     rep_interval=0.25
     skill_cool_down=180
     ground_skill=False
