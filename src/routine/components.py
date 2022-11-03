@@ -508,7 +508,7 @@ class CustomKey(Command):
     _display_name = '自定義按鍵'
     # skill_cool_down = 0
 
-    def __init__(self,name='',key='', direction='',jump='false',delay='0.5',rep='1',rep_interval='0.3',duration='0',cool_down='0',ground_skill='true',buff_time='',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
+    def __init__(self,name='',key='', direction='',jump='false',delay='0.5',rep='1',rep_interval='0.3',rep_interval_increase='0',duration='0',cool_down='0',ground_skill='true',buff_time='',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
         super().__init__(locals())
         self._display_name = name
         self.key = key
@@ -518,6 +518,7 @@ class CustomKey(Command):
         self.delay = float(delay)
         self.rep = settings.validate_nonnegative_int(rep)
         self.rep_interval = float(rep_interval)
+        self.rep_interval_increase = float(rep_interval_increase)
         self.duration = float(duration)
         self.skill_cool_down = float(cool_down)
         self.ground_skill = settings.validate_boolean(ground_skill)
@@ -545,10 +546,10 @@ class CustomKey(Command):
                 key_down(self.key,down_time=0.07)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
-                if i == (self.rep - 1):
-                    key_up(self.key,up_time=0.05)
-                else:
-                    key_up(self.key,up_time=self.rep_interval)
+                key_up(self.key,up_time=0.05)
+                if i != (self.rep-1):
+                    ret_interval = self.rep_interval+self.rep_interval_increase*i
+                    time.sleep(utils.rand_float(ret_interval*0.92, ret_interval*1.08))
             key_up(self.direction,up_time=0.01)
             # if self.skill_cool_down != 0:
             self.set_my_last_cooldown(time.time())
