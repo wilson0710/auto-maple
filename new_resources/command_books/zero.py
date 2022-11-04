@@ -224,8 +224,8 @@ class Teleport(BaseSkill):
 class Skill_Q(BaseSkill):
     _display_name ='狂風千刃(a4)'
     key=Key.SKILL_Q
-    delay=0.55
-    rep_intexrval=0.13
+    delay=0.65
+    rep_intexrval=0.1
     skill_cool_down=3
     ground_skill=False
     buff_time=0
