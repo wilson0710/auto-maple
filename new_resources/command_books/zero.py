@@ -1,5 +1,4 @@
 from turtle import right
-from sqlalchemy import true
 from src.common import config, settings, utils
 import time
 import math
@@ -90,6 +89,7 @@ def step(direction, target):
     if direction == 'down':
         # if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
         print("down stair")
+        # if abs(d_y) > 3 :
         Teleport(direction=direction).execute()
         if abs(d_x) > 3:
             if d_x > 0:
@@ -211,7 +211,7 @@ class Teleport(BaseSkill):
     _display_name ='爆裂衝刺'
     _distance = 27
     key=Key.TELEPORT
-    delay=0.2
+    delay=0.15
     rep_interval=0.3
     skill_cool_down=0
     ground_skill=False
@@ -224,12 +224,12 @@ class Teleport(BaseSkill):
 class Skill_Q(BaseSkill):
     _display_name ='狂風千刃(a4)'
     key=Key.SKILL_Q
-    delay=0.6
-    rep_intexrval=0.25
+    delay=0.65
+    rep_intexrval=0.1
     skill_cool_down=3
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.25
     skill_image = IMAGE_DIR + 'skill_q.png'
     
     def main(self):
@@ -275,12 +275,12 @@ class Skill_A(BaseSkill):
 class Skill_S(BaseSkill):
     _display_name ='瞬閃斬擊(a2)'
     key=Key.SKILL_S
-    delay=0.45
+    delay=0.3
     rep_interval=0.2
     skill_cool_down=2
     ground_skill=True
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.15
     skill_image = IMAGE_DIR + 'skill_s.png'
 
     def main(self):
@@ -301,7 +301,7 @@ class Skill_S(BaseSkill):
 class Skill_R(BaseSkill):
     _display_name ='巨力重擊(b4)'
     key=Key.SKILL_R
-    delay=1
+    delay=1.15
     rep_interval=0.25
     rep_interval_increase = 0.3
     skill_cool_down=3
@@ -481,7 +481,7 @@ class Skill_3(BaseSkill):
 class Buff_Pageup(BaseSkill):
     _display_name ='掌握時間'
     key=Key.BUFF_PAGEUP
-    delay=0.5
+    delay=1
     rep_interval=0.25
     skill_cool_down=180
     ground_skill=False

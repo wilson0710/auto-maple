@@ -15,13 +15,16 @@ if __name__ == '__main__':
     parser.add_argument('-cb', type=str, default="")
     parser.add_argument('-rt', type=str, default="")
     parser.add_argument('--rent', action='store_true')
+    parser.add_argument('-dk', action='store_true')
     args = parser.parse_args()
     print(args)
     if args.full_screen:
         settings.full_screen = True
     if args.rent:
         settings.rent_frenzy = True
-
+    if args.dk:
+        settings.driver_key = True
+        
     bot = Bot()
     capture = Capture()
     notifier = Notifier()

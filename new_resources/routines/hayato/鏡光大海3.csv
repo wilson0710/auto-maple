@@ -23,11 +23,9 @@ $, target=platforms, value=b63|54~92*52|12~50*46|24~42*34|35~65*23|63~99*36|92~1
 *, x=73, y=52, frequency=1, skip=False, adjust=False, active_if_skill_ready=skill_8, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Wait, duration=0.3
     Skill_3, direction=right, jump=false, attacks=1, repetitions=1, combo=false
-    UpJump, direction=, jump=False, combo=true
-    MainGroupAttackSkill, direction=, jump=false, attacks=3, repetitions=1, combo=false
-    Skill_22, direction=, jump=false, rep=1, duration=0, combo=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Skill_11, direction=, jump=false, combo=true
     Skill_8, direction=, jump=false, combo=true
-    Skill_Z, direction=right, jump=false, combo=false
+    Skill_3, direction=left, jump=false, attacks=1, repetitions=1, combo=false
 *, x=73, y=52.000, frequency=1, skip=False, adjust=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     FlashJump, direction=right, jump=false, combo=, triple_jump=False, fast_jump=false
     MainGroupAttackSkill, direction=, jump=false, attacks=3, repetitions=1, combo=true
@@ -35,7 +33,7 @@ $, target=platforms, value=b63|54~92*52|12~50*46|24~42*34|35~65*23|63~99*36|92~1
 *, x=104, y=63.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_10, direction=left, jump=false, combo=true
     MainGroupAttackSkill, direction=, jump=false, attacks=1, repetitions=1, combo=false
-    UpJump, direction=, jump=False, combo=true
+    UpJump, direction=left, jump=False, combo=true
     MainGroupAttackSkill, direction=, jump=false, attacks=1, repetitions=1, combo=true
     Wait, duration=0.2
     SkillCombination, direction=, jump=false, target_skills=skill_22+skill_3|skill_11+skill_3
@@ -43,15 +41,13 @@ $, target=platforms, value=b63|54~92*52|12~50*46|24~42*34|35~65*23|63~99*36|92~1
 >, label=center, frequency=1, skip=False, frequency_to_loop=False, active_if_skill_ready=, active_if_skill_cd=skill_5, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 
 @, label=left
-*, x=31, y=63, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+*, x=32, y=63, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Skill_5, direction=, jump=false, combo=false
     UpJump, direction=right, jump=False, combo=true
     MainGroupAttackSkill, direction=, jump=false, attacks=1, repetitions=1, combo=true
     Wait, duration=0.2
     Skill_22, direction=, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_3, direction=, jump=false, attacks=1, repetitions=1, combo=false
-*, x=34.000, y=46.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=skill_5, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    Wait, duration=0.3
-    Skill_5, direction=, jump=false, combo=false
     UpJump, direction=right, jump=true, combo=true
     MainGroupAttackSkill, direction=, jump=false, attacks=3, repetitions=1, combo=false
 *, x=57.000, y=23.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
@@ -81,6 +77,15 @@ $, target=platforms, value=b63|54~92*52|12~50*46|24~42*34|35~65*23|63~99*36|92~1
     Move, x=68, y=36, max_steps=15
     Fall
     SkillCombination, direction=, jump=false, target_skills=skill_1+skill_2|skill_22+skill_3|MainGroupAttackSkill
+    Walk, direction=left, duration=0.1
+    Walk, direction=right, duration=0.1
+*, x=68, y=52, frequency=1, skip=False, adjust=False, active_if_skill_ready=skill_7, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Wait, duration=0.3
+    Skill_7, direction=, jump=false, combo=true
+    Wait, duration=0.3
+    Skill_3, direction=, jump=false, attacks=1, repetitions=1, combo=false
+    Wait, duration=2
+    Skill_3, direction=, jump=false, attacks=1, repetitions=1, combo=false
 >, label=up_down, frequency=1, skip=False, frequency_to_loop=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=skill_5, active_if_not_in_skill_buff=
 *, x=68.000, y=52.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_3, direction=left, jump=false, attacks=1, repetitions=1, combo=false

@@ -483,16 +483,22 @@ class Fall(Command):
     from their starting position.
     """
 
-    def __init__(self):
+    def __init__(self, direction='', duration='0.1'):
         super().__init__(locals())
+        self.direction = settings.validate_horizontal_arrows(direction)
+        self.duration = float(duration)
 
     def main(self):
         utils.wait_for_is_standing(500)
         key_down('down')
         if config.stage_fright and utils.bernoulli(0.5):
             time.sleep(utils.rand_float(0.2, 0.4))
-        press(config.jump_button, 2, down_time=0.1)
+        press(config.jump_button, 2, down_time=self.duration)
         key_up('down')
+        if self.direction != '':
+            key_down(self.direction)
+            press(config.jump_button, 2, down_time=0.1)
+            key_up(self.direction)
         time.sleep(utils.rand_float(0.08, 0.12))
 
 
@@ -508,7 +514,7 @@ class CustomKey(Command):
     _display_name = '自定義按鍵'
     # skill_cool_down = 0
 
-    def __init__(self,name='',key='', direction='',jump='false',delay='0.5',rep='1',rep_interval='0.3',duration='0',cool_down='0',ground_skill='true',buff_time='',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
+    def __init__(self,name='',key='', direction='',jump='false',delay='0.5',rep='1',rep_interval='0.3',rep_interval_increase='0',duration='0',cool_down='0',ground_skill='true',buff_time='',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
         super().__init__(locals())
         self._display_name = name
         self.key = key
@@ -518,6 +524,7 @@ class CustomKey(Command):
         self.delay = float(delay)
         self.rep = settings.validate_nonnegative_int(rep)
         self.rep_interval = float(rep_interval)
+        self.rep_interval_increase = float(rep_interval_increase)
         self.duration = float(duration)
         self.skill_cool_down = float(cool_down)
         self.ground_skill = settings.validate_boolean(ground_skill)
@@ -545,10 +552,10 @@ class CustomKey(Command):
                 key_down(self.key,down_time=0.07)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
-                if i == (self.rep - 1):
-                    key_up(self.key,up_time=0.05)
-                else:
-                    key_up(self.key,up_time=self.rep_interval)
+                key_up(self.key,up_time=0.05)
+                if i != (self.rep-1):
+                    ret_interval = self.rep_interval+self.rep_interval_increase*i
+                    time.sleep(utils.rand_float(ret_interval*0.92, ret_interval*1.08))
             key_up(self.direction,up_time=0.01)
             # if self.skill_cool_down != 0:
             self.set_my_last_cooldown(time.time())
@@ -593,20 +600,20 @@ class BaseSkill(Command):
                 key_down(self.direction)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
-                key_down(self.key,down_time=0.1)
+                key_down(self.key,down_time=0.07)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
-                if i == (self.rep - 1):
-                    key_up(self.key,up_time=0.05)
-                else:
-                    key_up(self.key,up_time=self.rep_interval+self.rep_interval_increase*i)
+                key_up(self.key,up_time=0.05)
+                if i != (self.rep-1):
+                    ret_interval = self.rep_interval+self.rep_interval_increase*i
+                    time.sleep(utils.rand_float(ret_interval*0.92, ret_interval*1.08))
             key_up(self.direction,up_time=0.01)
             # if self.skill_cool_down != 0:
             self.set_my_last_cooldown(time.time())
             if self.combo:
-                time.sleep(utils.rand_float(self.combo_delay*0.9, self.combo_delay*1.2))
+                time.sleep(utils.rand_float(self.combo_delay*0.9, self.combo_delay*1.1))
             else:
-                time.sleep(utils.rand_float(self.delay*0.9, self.delay*1.15))
+                time.sleep(utils.rand_float(self.delay*0.9, self.delay*1.1))
 
 class SkillCombination(Command):
     """auto select skill in this combination"""

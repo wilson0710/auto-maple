@@ -59,7 +59,7 @@ class Capture:
         """Initializes this Capture object's main thread."""
 
         config.capture = self
-        self.capture_gap_sec = 0.02
+        self.capture_gap_sec = 0.025
         self.frame = None
         self.minimap = None
         self.minimap_ratio = 1
@@ -172,7 +172,7 @@ class Capture:
                         self.recording_frames.pop(0)
                 elif not config.enabled and len(self.recording_frames) > 0:
                     for index in range(len(self.recording_frames)):
-                        cv2.imwrite('./recording/' + str(index) + '.png',self.recording_frames[index])
+                        cv2.imwrite('./recording/r_' + str(index) + '.png',self.recording_frames[index])
 
                 # Take screenshot
                 minimap = self.screenshot_in_bg(self.handle,mm_tl[0],mm_tl[1],mm_br[0]-mm_tl[0],mm_br[1]-mm_tl[1])
@@ -271,7 +271,7 @@ class Capture:
                     self.ready = True
                 self.refresh_counting = self.refresh_counting + 1
                 if settings.rent_frenzy:
-                    time.sleep(self.capture_gap_sec*5)
+                    time.sleep(self.capture_gap_sec*10)
                 else:
                     time.sleep(self.capture_gap_sec)
                 
