@@ -58,7 +58,6 @@ $, target=move_tolerance, value=9
     Fall, direction=right, duration=0.1
     Wait, duration=0.2
     Skill_Q, direction=left, jump=false, rep=3, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    Walk, direction=left, duration=0.2
     Skill_S, direction=, jump=false, rep=2, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Teleport, direction=left, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Fall, direction=, duration=0.1
