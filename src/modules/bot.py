@@ -133,12 +133,12 @@ class Bot(Configurable):
             time.sleep(3.1) 
             press(self.config['Interact'], 1, down_time=0.1,up_time=0.3) # Inherited from Configurable
             print('\nSolving rune:')
-            for _ in range(5):
+            for _ in range(3):
                 if self.rune_active == False:
                     break
                 frame = config.capture.frame
                 height, width, _n = frame.shape
-                solution_frame = frame[height//2-300:height//2+40, width //2-500:width//2+500]
+                solution_frame = frame[height//2-300:height//2+300, width //2-500:width//2+500]
                 cv2.imwrite('./recording/s_' + str(time.time()) + '.png',solution_frame)
                 solution = detection.merge_detection(model, solution_frame)
                 if solution:

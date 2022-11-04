@@ -211,7 +211,7 @@ class Teleport(BaseSkill):
     _display_name ='爆裂衝刺'
     _distance = 27
     key=Key.TELEPORT
-    delay=0.2
+    delay=0.15
     rep_interval=0.3
     skill_cool_down=0
     ground_skill=False
@@ -224,8 +224,8 @@ class Teleport(BaseSkill):
 class Skill_Q(BaseSkill):
     _display_name ='狂風千刃(a4)'
     key=Key.SKILL_Q
-    delay=0.73
-    rep_intexrval=0.2
+    delay=0.55
+    rep_intexrval=0.13
     skill_cool_down=3
     ground_skill=False
     buff_time=0
@@ -275,12 +275,12 @@ class Skill_A(BaseSkill):
 class Skill_S(BaseSkill):
     _display_name ='瞬閃斬擊(a2)'
     key=Key.SKILL_S
-    delay=0.45
-    rep_interval=0.13
+    delay=0.3
+    rep_interval=0.2
     skill_cool_down=2
     ground_skill=True
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.15
     skill_image = IMAGE_DIR + 'skill_s.png'
 
     def main(self):
