@@ -483,16 +483,22 @@ class Fall(Command):
     from their starting position.
     """
 
-    def __init__(self):
+    def __init__(self, direction='', duration='0.1'):
         super().__init__(locals())
+        self.direction = settings.validate_horizontal_arrows(direction)
+        self.duration = float(duration)
 
     def main(self):
         utils.wait_for_is_standing(500)
         key_down('down')
         if config.stage_fright and utils.bernoulli(0.5):
             time.sleep(utils.rand_float(0.2, 0.4))
-        press(config.jump_button, 2, down_time=0.1)
+        press(config.jump_button, 2, down_time=self.duration)
         key_up('down')
+        if self.direction != '':
+            key_down(self.direction)
+            press(config.jump_button, 2, down_time=0.1)
+            key_up(self.direction)
         time.sleep(utils.rand_float(0.08, 0.12))
 
 
