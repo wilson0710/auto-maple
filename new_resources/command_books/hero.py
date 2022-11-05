@@ -88,7 +88,7 @@ def step(direction, target):
     if direction == 'down':
         down_duration = 0.04
         if abs(d_y) > 20:
-            down_duration = 0.2
+            down_duration = 0.14
         elif abs(d_y) > 13:
             down_duration = 0.1
         
