@@ -8,5 +8,6 @@ $, target=platforms, value=131~151*16|117~137*26|b131~151*35|b27~131*39|b5~26*35
 *, x=41.000, y=39.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     SkillCombination, direction=left, jump=true, target_skills=skill_2|skill_3|flashjump+skill_q
 *, x=81, y=39, frequency=6, skip=true, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Skill_T, direction=, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     UpJump, jump=false, direction=right, combo=true
     Skill_1, direction=, jump=false

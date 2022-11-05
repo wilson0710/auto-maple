@@ -495,8 +495,8 @@ class Fall(Command):
         key_up('down')
         if self.direction != '':
             key_down(self.direction)
-            press(config.jump_button, 1, down_time=0.05,up_time=0.03)
-            key_up(self.direction)
+            press(config.jump_button, 2, down_time=0.05,up_time=0.03)
+            key_up(self.direction,up_time=0.03)
         time.sleep(utils.rand_float(0.02, 0.03))
 
 
