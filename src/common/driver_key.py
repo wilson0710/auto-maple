@@ -8,7 +8,7 @@ import platform
 
 driver_dir_path = r'driver'
 kmclass_dll_path = os.path.abspath(driver_dir_path+'/win10/kmclassdll.dll')
-kmclass_driver_path = os.path.abspath(driver_dir_path+'/win10/kmclass.sys').encode(encoding='utf-8')
+kmclass_driver_path = os.path.abspath(driver_dir_path+'/kmclass.sys').encode(encoding='utf-8')
 
 class DriverKey():
     def __init__(self) :

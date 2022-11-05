@@ -3,7 +3,7 @@
 from src.common import config, settings, utils
 import time
 import math
-from src.routine.components import Command, SkillCombination, Fall
+from src.routine.components import Command, SkillCombination, Fall,BaseSkill
 from src.common.vkeys import press, key_down, key_up
 
 ### image dir
@@ -17,6 +17,11 @@ class Key:
     ROPE = 'c'
     # Buffs
     BUFF_1 = "f"
+    BUFF_V = "v"
+    BUFF_S = "s"
+    BUFF_G = "g"
+    BUFF_R = "r"
+    BUFF_F4 = "f4"
     # Buffs Toggle
 
     # Attack Skills
@@ -27,6 +32,7 @@ class Key:
     SKILL_W = 'w' # 空間斬
     SKILL_A = 'a' # 劍之幻象
     SKILL_X = 'x' # 閃光斬
+    SKILL_T = 't' # 蜘蛛之鏡
 
 #########################
 #       Commands        #
@@ -57,18 +63,24 @@ def step(direction, target):
                 key_up(direction)
             utils.wait_for_is_standing(200)
         else:
-            SkillCombination(direction='',jump='true',target_skills='skill_w|skill_3|skill_a|skill_q').execute()
+            SkillCombination(direction='',jump='true',target_skills='skill_a|skill_q').execute()
             # time.sleep(utils.rand_float(0.05, 0.12))
             utils.wait_for_is_standing(200)
     
     if direction == 'up':
         utils.wait_for_is_standing(500)
         if abs(d_y) > 6 :
-            if abs(d_y) > 23:
+            if abs(d_y) > 36:
                 press(Key.JUMP, 1)
                 time.sleep(utils.rand_float(0.1, 0.15))
-            press(Key.ROPE, 1)
-            time.sleep(utils.rand_float(1.2, 1.5))
+                press(Key.ROPE, 1)
+                time.sleep(utils.rand_float(1.2, 1.5))
+            elif abs(d_y) <21:
+                UpJump().execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_a|skill_1').execute()
+            else:
+                press(Key.ROPE, 1)
+                time.sleep(utils.rand_float(1.2, 1.5))
             utils.wait_for_is_standing(300)
         else:
             press(Key.JUMP, 1)
@@ -76,20 +88,14 @@ def step(direction, target):
     if direction == 'down':
         if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
             print("down stair")
-            time.sleep(utils.rand_float(0.05, 0.07))
-            press(Key.JUMP, 1)
-            time.sleep(utils.rand_float(0.08, 0.12))
-            key_up('down')
-            if abs(d_x) > 5:
+            if abs(d_x) > 3:
                 if d_x > 0:
-                    key_down('right')
-                    press(Key.JUMP, 1)
-                    key_up('right')
+                    Fall(direction='right',duration='0.04').execute()
                 else:
-                    key_down('left')
-                    press(Key.JUMP, 1)
-                    key_up('left')
-            SkillCombination(direction='',jump='false',target_skills='skill_w|skill_3|skill_a|skill_1').execute()
+                    Fall(direction='left',duration='0.04').execute()
+            else:
+                Fall(direction='',duration='0.04').execute()
+            SkillCombination(direction='',jump='false',target_skills='skill_a|skill_1').execute()
         time.sleep(utils.rand_float(0.02, 0.05))
       
 
@@ -163,14 +169,26 @@ class Buff(Command):
         now = time.time()
         utils.wait_for_is_standing(2000)
         if self.cd120_buff_time == 0 or now - self.cd120_buff_time > 120:
-            press(Key.BUFF_1, 2,up_time=0.5)
+            press(Key.BUFF_R, 1,up_time=0.3)
+            time.sleep(utils.rand_float(0.1, 0.3))
+            press(Key.BUFF_1, 1,up_time=0.4)
             time.sleep(utils.rand_float(0.1, 0.3))
             self.cd120_buff_time = now
+        if self.cd150_buff_time == 0 or now - self.cd150_buff_time > 150:
+            press(Key.BUFF_G, 1,up_time=0.5)
+            time.sleep(utils.rand_float(0.2, 0.3))
+            self.cd150_buff_time = now
         if self.cd180_buff_time == 0 or now - self.cd180_buff_time > 180:
+            press(Key.BUFF_F4, 1,up_time=0.3)
+            time.sleep(utils.rand_float(0.2, 0.3))
+            press(Key.BUFF_V, 1,up_time=0.2)
+            time.sleep(utils.rand_float(0.2, 0.3))
             self.cd180_buff_time = now
         if self.cd200_buff_time == 0 or now - self.cd200_buff_time > 200:
             self.cd200_buff_time = now
         if self.cd240_buff_time == 0 or now - self.cd240_buff_time > 240:
+            press(Key.BUFF_S, 1,up_time=0.2)
+            time.sleep(utils.rand_float(0.2, 0.3))
             self.cd240_buff_time = now
         if self.cd900_buff_time == 0 or now - self.cd900_buff_time > 900:
             # press(Key.BUFF_2, 2)
@@ -186,7 +204,7 @@ class FlashJump(Command):
     """Performs a flash jump in the given direction."""
     _display_name = '二段跳'
 
-    def __init__(self, direction="left",triple_jump="False",fast_jump="true"):
+    def __init__(self, direction="left",triple_jump="False",fast_jump="true",jump='true',combo='true'):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.triple_jump = settings.validate_boolean(triple_jump)
@@ -197,7 +215,7 @@ class FlashJump(Command):
         if self.fast_jump:
             time.sleep(utils.rand_float(0.09, 0.12)) # fast flash jump gap
         else:
-            time.sleep(utils.rand_float(0.3, 0.4)) # slow flash jump gap
+            time.sleep(utils.rand_float(0.25, 0.35)) # slow flash jump gap
         if self.direction == 'up':
             press(Key.FLASH_JUMP, 1)
         else:
@@ -206,7 +224,7 @@ class FlashJump(Command):
                 time.sleep(utils.rand_float(0.05, 0.08))
                 press(Key.FLASH_JUMP, 1,down_time=0.07,up_time=0.04) # if this job can do triple jump
         key_up(self.direction,up_time=0.01)
-        time.sleep(utils.rand_float(0.03, 0.06))
+        time.sleep(utils.rand_float(0.04, 0.06))
 			
 class UpJump(Command):
     """Performs a up jump in the given direction."""
@@ -217,10 +235,10 @@ class UpJump(Command):
         self.direction = settings.validate_arrows(direction)
 
     def main(self):
-        utils.wait_for_is_standing(800)
+        utils.wait_for_is_standing(500)
         press(Key.UP_JUMP, 1)
         key_down(self.direction)
-        time.sleep(utils.rand_float(0.3, 0.5))
+        time.sleep(utils.rand_float(0.3, 0.4))
         if 'left' in self.direction or 'right' in self.direction:
             press(Key.JUMP, 1)
         key_up(self.direction)
@@ -260,7 +278,7 @@ class Skill_Q(Command):
             key_down(self.direction)
         press(Key.SKILL_Q, 1)
         key_up(self.direction,up_time=0.02)
-        time.sleep(utils.rand_float(0.5, 0.65))
+        time.sleep(utils.rand_float(0.4, 0.45))
 
 # 狂暴攻擊
 class Skill_1(Command):
@@ -275,12 +293,12 @@ class Skill_1(Command):
     def main(self):
         if self.jump:
             self.player_jump(self.direction)
-            time.sleep(utils.rand_float(0.02, 0.05))
+            time.sleep(utils.rand_float(0.03, 0.05))
         else:
             key_down(self.direction)
         press(Key.SKILL_1, 1)
-        key_up(self.direction,up_time=0.02)
-        time.sleep(utils.rand_float(0.4, 0.55))
+        key_up(self.direction,up_time=0.01)
+        time.sleep(utils.rand_float(0.35, 0.40))
 
 # 憤怒爆發
 class Skill_2(Command):
@@ -301,7 +319,7 @@ class Skill_2(Command):
             #     time.sleep(utils.rand_float(0.1, 0.2))
             key_up(self.direction)
             self.set_my_last_cooldown(time.time())
-            time.sleep(utils.rand_float(0.7, 0.8))
+            time.sleep(utils.rand_float(0.6, 0.7))
 
 # 靈氣之刃
 class Skill_3(Command):
@@ -328,7 +346,7 @@ class Skill_3(Command):
             #     time.sleep(utils.rand_float(0.1, 0.2))
             key_up(self.direction)
             self.set_my_last_cooldown(time.time())
-            time.sleep(utils.rand_float(0.44, 0.55))
+            time.sleep(utils.rand_float(0.4, 0.45))
 
 # 空間斬
 class Skill_W(Command):
@@ -351,7 +369,7 @@ class Skill_W(Command):
             press(Key.SKILL_W, 1)
             key_up(self.direction,up_time=0.02)
             self.set_my_last_cooldown(time.time())
-            time.sleep(utils.rand_float(1.1, 1.3))
+            time.sleep(utils.rand_float(1.3, 1.4))
 
 # 劍之幻象
 class Skill_A(Command):
@@ -376,7 +394,7 @@ class Skill_A(Command):
             press(Key.SKILL_A, 1, up_time=0.1)
             key_up(self.direction)
             self.set_my_last_cooldown(time.time())
-            time.sleep(utils.rand_float(0.5, 0.6))
+            time.sleep(utils.rand_float(0.5, 0.55))
 
 # 閃光斬
 class Skill_X(Command):
@@ -393,14 +411,22 @@ class Skill_X(Command):
         if self.check_is_skill_ready():
             if self.jump:
                 utils.wait_for_is_standing(500)
-                key_down(self.direction)
                 press(Key.JUMP, 1)
-            else:
-                key_down(self.direction)
+            key_down(self.direction)
             time.sleep(utils.rand_float(0.03, 0.05))
             press(Key.SKILL_X, 1, up_time=0.1)
             # if config.stage_fright and utils.bernoulli(0.7):
             #     time.sleep(utils.rand_float(0.1, 0.2))
             key_up(self.direction)
             self.set_my_last_cooldown(time.time())
-            time.sleep(utils.rand_float(0.4, 0.52))
+            time.sleep(utils.rand_float(0.4, 0.46))
+
+class Skill_T(BaseSkill):
+    _display_name ='蜘蛛之鏡'
+    key=Key.SKILL_T
+    delay=0.8
+    rep_interval=0.25
+    skill_cool_down=240
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3

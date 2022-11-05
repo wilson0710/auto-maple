@@ -491,9 +491,7 @@ class Fall(Command):
     def main(self):
         utils.wait_for_is_standing(500)
         key_down('down')
-        if config.stage_fright and utils.bernoulli(0.5):
-            time.sleep(utils.rand_float(0.2, 0.4))
-        press(config.jump_button, 2, down_time=self.duration)
+        press(config.jump_button, 1, down_time=self.duration)
         key_up('down')
         if self.direction != '':
             key_down(self.direction)

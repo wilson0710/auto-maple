@@ -1,7 +1,6 @@
 # 自動打黑王
 # 誤傳地圖自動回來
 # 自動吃加倍
-# 自動輪燒
 # 測謊檢測
 # 後台按鍵
 # VM控制
@@ -19,3 +18,5 @@
 # 全螢幕
 # 腳本預設載入command book routine fullscreen rent_frenzy
 # 所有command條件判定觸發
+# 自動輪燒
+# 驅動按鍵

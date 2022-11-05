@@ -181,10 +181,31 @@ class Capture:
                 
                 # Determine the player's position
                 player = utils.multi_match(minimap, PLAYER_TEMPLATE, threshold=0.8)
+                
+                # find left half or right half if didnt find complete player_template
+                find_left_half = False
+                find_right_half = False
+                if not player:
+                    p_height, p_width = PLAYER_TEMPLATE.shape
+                    left_half_player = PLAYER_TEMPLATE[0:p_height, 0 : p_width //2]
+                    player = utils.multi_match(minimap, left_half_player, threshold=0.8)
+                    if player:
+                        find_left_half = True
+                if not player:
+                    p_height, p_width = PLAYER_TEMPLATE.shape
+                    right_half_player = PLAYER_TEMPLATE[0:p_height, p_width //2+1 : p_width]
+                    player = utils.multi_match(minimap, right_half_player, threshold=0.8)
+                    if player:
+                        find_right_half = True
+
                 if player:
                     # check is_standing
                     last_player_pos = config.player_pos
                     config.player_pos = utils.convert_to_relative(player[0], minimap)
+                    if find_left_half:
+                        config.player_pos = (config.player_pos[0]+2,config.player_pos[1])
+                    if find_right_half:
+                        config.player_pos = (config.player_pos[0]-2,config.player_pos[1])
                     done_check_is_standing = False
                     is_bottom = False
                     # print(config.player_pos)
