@@ -40,7 +40,7 @@ def create_desktop_shortcut():
     shortcut_path = os.path.join(shell.SpecialFolders('Desktop'), 'Auto Maple.lnk')
     shortcut = shell.CreateShortCut(shortcut_path)
     shortcut.Targetpath = target
-    shortcut.Arguments = flag + f' \"C:/Users/user/miniconda3/Scripts/activate & cd {cwd} & python main.py\"'
+    shortcut.Arguments = flag + f' \"C:/Users/user/anaconda3/Scripts/activate & cd {cwd} & python main.py -dk\"'
     shortcut.IconLocation = os.path.join(cwd, 'assets', 'icon.ico')
     try:
         shortcut.save()
