@@ -102,8 +102,8 @@ class Listener(Configurable):
     @staticmethod
     def recalibrate_minimap():
         window_name = "MapleStory"
-        hwnd = win32gui.FindWindow(None, window_name)
-        win32gui.SetForegroundWindow(hwnd)
+        # hwnd = win32gui.FindWindow(None, window_name)
+        # win32gui.SetForegroundWindow(hwnd)
         config.capture.calibrated = False
         while not config.capture.calibrated:
             time.sleep(0.01)
