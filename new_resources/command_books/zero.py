@@ -212,7 +212,7 @@ class Teleport(BaseSkill):
     _display_name ='爆裂衝刺'
     _distance = 27
     key=Key.TELEPORT
-    delay=0.15
+    delay=0.2
     rep_interval=0.3
     skill_cool_down=0
     ground_skill=False
@@ -238,10 +238,10 @@ class Skill_Q(BaseSkill):
             if config.player_states['current_tag'] == 'beta':
                 utils.wait_for_is_standing(800)
             latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
-            if latest_beta_tag_duration > 3.1 and config.player_states['current_tag'] == 'beta':
+            if latest_beta_tag_duration > 3.2 and config.player_states['current_tag'] == 'beta':
                 config.player_states['alpha_tag'] = time.time()
-            elif latest_beta_tag_duration < 3.1 and config.player_states['current_tag'] == 'beta':
-                time.sleep(3.1-(time.time() - config.player_states['beta_tag']))
+            elif latest_beta_tag_duration < 3.2 and config.player_states['current_tag'] == 'beta':
+                time.sleep(3.2-(time.time() - config.player_states['beta_tag']))
                 config.player_states['alpha_tag'] = time.time()
             config.player_states['current_tag'] = 'alpha'
         else:
@@ -265,10 +265,10 @@ class Skill_A(BaseSkill):
             if config.player_states['current_tag'] == 'beta':
                 utils.wait_for_is_standing(800)
             latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
-            if latest_beta_tag_duration > 3.1 and config.player_states['current_tag'] == 'beta':
+            if latest_beta_tag_duration > 3.2 and config.player_states['current_tag'] == 'beta':
                 config.player_states['alpha_tag'] = time.time()
-            elif latest_beta_tag_duration < 3.1 and config.player_states['current_tag'] == 'beta':
-                time.sleep(3.1-(time.time() - config.player_states['beta_tag']))
+            elif latest_beta_tag_duration < 3.2 and config.player_states['current_tag'] == 'beta':
+                time.sleep(3.2-(time.time() - config.player_states['beta_tag']))
                 config.player_states['alpha_tag'] = time.time()
             config.player_states['current_tag'] = 'alpha'
         else:
@@ -293,10 +293,10 @@ class Skill_S(BaseSkill):
             if config.player_states['current_tag'] == 'beta':
                 utils.wait_for_is_standing(800)
             latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
-            if latest_beta_tag_duration > 3.1 and config.player_states['current_tag'] == 'beta':
+            if latest_beta_tag_duration > 3.2 and config.player_states['current_tag'] == 'beta':
                 config.player_states['alpha_tag'] = time.time()
-            elif latest_beta_tag_duration < 3.1 and config.player_states['current_tag'] == 'beta':
-                time.sleep(3.1-(time.time() - config.player_states['beta_tag']))
+            elif latest_beta_tag_duration < 3.2 and config.player_states['current_tag'] == 'beta':
+                time.sleep(3.2-(time.time() - config.player_states['beta_tag']))
                 config.player_states['alpha_tag'] = time.time()
             config.player_states['current_tag'] = 'alpha'
         else:
@@ -320,10 +320,10 @@ class Skill_D(BaseSkill):
             if config.player_states['current_tag'] == 'beta':
                 utils.wait_for_is_standing(800)
             latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
-            if latest_beta_tag_duration > 3.1 and config.player_states['current_tag'] == 'beta':
+            if latest_beta_tag_duration > 3.2 and config.player_states['current_tag'] == 'beta':
                 config.player_states['alpha_tag'] = time.time()
-            elif latest_beta_tag_duration < 3.1 and config.player_states['current_tag'] == 'beta':
-                time.sleep(3.1-(time.time() - config.player_states['beta_tag']))
+            elif latest_beta_tag_duration < 3.2 and config.player_states['current_tag'] == 'beta':
+                time.sleep(3.2-(time.time() - config.player_states['beta_tag']))
                 config.player_states['alpha_tag'] = time.time()
             config.player_states['current_tag'] = 'alpha'
         else:
@@ -348,10 +348,10 @@ class Skill_R(BaseSkill):
             if config.player_states['current_tag'] == 'alpha':
                 utils.wait_for_is_standing(800)
             latest_alpha_tag_duration = time.time() - config.player_states['alpha_tag']
-            if latest_alpha_tag_duration > 3.1 and config.player_states['current_tag'] == 'alpha':
+            if latest_alpha_tag_duration > 3.2 and config.player_states['current_tag'] == 'alpha':
                 config.player_states['beta_tag'] = time.time()
-            elif latest_alpha_tag_duration < 3.1 and config.player_states['current_tag'] == 'alpha':
-                time.sleep(3.1-(time.time() - config.player_states['alpha_tag']))
+            elif latest_alpha_tag_duration < 3.2 and config.player_states['current_tag'] == 'alpha':
+                time.sleep(3.2-(time.time() - config.player_states['alpha_tag']))
                 config.player_states['beta_tag'] = time.time()
             config.player_states['current_tag'] = 'beta'
         else:
@@ -375,10 +375,10 @@ class Skill_W(BaseSkill):
             if config.player_states['current_tag'] == 'alpha':
                 utils.wait_for_is_standing(800)
             latest_alpha_tag_duration = time.time() - config.player_states['alpha_tag']
-            if latest_alpha_tag_duration > 3.1 and config.player_states['current_tag'] == 'alpha':
+            if latest_alpha_tag_duration > 3.2 and config.player_states['current_tag'] == 'alpha':
                 config.player_states['beta_tag'] = time.time()
-            elif latest_alpha_tag_duration < 3.1 and config.player_states['current_tag'] == 'alpha':
-                time.sleep(3.1-(time.time() - config.player_states['alpha_tag']))
+            elif latest_alpha_tag_duration < 3.2 and config.player_states['current_tag'] == 'alpha':
+                time.sleep(3.2-(time.time() - config.player_states['alpha_tag']))
                 config.player_states['beta_tag'] = time.time()
             config.player_states['current_tag'] = 'beta'
         else:
@@ -402,10 +402,10 @@ class Skill_E(BaseSkill):
             if config.player_states['current_tag'] == 'alpha':
                 utils.wait_for_is_standing(800)
             latest_alpha_tag_duration = time.time() - config.player_states['alpha_tag']
-            if latest_alpha_tag_duration > 3.1 and config.player_states['current_tag'] == 'alpha':
+            if latest_alpha_tag_duration > 3.2 and config.player_states['current_tag'] == 'alpha':
                 config.player_states['beta_tag'] = time.time()
-            elif latest_alpha_tag_duration < 3.1 and config.player_states['current_tag'] == 'alpha':
-                time.sleep(3.1-(time.time() - config.player_states['alpha_tag']))
+            elif latest_alpha_tag_duration < 3.2 and config.player_states['current_tag'] == 'alpha':
+                time.sleep(3.2-(time.time() - config.player_states['alpha_tag']))
                 config.player_states['beta_tag'] = time.time()
             config.player_states['current_tag'] = 'beta'
         else:
