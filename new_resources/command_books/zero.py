@@ -282,7 +282,7 @@ class Skill_S(BaseSkill):
     key=Key.SKILL_S
     delay=0.3
     rep_interval=0.2
-    skill_cool_down=2
+    skill_cool_down=1
     ground_skill=False
     buff_time=0
     combo_delay = 0.15
@@ -335,8 +335,8 @@ class Skill_D(BaseSkill):
 class Skill_R(BaseSkill):
     _display_name ='巨力重擊(b4)'
     key=Key.SKILL_R
-    delay=1.15
-    rep_interval=0.25
+    delay=1.2
+    rep_interval=0.2
     rep_interval_increase = 0.3
     skill_cool_down=3
     ground_skill=True

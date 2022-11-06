@@ -155,7 +155,7 @@ class Notifier:
                         skill_match = utils.multi_match(is_ready_region, skill_template, threshold=0.9)
                         if len(skill_match) > 0:
                             print(command_book[key]._display_name , " skill_match")
-                            image_matched = True
+                            # image_matched = True
                             command_book[key].set_is_skill_ready(True)
 
                 # Check for rune
