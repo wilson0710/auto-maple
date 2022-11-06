@@ -308,7 +308,9 @@ class Command(Component):
                 return False
         return True
 
-    def get_my_last_cooldown(self,id):
+    def get_my_last_cooldown(self,id=''):
+        if id == '':
+            id = self._custom_id
         if id in config.skill_cd_timer:
             return config.skill_cd_timer[id]
         else: 

@@ -160,7 +160,7 @@ def get_is_in_skill_buff(skill):
             break
     # print(config.skill_cd_timer[target_skill_name])
     # print(command_book[target_skill_name].buff_time)
-    if target_skill_name and time.time() - float(config.skill_cd_timer[target_skill_name]) < int(command_book[target_skill_name].buff_time):
+    if target_skill_name and time.time() - float(config.skill_cd_timer[target_skill_name]) < int(command_book[target_skill_name.lower()].buff_time):
         print("in skill buff : ",skill)
         return True
     else:

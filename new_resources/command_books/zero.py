@@ -425,8 +425,8 @@ class Buff_F1(BaseSkill):
     combo_delay = 0.3
     skill_image = IMAGE_DIR + 'buff_f1.png'
     def main(self):
-        print(self._custom_id, "武公寶珠 last time : ", time.time() - self.get_my_last_cooldown,"s")
-        print(self._custom_id, "武公寶珠 : " ,self.check_is_skill_ready())
+        print(self._custom_id, "武公寶珠 last time : ", str(time.time() - self.get_my_last_cooldown()),"s")
+        print(self._custom_id, "武公寶珠 : " ,str(self.check_is_skill_ready()))
         super().main()
 
 class Skill_FA1(BaseSkill):
