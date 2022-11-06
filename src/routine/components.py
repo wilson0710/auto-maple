@@ -338,7 +338,7 @@ class Command(Component):
         now = time.time()
         if now - last_cool_down > cls.skill_cool_down:
             config.is_skill_ready_collector[cls.__name__] = True
-            print(cls.__name__,cls._display_name," is ready to use CD:",cls.skill_cool_down)
+            # print(cls.__name__,cls._display_name," is ready to use CD:",cls.skill_cool_down)
             return True
         else:
             config.is_skill_ready_collector[cls.__name__] = False
