@@ -87,6 +87,8 @@ class Adjust(Command):
     def main(self):
         counter = self.max_steps
         toggle = True
+        d_x = self.target[0] - config.player_pos[0]
+        d_y = self.target[1] - config.player_pos[1]
         while config.enabled and counter > 0 and (abs(d_x) > threshold or abs(d_y) > threshold):
             if toggle:
                 d_x = self.target[0] - config.player_pos[0]
@@ -115,7 +117,8 @@ class Adjust(Command):
                         Fall(duration=0.2).execute()
                         time.sleep(utils.rand_float(0.05, 0.1))
                     counter -= 1
-            error = utils.distance(config.player_pos, self.target)
+            d_x = self.target[0] - config.player_pos[0]
+            d_y = self.target[1] - config.player_pos[1]
             toggle = not toggle
 
 class Buff(Command):
