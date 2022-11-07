@@ -84,8 +84,7 @@ class Adjust(Command):
     def main(self):
         counter = self.max_steps
         toggle = True
-        error = utils.distance(config.player_pos, self.target)
-        while config.enabled and counter > 0 and error > settings.adjust_tolerance:
+        while config.enabled and counter > 0 and (abs(d_x) > threshold or abs(d_y) > threshold):
             if toggle:
                 d_x = self.target[0] - config.player_pos[0]
                 # threshold = settings.adjust_tolerance / math.sqrt(2)

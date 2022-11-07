@@ -112,10 +112,8 @@ class Adjust(Command):
     def main(self):
         counter = self.max_steps
         toggle = True
-        error = utils.distance(config.player_pos, self.target)
-        while config.enabled and counter > 0 and error > settings.adjust_tolerance:
+        while config.enabled and counter > 0 and (abs(d_x) > threshold or abs(d_y) > threshold):
             if toggle:
-                d_x = self.target[0] - config.player_pos[0]
                 threshold = settings.adjust_tolerance
                 if abs(d_x) > threshold:
                     walk_counter = 0
@@ -133,7 +131,6 @@ class Adjust(Command):
                         key_up('right')
                     counter -= 1
             else:
-                d_y = self.target[1] - config.player_pos[1]
                 if abs(d_y) > settings.adjust_tolerance:
                     if d_y < 0:
                         Teleport(direction='up').execute()
@@ -141,7 +138,8 @@ class Adjust(Command):
                         Teleport(direction='down').execute()
                         time.sleep(utils.rand_float(0.05, 0.1))
                     counter -= 1
-            error = utils.distance(config.player_pos, self.target)
+            d_x = self.target[0] - config.player_pos[0]
+            d_y = self.target[1] - config.player_pos[1]
             toggle = not toggle
 
 class Buff(Command):
