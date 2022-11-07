@@ -185,6 +185,7 @@ class Capture:
                 # find left half or right half if didnt find complete player_template
                 find_left_half = False
                 find_right_half = False
+                find_bottom_half = False
                 if not player:
                     p_height, p_width = PLAYER_TEMPLATE.shape
                     left_half_player = PLAYER_TEMPLATE[0:p_height, 0 : p_width //2]
@@ -197,7 +198,12 @@ class Capture:
                     player = utils.multi_match(minimap, right_half_player, threshold=0.8)
                     if player:
                         find_right_half = True
-
+                if not player:
+                    p_height, p_width = PLAYER_TEMPLATE.shape
+                    right_half_player = PLAYER_TEMPLATE[p_height //2+1:p_height, 0 : p_width]
+                    player = utils.multi_match(minimap, right_half_player, threshold=0.8)
+                    if player:
+                        find_bottom_half = True
                 if player:
                     # check is_standing
                     last_player_pos = config.player_pos
@@ -206,6 +212,8 @@ class Capture:
                         config.player_pos = (config.player_pos[0]+2,config.player_pos[1])
                     if find_right_half:
                         config.player_pos = (config.player_pos[0]-2,config.player_pos[1])
+                    if find_bottom_half:
+                        config.player_pos = (config.player_pos[0],config.player_pos[1]-1)
                     done_check_is_standing = False
                     is_bottom = False
                     # print(config.player_pos)
