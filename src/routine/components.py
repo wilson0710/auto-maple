@@ -597,7 +597,7 @@ class BaseSkill(Command):
                 self.player_jump(self.direction)
                 time.sleep(utils.rand_float(0.02, 0.05))
             else:
-                key_down(self.direction,down_time=0.03)
+                key_down(self.direction)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
                 key_down(self.key,down_time=0.07)

@@ -254,7 +254,7 @@ class Skill_DD(BaseSkill):
     skill_cool_down=27
     ground_skill=True
     buff_time=50
-    combo_delay = 0.15
+    combo_delay = 0.2
 
 class Skill_Q(BaseSkill):
     _display_name ='落雷凝聚'
@@ -281,12 +281,12 @@ class Skill_W(BaseSkill):
 class Skill_E(BaseSkill):
     _display_name ='暴風雪'
     key=Key.SKILL_E
-    delay=0.55
+    delay=1
     rep_interval=0.2
     skill_cool_down=43
     ground_skill=True
     buff_time=0
-    combo_delay = 0.15
+    combo_delay = 1
     skill_image = IMAGE_DIR + 'skill_e.png'
 
 class Skill_1(BaseSkill):

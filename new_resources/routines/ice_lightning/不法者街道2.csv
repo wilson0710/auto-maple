@@ -11,7 +11,7 @@ $, target=platforms, value=b37
 @, label=regular
 *, x=90, y=37.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     TeleportCombination, direction=up, combo_skill=skill_e|skill_a, combo_direction=left, jump=False, combo2=true
-    TeleportCombination, direction=down, combo_skill=skill_a, combo_direction=, jump=False, combo2=true
+    TeleportCombination, direction=down, combo_skill=skill_3|skill_a, combo_direction=, jump=False, combo2=true
 *, x=131, y=37.000, frequency=1, skip=False, adjust=true, active_if_skill_ready=, active_if_skill_cd=skill_w, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     TeleportCombination, direction=up, combo_skill=skill_s|skill_a, combo_direction=right, jump=False, combo2=true
     TeleportCombination, direction=down, combo_skill=skill_a, combo_direction=left, jump=False, combo2=true
@@ -21,13 +21,20 @@ $, target=platforms, value=b37
 @, label=ice_age
 *, x=134, y=37.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     TeleportCombination, direction=up, combo_skill=skill_w, combo_direction=, jump=False, combo2=true
+    TeleportCombination, direction=down, combo_skill=skill_a, combo_direction=left, jump=False, combo2=true
 *, x=65.000, y=37.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     TeleportCombination, direction=left, combo_skill=skill_1|skill_s|skill_a, combo_direction=, jump=False, combo2=true
 *, x=10, y=37, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=skill_1, active_if_not_in_skill_buff=
     TeleportCombination, direction=right, combo_skill=skill_a, combo_direction=right, jump=False, combo2=true
     TeleportCombination, direction=right, combo_skill=skill_s|skill_a, combo_direction=left, jump=False, combo2=true
+*, x=90, y=37, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=skill_1, active_if_not_in_skill_buff=
+    TeleportCombination, direction=up, combo_skill=skill_s|skill_a, combo_direction=left, jump=False, combo2=true
+    TeleportCombination, direction=up, combo_skill=skill_a, combo_direction=, jump=False, combo2=False
+    TeleportCombination, direction=down, combo_skill=skill_a, combo_direction=, jump=False, combo2=true
+    TeleportCombination, direction=down, combo_skill=skill_a, combo_direction=, jump=False, combo2=true
 *, x=160, y=37.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=skill_1, active_if_not_in_skill_buff=
     TeleportCombination, direction=up, combo_skill=skill_s|skill_a, combo_direction=left, jump=False, combo2=false
+    Wait, duration=1
 *, x=69.000, y=37.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=skill_1
     TeleportCombination, direction=up, combo_skill=skill_e|skill_a, combo_direction=left, jump=False, combo2=true
     TeleportCombination, direction=down, combo_skill=skill_3|skill_s|skill_a, combo_direction=left, jump=False, combo2=true
