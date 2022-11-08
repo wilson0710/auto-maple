@@ -4,7 +4,7 @@ $, target=platforms, value=b37
 @, label=left
 *, x=63, y=37.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=skill_q, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     TeleportCombination, direction=left, combo_skill=skill_q, combo_direction=right, jump=False, combo2=False
-    Skill_D, direction=, jump=false, rep=1, duration=0.2, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Skill_D, direction=, jump=false, rep=2, duration=0.2, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     TeleportCombination, direction=up, combo_skill=skill_dd, combo_direction=, jump=False, combo2=false
     TeleportCombination, direction=down, combo_skill=skill_s|skill_a, combo_direction=left, jump=False, combo2=true
 
