@@ -130,8 +130,7 @@ class Bot(Configurable):
                 press("left", 1, down_time=0.1,up_time=0.2) 
             elif ii == 2:
                 press("right", 1, down_time=0.2,up_time=0.2) 
-            time.sleep(3.1) 
-            press(self.config['Interact'], 1, down_time=0.1,up_time=0.3) # Inherited from Configurable
+            press(self.config['Interact'], 1, down_time=0.1,up_time=0.4) # Inherited from Configurable
             print('\nSolving rune:')
             for _ in range(3):
                 if self.rune_active == False:
@@ -166,6 +165,7 @@ class Bot(Configurable):
                         break
                 else:
                     time.sleep(0.1)
+            time.sleep(3) 
     
     def load_commands(self, file):
         """Prompts the user to select a command module to import. Updates config's command book."""

@@ -59,7 +59,7 @@ class Capture:
         """Initializes this Capture object's main thread."""
 
         config.capture = self
-        self.capture_gap_sec = 0.025
+        self.capture_gap_sec = 0.022
         self.frame = None
         self.minimap = None
         self.minimap_ratio = 1
