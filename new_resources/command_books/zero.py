@@ -90,16 +90,17 @@ def step(direction, target):
         print("down stair")
         # if abs(d_y) > 3 :
         Teleport(direction=direction).execute()
-        if abs(d_x) > 3:
-            if d_x > 0:
-                key_down('right')
-                press(Key.JUMP, 1)
-                key_up('right')
-            else:
-                key_down('left')
-                press(Key.JUMP, 1)
-                key_up('left')
+        # if abs(d_x) > 3:
+        #     if d_x > 0:
+        #         key_down('right')
+        #         press(Key.JUMP, 1)
+        #         key_up('right')
+        #     else:
+        #         key_down('left')
+        #         press(Key.JUMP, 1)
+        #         key_up('left')
         time.sleep(utils.rand_float(0.05, 0.08))
+        # utils.wait_for_is_standing(300)
 
 class Adjust(Command):
     """Fine-tunes player position using small movements."""

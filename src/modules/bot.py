@@ -124,12 +124,10 @@ class Bot(Configurable):
         adjust(*self.rune_pos).execute()
         time.sleep(0.2)   
         for ii in range(3):
-            if self.rune_active == False:
-                break
             if ii == 1:
-                press("left", 1, down_time=0.1,up_time=0.2) 
+                press("left", 1, down_time=0.1,up_time=0.1) 
             elif ii == 2:
-                press("right", 1, down_time=0.2,up_time=0.2) 
+                press("right", 1, down_time=0.2,up_time=0.1) 
             press(self.config['Interact'], 1, down_time=0.1,up_time=0.4) # Inherited from Configurable
             print('\nSolving rune:')
             for _ in range(3):
@@ -164,7 +162,9 @@ class Bot(Configurable):
                         click((config.capture.window['left']+700,config.capture.window['top']+120), button='right')
                         break
                 else:
-                    time.sleep(0.1)
+                    press("left", 1, down_time=0.05,up_time=0.1)
+            if self.rune_active == False:
+                break
             time.sleep(3) 
     
     def load_commands(self, file):
