@@ -1,6 +1,5 @@
 """An interpreter that reads and executes user-created routines."""
 
-from genericpath import exists
 import threading
 import time
 import git
@@ -79,6 +78,7 @@ class Bot(Configurable):
             print('\n[~] Initialized detection algorithm')
         
         self.ready = True
+        solve_rune_fail_count = 0
 
         while True:
             if config.enabled and len(config.routine) > 0:
@@ -95,15 +95,29 @@ class Bot(Configurable):
                 # Highlight the current Point
                 config.gui.view.routine.select(config.routine.index)
                 config.gui.view.details.display_info(config.routine.index)
+                
+                # 
+                if settings.auto_change_channel and config.should_change_channel:
+                    components.ChangeChannel(max_rand=40).execute()
 
                 # Execute next Point in the routine
                 element = config.routine[config.routine.index]
-                if self.rune_active and isinstance(element, Point) \
+                if self.rune_active and \
+                    (isinstance(element, Point) \
                         and (element.location == self.rune_closest_pos \
-                        or utils.distance(config.bot.rune_pos, element.location) <= 30):
+                            or utils.distance(config.bot.rune_pos, element.location) <= 40) \
+                        and time.time() - float(config.latest_solved_rune) >= (15 * 60) \
+                        or config.should_solve_rune) :
                     if not model:
                         model = detection.load_model()
-                    self._solve_rune(model)
+                    if self._solve_rune(model):
+                        solve_rune_fail_count = 0
+                    else:
+                        solve_rune_fail_count = solve_rune_fail_count + 1
+                    if solve_rune_fail_count >= 2 and settings.auto_change_channel:
+                        print("max try, auto change channel")
+                        change_action = components.ChangeChannel(max_rand=40)
+                        change_action.execute()
                 element.execute()
                 config.routine.next_step()
             else:
@@ -125,9 +139,9 @@ class Bot(Configurable):
         time.sleep(0.2)   
         for ii in range(3):
             if ii == 1:
-                press("left", 1, down_time=0.1,up_time=0.1) 
+                press("left", 1, down_time=0.1,up_time=0.3) 
             elif ii == 2:
-                press("right", 1, down_time=0.2,up_time=0.1) 
+                press("right", 1, down_time=0.2,up_time=0.3) 
             press(self.config['Interact'], 1, down_time=0.1,up_time=0.4) # Inherited from Configurable
             print('\nSolving rune:')
             for _ in range(3):
@@ -158,14 +172,17 @@ class Bot(Configurable):
                                     round(rune_buff_pos[1] + config.capture.window['top'])
                                 )
                                 click(target, button='right')
-                        self.rune_active = False
-                        click((config.capture.window['left']+700,config.capture.window['top']+120), button='right')
-                        break
-                else:
-                    press("left", 1, down_time=0.05,up_time=0.1)
+                                config.latest_solved_rune = time.time()
+                                config.should_solve_rune = False
+                                self.rune_active = False
+                                click((config.capture.window['left']+700,config.capture.window['top']+120), button='right')
+                                return True
+            press("left", 1, down_time=0.05,up_time=0.1)
+            press("right", 1, down_time=0.05,up_time=0.1)
             if self.rune_active == False:
                 break
-            time.sleep(3) 
+            time.sleep(2.8) 
+        return False
     
     def load_commands(self, file):
         """Prompts the user to select a command module to import. Updates config's command book."""
@@ -180,7 +197,7 @@ class Bot(Configurable):
 
         new_step = components.step
         new_cb = {}
-        for c in (components.Wait, components.Walk, components.Fall, components.SkillCombination, components.GoToMap, components.CustomKey):
+        for c in (components.Wait, components.Walk, components.Fall, components.SkillCombination, components.GoToMap, components.CustomKey, components.ChangeChannel):
             new_cb[c.__name__.lower()] = c
 
         # Import the desired command book file

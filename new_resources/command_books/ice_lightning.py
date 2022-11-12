@@ -146,14 +146,14 @@ class Buff(Command):
         if self.cd150_buff_time == 0 or now - self.cd150_buff_time > 151:
             self.cd150_buff_time = now
         if self.cd180_buff_time == 0 or now - self.cd180_buff_time > 181:
-            time.sleep(utils.rand_float(0.1, 0.2))
-            press(Key.SKILL_F1, 1,up_time=0.3)
+            time.sleep(utils.rand_float(0.3, 0.4))
+            press(Key.SKILL_F1, 1,up_time=0.2)
             self.cd180_buff_time = now
         if self.cd200_buff_time == 0 or now - self.cd200_buff_time > 200:
             self.cd200_buff_time = now
         if self.cd240_buff_time == 0 or now - self.cd240_buff_time > 240:
-            time.sleep(utils.rand_float(0.1, 0.2))
-            press(Key.BUFF_5, 1,up_time=0.5)
+            time.sleep(utils.rand_float(0.3, 0.4))
+            press(Key.BUFF_5, 1,up_time=0.3)
             self.cd240_buff_time = now
         if self.cd900_buff_time == 0 or now - self.cd900_buff_time > 900:
             # time.sleep(utils.rand_float(0.1, 0.3))

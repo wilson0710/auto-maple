@@ -1,6 +1,5 @@
 """A module for detecting and notifying the user of dangerous in-game events."""
 
-from msilib.schema import Component
 from src.common import config, utils, settings
 import time
 import os
@@ -39,6 +38,9 @@ REVIVE_CONFIRM_TEMPLATE = cv2.imread('assets/revive_confirm.png', 0)
 
 # fiona_lie_detector image
 FIONA_LIE_DETECTOR_TEMPLATE = cv2.imread('assets/fiona_lie_detector.png',0)
+
+# rune curse image
+RUNE_CURSE_TEMPLATE = cv2.imread('assets/rune_curse.png',0)
 
 def get_alert_path(name):
     return os.path.join(Notifier.ALERTS_DIR, f'{name}.mp3')
@@ -83,8 +85,8 @@ class Notifier:
                 if not config.map_changing:
                     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                     if np.count_nonzero(gray < 15) / height / width > self.room_change_threshold:
-                        self._send_msg_to_line_notify("畫面黑屏")
                         if settings.rent_frenzy == False:
+                            self._send_msg_to_line_notify("畫面黑屏")
                             self._alert('siren')
 
                 # Check for elite warning
@@ -95,14 +97,17 @@ class Notifier:
                     if settings.rent_frenzy == False:
                         self._alert('siren')
 
-                # Check for other players entering the map
-                filtered = utils.filter_color(minimap, OTHER_RANGES)
-                others = len(utils.multi_match(filtered, OTHER_TEMPLATE, threshold=0.5))
-                config.stage_fright = others > 0
-                if others != prev_others:
-                    if others > prev_others:
-                        self._ping('ding')
-                    prev_others = others
+                if settings.rent_frenzy == False:
+                    # Check for other players entering the map
+                    filtered = utils.filter_color(minimap, OTHER_RANGES)
+                    others = len(utils.multi_match(filtered, OTHER_TEMPLATE, threshold=0.5))
+                    config.stage_fright = others > 0
+                    if time.time() - config.latest_change_channel_or_map <= 60 and config.stage_fright:
+                        config.should_change_channel = True # if find other in 1 min between change channel, change again
+                    if others != prev_others:
+                        if others > prev_others:
+                            self._ping('ding')
+                        prev_others = others
 
                 # check for fiona_lie_detector
                 fiona_frame = frame[height-400:height, width - 300:width]
@@ -116,6 +121,18 @@ class Notifier:
                     
                 # not urgen detection 
                 if detection_i % 5==0:
+                    # check for rune curse
+                    if settings.rent_frenzy == False and config.should_change_channel == False:
+                        curse_frame = frame[0:height // 2, 0:width//2]
+                        rune_curse_detector = utils.multi_match(curse_frame, RUNE_CURSE_TEMPLATE, threshold=0.9)
+                        if len(rune_curse_detector) > 0:
+                            print("find rune_curse_detector")
+                            if time.time() - config.latest_change_channel_or_map <= 60:
+                                config.should_solve_rune = True
+                            else:
+                                config.should_change_channel = True
+                            self._ping('rune_appeared', volume=0.75)
+
                     # check for unexpected conversation
                     conversation_frame = frame[height//2-250:height//2+250, width //2-250:width//2+250]
                     conversation = utils.multi_match(conversation_frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
@@ -177,7 +194,10 @@ class Notifier:
                     elif now - rune_start_time > self.rune_alert_delay:     # Alert if rune hasn't been solved
                         config.bot.rune_active = False
                         self._send_msg_to_line_notify("多次解輪失敗")
-                        self._alert('siren')
+                        if settings.auto_change_channel:
+                            config.should_change_channel = True
+                        else:
+                            self._alert('siren')
                 detection_i = detection_i + 1
             time.sleep(self.notifier_delay)
 
@@ -212,8 +232,10 @@ class Notifier:
 
         while not kb.is_pressed(config.listener.config['Start/stop']):
             time.sleep(0.1)
+            if config.enabled:
+                break
         self.mixer.stop()
-        time.sleep(2)
+        time.sleep(1)
         config.listener.enabled = True
 
     def _ping(self, name, volume=0.5):

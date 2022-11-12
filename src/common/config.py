@@ -68,3 +68,18 @@ listener = None
 
 # Shares the gui to all modules
 gui = None
+
+# current channel
+current_channel = 1
+
+# latest change channel or map
+latest_change_channel_or_map = 0
+
+# latest rune solved time
+latest_solved_rune = 0
+
+# should instant change channel
+should_change_channel = False
+
+# should instant change channel
+should_solve_rune = True

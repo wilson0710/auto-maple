@@ -7,6 +7,8 @@ from src.common import config, settings, utils
 from src.common.vkeys import click, key_down, key_up, press
 from src.routine.maps import WorldMap
 from src.modules.listener import Listener
+import cv2
+from random import randint
 
 #################################
 #       Routine Components      #
@@ -662,8 +664,8 @@ class GoToMap(Command):
         press('n') # big map key
         time.sleep(utils.rand_float(0.3*0.8, 0.3*1.2))
         wm = WorldMap()
+        config.map_changing = True
         if self.target_map in wm.maps_info:
-            config.map_changing = True
             target_map_info = wm.maps_info[self.target_map]
             utils.game_window_click(wm.WORLD_MENU)
             utils.game_window_click(target_map_info['world_selection_point'])
@@ -671,14 +673,70 @@ class GoToMap(Command):
             utils.game_window_click(target_map_info['area_selection_point'])
             time.sleep(utils.rand_float(0.3*0.8, 0.3*1.2))
             utils.game_window_click(target_map_info['point'],click_time=2)
-            press('enter')
-            time.sleep(1)
-            for _ in range(10):
-                if wm.check_if_in_correct_map(self.target_map):
-                    break
-                time.sleep(0.3)
-            Listener.recalibrate_minimap()
-            time.sleep(0.2)
-            config.map_changing = False
         else:
             pass # use search to reach map
+
+        press('enter')
+        time.sleep(1)
+        for _ in range(10):
+            if wm.check_if_in_correct_map(self.target_map):
+                break
+            time.sleep(0.3)
+        Listener.recalibrate_minimap()
+        time.sleep(0.2)
+        config.map_changing = False
+
+class ChangeChannel(Command):
+    """ go to target channel """
+    _display_name = '換頻'
+    # skill_cool_down = 0
+
+    def __init__(self,target_channel='',max_rand='0'):
+        super().__init__(locals())
+        if int(max_rand) > 0:
+            self.max_rand = int(max_rand)
+            self.next_line = False
+        elif target_channel == '':
+            self.next_line = True
+            self.target_channel = int(config.current_channel) + 1
+        else:
+            self.next_line = False
+            self.target_channel = int(target_channel)
+
+    def main(self):
+        if int(self.max_rand) > 0:
+            while True:
+                self.target_channel = randint(1,int(self.max_rand))
+                if self.target_channel != config.current_channel:
+                    break
+        for _ in range(5):
+            press('esc') # menu key
+            press('enter',n=2) # select channel change key
+            time.sleep(utils.rand_float(0.3*0.8, 0.3*1.2))
+            frame = config.capture.frame
+            title_template = cv2.imread('assets/channel_change.png', 0)
+            points = utils.multi_match(frame, title_template, threshold=0.9)
+            if len(points) > 0:
+                config.map_changing = True
+                p = (points[0][0],points[0][1])
+                base_point = (-142,51)
+                block_size = (70,20)
+                if self.next_line == False:
+                    target_point = (p[0]+base_point[0]+block_size[0] * ((self.target_channel - 1) % 5),p[1]+base_point[1]+block_size[1] * ((self.target_channel - 1) // 5))
+                    utils.game_window_click(target_point,click_time=2)
+                    print("change to channel: ",self.target_channel)
+                else:
+                    press('right',up_time=0.2) 
+                    press('enter')
+                time.sleep(4)
+                # check if menu is opened
+                frame = config.capture.frame
+                check_points = utils.multi_match(frame, title_template, threshold=0.9)
+                if len(check_points) > 0:
+                    press('esc') 
+                Listener.recalibrate_minimap()
+                config.map_changing = False
+                config.current_channel = self.target_channel
+                config.latest_change_channel_or_map = time.time()
+                config.should_change_channel = False
+                break

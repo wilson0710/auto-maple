@@ -259,7 +259,7 @@ class Capture:
                         config.player_states['in_bottom_platform'] = False
                     if last_player_pos[1] == config.player_pos[1] and not config.player_states['is_standing']:
                         self.check_is_standing_count += 1
-                        if self.check_is_standing_count >= 7:
+                        if self.check_is_standing_count >= 8:
                             config.player_states['is_standing'] = True
                             config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
                             self.check_is_standing_count = 0

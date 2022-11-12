@@ -80,6 +80,7 @@ SETTING_VALIDATORS = {
     'platforms':str,
     'rent_frenzy':validate_boolean,
     'driver_key':validate_boolean,
+    'auto_change_channel':validate_boolean,
 }
 
 
@@ -102,7 +103,7 @@ def reset():
 move_tolerance = 9
 
 # The allowed error from a specific location while adjusting to that location
-adjust_tolerance = 3
+adjust_tolerance = 2
 
 # Whether the bot should save new player positions to the current layout
 record_layout = False
@@ -117,7 +118,10 @@ rent_frenzy = False
 full_screen = False
 
 driver_key = False
+
 # user id
 id = ""
+
+auto_change_channel = False
 
 reset()
