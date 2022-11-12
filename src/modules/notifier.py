@@ -94,8 +94,9 @@ class Notifier:
                 elite = utils.multi_match(elite_frame, ELITE_TEMPLATE, threshold=0.9)
                 if len(elite) > 0:
                     self._send_msg_to_line_notify("黑王出沒")
-                    if settings.rent_frenzy == False:
+                    if settings.rent_frenzy == False and not settings.auto_change_channel:
                         self._alert('siren')
+                    config.should_change_channel = True
 
                 if settings.rent_frenzy == False:
                     # Check for other players entering the map

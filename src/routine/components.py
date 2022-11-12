@@ -704,6 +704,7 @@ class ChangeChannel(Command):
             self.target_channel = int(target_channel)
 
     def main(self):
+        time.sleep(5)
         if int(self.max_rand) > 0:
             while True:
                 self.target_channel = randint(1,int(self.max_rand))
