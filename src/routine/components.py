@@ -118,6 +118,8 @@ class Point(Component):
                     adjust = config.bot.command_book.get('adjust')      # TODO: adjust using step('up')?
                     adjust(*self.location).execute()
             for command in self.commands:
+                if config.should_change_channel or config.should_solve_rune or config.enabled == False:
+                    break
                 command.execute()
         time.sleep(utils.rand_float(0.02, 0.08))
         self._increment_counter()
@@ -398,6 +400,10 @@ class Move(Command):
                     local_error > settings.move_tolerance and \
                     global_error > settings.move_tolerance or \
                     abs(d_y) > settings.move_tolerance / 2:
+                # stop if other move trigger
+                if config.should_change_channel or config.enabled == False:
+                    self._new_direction('')
+                    break
                 if toggle:
                     d_x = point[0] - config.player_pos[0]
                     if abs(d_x) > settings.move_tolerance / math.sqrt(2):
@@ -416,7 +422,7 @@ class Move(Command):
                     if abs(d_y) > settings.move_tolerance / 2:
                         if d_y < 0:
                             key = 'up' # if direction=up dont press up to avoid transporter
-                            if abs(d_x) < settings.move_tolerance / math.sqrt(2): # key up horizontal arrow if inside move_tolerance 
+                            if abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
                                 self._new_direction('')
                         else:
                             key = 'down'
@@ -442,6 +448,13 @@ class Adjust(Command):
         self.target = (float(x), float(y))
         self.max_steps = settings.validate_nonnegative_int(max_steps)
 
+class Player_jump(Command):
+    def __init__(self):
+        super().__init__(locals())
+    
+    def main(self):
+        self.player_jump()
+        return super().main()
 
 def step(direction, target):
     """
@@ -602,7 +615,7 @@ class BaseSkill(Command):
                 key_down(self.direction)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
-                key_down(self.key,down_time=0.07)
+                key_down(self.key,down_time=0.06)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
                 key_up(self.key,up_time=0.05)

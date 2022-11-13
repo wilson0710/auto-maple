@@ -82,4 +82,4 @@ latest_solved_rune = 0
 should_change_channel = False
 
 # should instant change channel
-should_solve_rune = True
+should_solve_rune = False
