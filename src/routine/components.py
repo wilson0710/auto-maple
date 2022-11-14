@@ -118,7 +118,9 @@ class Point(Component):
                     adjust = config.bot.command_book.get('adjust')      # TODO: adjust using step('up')?
                     adjust(*self.location).execute()
             for command in self.commands:
-                if config.should_change_channel or config.should_solve_rune or config.enabled == False:
+                if settings.auto_change_channel and \
+                    (config.should_change_channel or \
+                    config.should_solve_rune or config.enabled == False):
                     break
                 command.execute()
         time.sleep(utils.rand_float(0.02, 0.08))
@@ -699,6 +701,9 @@ class GoToMap(Command):
         Listener.recalibrate_minimap()
         time.sleep(0.2)
         config.map_changing = False
+        config.latest_change_channel_or_map = time.time()
+        config.bot.rune_active = False
+
 
 class ChangeChannel(Command):
     """ go to target channel """
@@ -754,4 +759,5 @@ class ChangeChannel(Command):
                 config.current_channel = self.target_channel
                 config.latest_change_channel_or_map = time.time()
                 config.should_change_channel = False
+                config.bot.rune_active = False
                 break

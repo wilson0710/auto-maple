@@ -27,7 +27,7 @@ class Key:
     SKILL_F = 'f' # 
     SKILL_F1 = 'f1' # 魔力無限
     SKILL_F2 = 'f2' # 
-    SKILL_2 = '2' # 
+    SKILL_2 = '2' # 蜘蛛之鏡
     SKILL_3 = '3' # 
 
     # special Skills
@@ -48,7 +48,7 @@ def step(direction, target):
 
     if direction == 'left' or direction == 'right':
         if abs(d_x) >= 15:
-            Teleport(direction=direction).execute()
+            Teleport(direction=direction,combo='true').execute()
             Skill_A(combo='True').execute()
         elif abs(d_x) > 10:
             time.sleep(utils.rand_float(0.1, 0.15))
@@ -59,7 +59,7 @@ def step(direction, target):
             if abs(d_y) >= 40:
                 UpJump().execute()
                 Teleport(direction=direction,jump='true').execute()
-            elif abs(d_y) >= 22:
+            elif abs(d_y) >= 23:
                 Teleport(direction=direction,jump='true').execute()
             else:
                 Teleport(direction=direction).execute()
@@ -70,6 +70,8 @@ def step(direction, target):
     if direction == 'down':
         # if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
         print("down stair")
+        if abs(d_y) >= 23 :
+            Fall(duration='0.15').execute()
         if abs(d_y) > 8 :
             Teleport(direction=direction).execute()
         else:
@@ -168,12 +170,12 @@ class Teleport(BaseSkill):
     _display_name ='瞬移'
     _distance = 27
     key=Key.TELEPORT
-    delay=0.23
+    delay=0.27
     rep_interval=0.3
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.1
+    combo_delay = 0.27
 
 class UpJump(Command):
     """Performs a up jump in the given direction."""
@@ -191,14 +193,14 @@ class UpJump(Command):
         press(Key.UP_JUMP, 1,up_time=0.05)
         key_up(self.direction)
         if self.combo:
-            time.sleep(utils.rand_float(0.1, 0.2))
+            time.sleep(utils.rand_float(0.05, 0.1))
         else:
             time.sleep(utils.rand_float(0.4, 0.6))
 
 class Skill_A(BaseSkill):
     _display_name ='閃電連擊'
     key=Key.SKILL_A
-    delay=0.48
+    delay=0.55
     rep_interval=0.2
     skill_cool_down=0
     ground_skill=True
@@ -232,17 +234,17 @@ class TeleportCombination(Command):
 class Skill_S(BaseSkill):
     _display_name ='冰鋒刃'
     key=Key.SKILL_S
-    delay=0.55
+    delay=0.8
     rep_interval=0.2
     skill_cool_down=5
     ground_skill=True
     buff_time=0
-    combo_delay = 0.15
+    combo_delay = 0.25
 
 class Skill_D(BaseSkill):
     _display_name ='閃電球'
     key=Key.SKILL_D
-    delay=0.55
+    delay=0.6
     rep_interval=0.2
     skill_cool_down=0
     ground_skill=True
@@ -262,12 +264,12 @@ class Skill_DD(BaseSkill):
 class Skill_Q(BaseSkill):
     _display_name ='落雷凝聚'
     key=Key.SKILL_Q
-    delay=0.4
+    delay=0.5
     rep_interval=0.2
     skill_cool_down=39
     ground_skill=True
     buff_time=0
-    combo_delay = 0.05
+    combo_delay = 0.1
     skill_image = IMAGE_DIR + 'skill_q.png'
 
 class Skill_W(BaseSkill):
@@ -322,4 +324,28 @@ class Skill_F1(BaseSkill):
     skill_cool_down=180
     ground_skill=True
     buff_time=69
+    combo_delay = 0.2
+
+class Skill_2(BaseSkill):
+    _display_name ='蜘蛛之鏡'
+    key=Key.SKILL_2
+    delay=0.5
+    rep_interval=0.25
+    skill_cool_down=240
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.3
+
+class Sp_F12(BaseSkill):
+    _display_name ='輪迴'
+    key=Key.SP_F12
+    delay=0.5
+    rep_interval=0.2
+    skill_cool_down=60
+    ground_skill=True
+    buff_time=600
     combo_delay = 0.1
+
+    def main(self):
+        time.sleep(0.4)
+        return super().main()

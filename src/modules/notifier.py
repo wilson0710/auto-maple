@@ -128,11 +128,16 @@ class Notifier:
                         rune_curse_detector = utils.multi_match(curse_frame, RUNE_CURSE_TEMPLATE, threshold=0.9)
                         if len(rune_curse_detector) > 0:
                             print("find rune_curse_detector")
-                            if time.time() - config.latest_change_channel_or_map <= 60:
-                                config.should_solve_rune = True
+                            if settings.auto_change_channel:
+                                if config.should_change_channel == False and config.should_solve_rune == False:
+                                    if time.time() - config.latest_change_channel_or_map <= 60:
+                                        config.should_solve_rune = True
+                                    else:
+                                        config.should_change_channel = True
+                                    self._ping('rune_appeared', volume=0.75)
                             else:
-                                config.should_change_channel = True
-                            self._ping('rune_appeared', volume=0.75)
+                                self._send_msg_to_line_notify("輪之詛咒")
+                                self._alert('siren')
 
                     # check for unexpected conversation
                     conversation_frame = frame[height//2-250:height//2+250, width //2-250:width//2+250]
@@ -192,13 +197,21 @@ class Notifier:
                             config.bot.rune_closest_pos = config.routine[index].location
                             config.bot.rune_active = True
                             self._ping('rune_appeared', volume=0.75)
-                    elif now - rune_start_time > self.rune_alert_delay:     # Alert if rune hasn't been solved
+                    elif now - rune_start_time > self.rune_alert_delay and now - config.latest_solved_rune >= (60 * 15 + self.rune_alert_delay):     # Alert if rune hasn't been solved
                         config.bot.rune_active = False
-                        self._send_msg_to_line_notify("多次解輪失敗")
+                        self._send_msg_to_line_notify("解輪耗時過久")
                         if settings.auto_change_channel:
                             config.should_change_channel = True
                         else:
                             self._alert('siren')
+                    else:
+                        # check for rune is actually existing
+                        if detection_i % 10==0:
+                            filtered = utils.filter_color(minimap, RUNE_RANGES)
+                            matches = utils.multi_match(filtered, RUNE_TEMPLATE, threshold=0.9)
+                            if not matches:
+                                config.bot.rune_active = False
+
                 detection_i = detection_i + 1
             time.sleep(self.notifier_delay)
 

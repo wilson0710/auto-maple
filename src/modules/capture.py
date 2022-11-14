@@ -300,7 +300,7 @@ class Capture:
                     self.ready = True
                 self.refresh_counting = self.refresh_counting + 1
                 if settings.rent_frenzy:
-                    time.sleep(self.capture_gap_sec*10)
+                    time.sleep(self.capture_gap_sec*5)
                 else:
                     time.sleep(self.capture_gap_sec)
                 
