@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
-from src.common import utils, config
+from src.common import utils, config, vkeys
 import cv2
+import clipboard
+import time
 
 class WorldMap():
     # check_image dir 
     MAP_CHECK_DIR = 'assets/map_check'
     MAP_OPEN_PNG = cv2.imread('assets/world_map_open.png', 0)
+    ARC_TARGET_MAP = cv2.imread('assets/arc_target_map_point.png', 0)
+    AUT_TARGET_MAP = cv2.imread('assets/aut_target_map_point.png', 0)
+    NORMAL_TARGET_MAP = cv2.imread('assets/normal_target_map_point.png', 0)
+    STAR_TARGET_MAP = cv2.imread('assets/star_target_map_point.png', 0)
     MENU_GAP = 16
 
     def __init__(self):
@@ -88,4 +94,46 @@ class WorldMap():
             if len(point) > 0:
                 print("in correct map")
                 return True
+        return False
+
+    def search_map(self,map_name):
+        utils.game_window_click(self.SEARCH_BAR)
+        time.sleep(utils.rand_float(0.5,0.6))
+        clipboard.copy(map_name)
+        vkeys.key_down("ctrl")
+        time.sleep(utils.rand_float(0.2,0.25))
+        vkeys.key_down("v")
+        time.sleep(utils.rand_float(0.03,0.05))
+        vkeys.key_up("v")
+        time.sleep(utils.rand_float(0.1,0.15))
+        vkeys.key_up("ctrl")
+        time.sleep(utils.rand_float(0.5,0.6))
+        utils.game_window_click(self.SEARCH_BTN)
+        time.sleep(utils.rand_float(0.7,0.8))
+        utils.game_window_click(self.FIRST_RESULT)
+        time.sleep(utils.rand_float(0.5,0.7))
+        for i in range(100):
+            frame = config.capture.frame
+            # frame = frame[10:57, 10:234]
+            point = utils.single_match_with_threshold(frame, self.ARC_TARGET_MAP, threshold=0.9)
+            if len(point) > 0:
+                print("find arc target map")
+                utils.game_window_click(point[0],2)
+                return True
+            point = utils.single_match_with_threshold(frame, self.AUT_TARGET_MAP, threshold=0.9)
+            if len(point) > 0:
+                print("find aut target map")
+                utils.game_window_click(point[0],2)
+                return True
+            point = utils.single_match_with_threshold(frame, self.NORMAL_TARGET_MAP, threshold=0.9)
+            if len(point) > 0:
+                print("find normal target map")
+                utils.game_window_click(point[0],2)
+                return True
+            point = utils.single_match_with_threshold(frame, self.STAR_TARGET_MAP, threshold=0.9)
+            if len(point) > 0:
+                print("find star target map")
+                utils.game_window_click(point[0],2)
+                return True
+            time.sleep(0.01)
         return False

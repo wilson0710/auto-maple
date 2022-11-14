@@ -11,3 +11,4 @@ pywinauto
 tensorflow-gpu
 pynput
 pywinio
+clipboard

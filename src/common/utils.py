@@ -225,6 +225,25 @@ def multi_match(frame, template, threshold=0.95):
         results.append((x, y))
     return results
 
+def single_match_with_threshold(frame, template, threshold=0.95):
+    """
+    Finds all matches in FRAME that are similar to TEMPLATE by at least THRESHOLD.
+    :param frame:       The image in which to search.
+    :param template:    The template to match with.
+    :param threshold:   The minimum percentage of TEMPLATE that each result must match.
+    :return:            An array of matches that exceed THRESHOLD.
+    """
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    result = cv2.matchTemplate(gray, template, cv2.TM_CCOEFF_NORMED)
+    results = []
+    _, score, _, top_left = cv2.minMaxLoc(result)
+    print("score : ",score)
+    if score >= threshold:
+        x = int(round(top_left[0] + template.shape[1] / 2))
+        y = int(round(top_left[1] + template.shape[0] / 2))
+        results.append((x, y))
+    return results
 
 def convert_to_relative(point, frame):
     """

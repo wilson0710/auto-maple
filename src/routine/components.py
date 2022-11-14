@@ -687,7 +687,8 @@ class GoToMap(Command):
             time.sleep(utils.rand_float(0.3*0.8, 0.3*1.2))
             utils.game_window_click(target_map_info['point'],click_time=2)
         else:
-            pass # use search to reach map
+            if wm.search_map(self.target_map):
+                pass
 
         press('enter')
         time.sleep(1)
