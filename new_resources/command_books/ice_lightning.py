@@ -55,24 +55,25 @@ def step(direction, target):
         utils.wait_for_is_standing(200)
     
     if direction == 'up':
-        if abs(d_y) > 3 :
-            if abs(d_y) >= 40:
-                UpJump().execute()
-                Teleport(direction=direction,jump='true').execute()
-            elif abs(d_y) >= 23:
-                Teleport(direction=direction,jump='true').execute()
+        if abs(d_x) <= settings.move_tolerance:
+            if abs(d_y) > 3 :
+                if abs(d_y) >= 40:
+                    UpJump().execute()
+                    Teleport(direction=direction,jump='true').execute()
+                elif abs(d_y) >= 24:
+                    Teleport(direction=direction,jump='true').execute()
+                else:
+                    Teleport(direction=direction).execute()
+                utils.wait_for_is_standing(300)
             else:
-                Teleport(direction=direction).execute()
-            utils.wait_for_is_standing(300)
-        else:
-            press(Key.JUMP, 1)
-            time.sleep(utils.rand_float(0.1, 0.15))
+                press(Key.JUMP, 1)
+                time.sleep(utils.rand_float(0.1, 0.15))
     if direction == 'down':
         # if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
         print("down stair")
         if abs(d_y) >= 23 :
             Fall(duration='0.15').execute()
-        if abs(d_y) > 8 :
+        if abs(d_y) > 10 :
             Teleport(direction=direction).execute()
         else:
             Fall().execute()
@@ -170,12 +171,12 @@ class Teleport(BaseSkill):
     _display_name ='瞬移'
     _distance = 27
     key=Key.TELEPORT
-    delay=0.27
+    delay=0.4
     rep_interval=0.3
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.27
+    combo_delay = 0.26
 
 class UpJump(Command):
     """Performs a up jump in the given direction."""
@@ -190,7 +191,7 @@ class UpJump(Command):
     def main(self):
         self.player_jump(self.direction)
         time.sleep(utils.rand_float(0.03, 0.06)) 
-        press(Key.UP_JUMP, 1,up_time=0.05)
+        press(Key.UPJUMP, 1,up_time=0.05)
         key_up(self.direction)
         if self.combo:
             time.sleep(utils.rand_float(0.05, 0.1))
@@ -220,7 +221,7 @@ class TeleportCombination(Command):
         self.combo_direction = settings.validate_arrows(combo_direction)
 
     def main(self):
-        Teleport(direction=self.direction,jump=str(self.jump)).execute()
+        Teleport(direction=self.direction,combo="true",jump=str(self.jump)).execute()
         skills_array = self.combo_skill.split("|")
         for skill in skills_array:
             skill = skill.lower()
@@ -254,7 +255,7 @@ class Skill_D(BaseSkill):
 class Skill_DD(BaseSkill):
     _display_name ='放置閃電球'
     key=Key.SKILL_DD
-    delay=0.55
+    delay=0.7
     rep_interval=0.2
     skill_cool_down=27
     ground_skill=True
@@ -269,7 +270,7 @@ class Skill_Q(BaseSkill):
     skill_cool_down=39
     ground_skill=True
     buff_time=0
-    combo_delay = 0.1
+    combo_delay = 0.2
     skill_image = IMAGE_DIR + 'skill_q.png'
 
 class Skill_W(BaseSkill):
