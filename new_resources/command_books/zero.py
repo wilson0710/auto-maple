@@ -124,12 +124,14 @@ class Adjust(Command):
                         key_down('left',down_time=0.02)
                         while config.enabled and d_x < -1 * threshold and walk_counter < 60:
                             walk_counter += 1
+                            time.sleep(0.01)
                             d_x = self.target[0] - config.player_pos[0]
                         key_up('left')
                     else:
                         key_down('right',down_time=0.02)
                         while config.enabled and d_x > threshold and walk_counter < 60:
                             walk_counter += 1
+                            time.sleep(0.01)
                             d_x = self.target[0] - config.player_pos[0]
                         key_up('right')
                     counter -= 1
@@ -263,7 +265,7 @@ class Skill_A(BaseSkill):
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.2
     
     def main(self):
         if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
@@ -369,7 +371,7 @@ class Skill_W(BaseSkill):
     _display_name ='趨前砍擊'
     key=Key.SKILL_W
     delay=0.5
-    rep_interval=0.25
+    rep_interval=0.23
     skill_cool_down=0.5
     ground_skill=False
     buff_time=0
@@ -427,7 +429,7 @@ class Buff_F1(BaseSkill):
     skill_cool_down=143
     ground_skill=True
     buff_time=60
-    combo_delay = 0.25
+    combo_delay = 0.15
     skill_image = IMAGE_DIR + 'buff_f1.png'
 
     def main(self):
@@ -442,7 +444,7 @@ class Skill_FA1(BaseSkill):
     skill_cool_down=40
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.2
     skill_image = IMAGE_DIR + 'skill_fa.png'
 
     def main(self):
@@ -458,7 +460,7 @@ class Skill_FA2(BaseSkill):
     skill_cool_down=3
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.2
 
     def main(self):
         if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'alpha':
@@ -473,7 +475,7 @@ class Skill_FB1(BaseSkill):
     skill_cool_down=40
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.2
     skill_image = IMAGE_DIR + 'skill_fb.png'
 
     def main(self):
@@ -489,7 +491,7 @@ class Skill_FB2(BaseSkill):
     skill_cool_down=3
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.2
 
     def main(self):
         if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'beta':
@@ -504,7 +506,7 @@ class Skill_F2(BaseSkill):
     skill_cool_down=230
     buff_time=45
     ground_skill=False
-    combo_delay = 0.25
+    combo_delay = 0.2
 
 class Skill_F22(BaseSkill):
     _display_name ='終焉之時引爆'
@@ -524,7 +526,7 @@ class Skill_2(BaseSkill):
     skill_cool_down=240
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.2
 
 class Skill_3(BaseSkill):
     _display_name ='暗影之雨'
@@ -534,7 +536,7 @@ class Skill_3(BaseSkill):
     skill_cool_down=300
     ground_skill=True
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.2
     skill_image = IMAGE_DIR + 'skill_3.png'
 
     def main(self):
@@ -552,7 +554,7 @@ class Buff_Pageup(BaseSkill):
     skill_cool_down=180
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.2
     skill_image = IMAGE_DIR + 'buff_pageup.png'
 
 class Buff_F5(BaseSkill):
@@ -563,7 +565,7 @@ class Buff_F5(BaseSkill):
     skill_cool_down=230
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.2
 
 class SP_F12(BaseSkill):
     _display_name ='輪迴'
