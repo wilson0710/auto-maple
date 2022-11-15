@@ -142,7 +142,7 @@ class Bot(Configurable):
                 press("left", 1, down_time=0.1,up_time=0.3) 
             elif ii == 2:
                 press("right", 1, down_time=0.2,up_time=0.3) 
-            press(self.config['Interact'], 1, down_time=0.1,up_time=0.4) # Inherited from Configurable
+            press(self.config['Interact'], 1, down_time=0.1,up_time=0.5) # Inherited from Configurable
             print('\nSolving rune:')
             for _ in range(3):
                 if self.rune_active == False:
@@ -197,7 +197,7 @@ class Bot(Configurable):
 
         new_step = components.step
         new_cb = {}
-        for c in (components.Wait, components.Walk, components.Fall, components.SkillCombination, components.GoToMap, components.CustomKey, components.ChangeChannel,components.Player_jump):
+        for c in (components.Wait, components.Walk, components.Fall, components.SkillCombination, components.GoToMap, components.CustomKey, components.ChangeChannel,components.Player_jump,components.WaitStanding):
             new_cb[c.__name__.lower()] = c
 
         # Import the desired command book file

@@ -75,6 +75,8 @@ class Notifier:
         prev_others = 0
         rune_start_time = time.time()
         detection_i = 0
+        rune_check_count = 0
+
         while True:
             if config.enabled:
                 frame = config.capture.frame
@@ -196,6 +198,7 @@ class Notifier:
                             index = np.argmin(distances)
                             config.bot.rune_closest_pos = config.routine[index].location
                             config.bot.rune_active = True
+                            rune_check_count = 0
                             self._ping('rune_appeared', volume=0.75)
                     elif now - rune_start_time > self.rune_alert_delay and now - config.latest_solved_rune >= (60 * 15 + self.rune_alert_delay):     # Alert if rune hasn't been solved
                         config.bot.rune_active = False
@@ -206,11 +209,15 @@ class Notifier:
                             self._alert('siren')
                     else:
                         # check for rune is actually existing
-                        if detection_i % 10==0:
+                        if detection_i % 50 == 0:
                             filtered = utils.filter_color(minimap, RUNE_RANGES)
                             matches = utils.multi_match(filtered, RUNE_TEMPLATE, threshold=0.9)
                             if not matches:
-                                config.bot.rune_active = False
+                                if rune_check_count >= 10:
+                                    rune_check_count = 0
+                                    config.bot.rune_active = False
+                                else:
+                                    rune_check_count = rune_check_count + 1
 
                 detection_i = detection_i + 1
             time.sleep(self.notifier_delay)

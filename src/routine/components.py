@@ -108,7 +108,10 @@ class Point(Component):
     def main(self):
         if not self.check_should_active():
             return
-
+        if settings.auto_change_channel and \
+            (config.should_change_channel or \
+            config.should_solve_rune or config.enabled == False):
+            return
         """Executes the set of actions associated with this Point."""
         if self.counter == 0:
             if self.location != (-1,-1):
@@ -478,7 +481,7 @@ class Wait(Command):
         self.duration = float(duration)
 
     def main(self):
-        time.sleep(utils.rand_float(self.duration*0.8, self.duration*1.2))
+        time.sleep(utils.rand_float(self.duration*0.95, self.duration*1.05))
         
 
 
@@ -578,6 +581,17 @@ class CustomKey(Command):
             self.set_my_last_cooldown(time.time())
             time.sleep(utils.rand_float(self.delay*0.8, self.delay*1.2))
 
+class WaitStanding(Command):
+    """wait user standing """
+    _display_name = ""
+    def __init__(self,duration='0'):
+        super().__init__(locals())
+        self.duration = float(duration)
+
+    def main(self):
+        utils.wait_for_is_standing(self.duration*1000)
+        print("WaitStanding end")
+
 class BaseSkill(Command):
     """pre define base skill class """
     _display_name = ""
@@ -620,29 +634,37 @@ class BaseSkill(Command):
                 key_down(self.key,down_time=0.06)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
-                key_up(self.key,up_time=0.05)
+                if i == (self.rep-1):
+                    key_up(self.direction,up_time=0.01)
+                key_up(self.key,up_time=0.04)
                 if i != (self.rep-1):
                     ret_interval = self.rep_interval+self.rep_interval_increase*i
                     time.sleep(utils.rand_float(ret_interval*0.95, ret_interval*1.05))
-            key_up(self.direction,up_time=0.01)
             # if self.skill_cool_down != 0:
             self.set_my_last_cooldown(time.time())
             if self.combo:
-                time.sleep(utils.rand_float(self.combo_delay*0.9, self.combo_delay*1.1))
+                time.sleep(utils.rand_float(self.combo_delay*0.95, self.combo_delay*1.1))
             else:
-                time.sleep(utils.rand_float(self.delay*0.9, self.delay*1.1))
+                time.sleep(utils.rand_float(self.delay*0.95, self.delay*1.1))
 
 class SkillCombination(Command):
     """auto select skill in this combination"""
-    # _display_name = '自定義按鍵'
+    _display_name = '技能組合'
 
-    def __init__(self, direction='',jump='false',target_skills=''):
+    def __init__(self, direction='',jump='false',target_skills='',combo='false',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = jump
         self.target_skills = target_skills
+        self.combo = combo
+        self.active_if_skill_ready = active_if_skill_ready
+        self.active_if_skill_cd = active_if_skill_cd
+        self.active_if_in_skill_buff = active_if_in_skill_buff
+        self.active_if_not_in_skill_buff = active_if_not_in_skill_buff
         
     def main(self):
+        if not self.check_should_active():
+            return
         skills_array = self.target_skills.split("|")
         for skill in skills_array:
             skill = skill.lower()
@@ -653,14 +675,14 @@ class SkillCombination(Command):
                     continue
                 s(direction=self.direction,jump=self.jump,combo="true").execute()
                 s = config.bot.command_book[combo_skills[1]]
-                s(direction=self.direction,jump="false").execute()
+                s(direction=self.direction,jump="false",combo=self.combo).execute()
                 break
             else:
                 s = config.bot.command_book[skill]
                 if not s.get_is_skill_ready():
                     continue
                 else:
-                    s(direction=self.direction,jump=self.jump).execute()
+                    s(direction=self.direction,jump=self.jump,combo=self.combo).execute()
                     break
 
 class GoToMap(Command):

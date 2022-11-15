@@ -190,9 +190,14 @@ class FlashJump(Command):
         self.direction = settings.validate_arrows(direction)
         self.triple_jump = settings.validate_boolean(triple_jump)
         self.fast_jump = settings.validate_boolean(fast_jump)
+        self.jump = settings.validate_boolean(jump)
 
     def main(self):
-        self.player_jump(self.direction)
+        if not self.jump:
+            self.player_jump(self.direction)
+        else:
+            key_down(self.direction,down_time=0.05)
+            press(Key.JUMP,down_time=0.04,up_time=0.02)
         if not self.fast_jump:
             time.sleep(utils.rand_float(0.02, 0.04)) # fast flash jump gap
         else:
@@ -200,7 +205,7 @@ class FlashJump(Command):
         if self.direction == 'up':
             press(Key.FLASH_JUMP, 1)
         else:
-            press(Key.FLASH_JUMP, 1,up_time=0.05)
+            press(Key.FLASH_JUMP, 1,down_time=0.06,up_time=0.05)
             if self.triple_jump:
                 time.sleep(utils.rand_float(0.05, 0.08))
                 press(Key.FLASH_JUMP, 1,down_time=0.07,up_time=0.04) # if this job can do triple jump
@@ -211,12 +216,12 @@ class Teleport(BaseSkill):
     _display_name ='爆裂衝刺'
     _distance = 27
     key=Key.TELEPORT
-    delay=0.2
+    delay=0.16
     rep_interval=0.3
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.15
+    combo_delay = 0.08
 
     # def main(self):
     #     CustomKey(name=self._display_name,key=Key.TELEPORT,direction=self.direction,jump=self.jump,delay=0.095).execute()
@@ -225,7 +230,7 @@ class Skill_Q(BaseSkill):
     _display_name ='狂風千刃(a4)'
     key=Key.SKILL_Q
     delay=0.67
-    rep_interval=0.26
+    rep_interval=0.25
     skill_cool_down=3
     ground_skill=False
     buff_time=0
@@ -280,8 +285,8 @@ class Skill_A(BaseSkill):
 class Skill_S(BaseSkill):
     _display_name ='瞬閃斬擊(a2)'
     key=Key.SKILL_S
-    delay=0.3
-    rep_interval=0.15
+    delay=0.35
+    rep_interval=0.12
     skill_cool_down=1
     ground_skill=False
     buff_time=0
@@ -310,7 +315,7 @@ class Skill_D(BaseSkill):
     key=Key.SKILL_D
     delay=0.9
     rep_interval=0.9
-    skill_cool_down=3
+    skill_cool_down=2
     ground_skill=False
     buff_time=0
     combo_delay = 0.5
@@ -363,9 +368,9 @@ class Skill_R(BaseSkill):
 class Skill_W(BaseSkill):
     _display_name ='趨前砍擊'
     key=Key.SKILL_W
-    delay=0.45
+    delay=0.5
     rep_interval=0.25
-    skill_cool_down=2
+    skill_cool_down=0.5
     ground_skill=False
     buff_time=0
     combo_delay = 0.3
@@ -392,7 +397,7 @@ class Skill_E(BaseSkill):
     key=Key.SKILL_E
     delay=0.3
     rep_interval=0.15
-    skill_cool_down=2
+    skill_cool_down=0.5
     ground_skill=False
     buff_time=0
     combo_delay = 0.2
@@ -424,9 +429,9 @@ class Buff_F1(BaseSkill):
     buff_time=60
     combo_delay = 0.25
     skill_image = IMAGE_DIR + 'buff_f1.png'
+
     def main(self):
-        print(self._custom_id, "武公寶珠 last time : ", str(time.time() - self.get_my_last_cooldown()),"s")
-        print(self._custom_id, "武公寶珠 : " ,str(self.check_is_skill_ready()))
+        self.active_if_not_in_skill_buff = 'buff_f1'
         super().main()
 
 class Skill_FA1(BaseSkill):
@@ -532,6 +537,13 @@ class Skill_3(BaseSkill):
     combo_delay = 0.3
     skill_image = IMAGE_DIR + 'skill_3.png'
 
+    def main(self):
+        if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
+            latest_alpha_tag_duration = time.time() - config.player_states['alpha_tag']
+            latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
+            if latest_alpha_tag_duration < 3.1 or latest_beta_tag_duration < 3.1 :
+                super().main()
+
 class Buff_Pageup(BaseSkill):
     _display_name ='掌握時間'
     key=Key.BUFF_PAGEUP
@@ -552,3 +564,13 @@ class Buff_F5(BaseSkill):
     ground_skill=False
     buff_time=0
     combo_delay = 0.3
+
+class SP_F12(BaseSkill):
+    _display_name ='輪迴'
+    key=Key.SP_F12
+    delay=0.5
+    rep_interval=0.25
+    skill_cool_down=60
+    ground_skill=True
+    buff_time=600
+    combo_delay = 0.2

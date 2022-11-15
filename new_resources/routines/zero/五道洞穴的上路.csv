@@ -1,6 +1,7 @@
 $, target=platforms, value=b44|16
 $, target=move_tolerance, value=9
 $, target=auto_change_channel, value=True
+$, target=id, value=goat
 
 @, label=regular
 *, x=10, y=16, frequency=3, skip=true, adjust=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
