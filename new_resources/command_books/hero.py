@@ -272,7 +272,7 @@ class Skill_Q(Command):
     """Attacks using '烈焰翔斬' in a given direction."""
     _display_name = '烈焰翔斬'
 
-    def __init__(self, direction='',jump='false'):
+    def __init__(self, direction='',jump='false',combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
@@ -292,7 +292,7 @@ class Skill_1(Command):
     """Attacks using '狂暴攻擊' in a given direction."""
     _display_name = '狂暴攻擊'
 
-    def __init__(self, direction='',jump='false'):
+    def __init__(self, direction='',jump='false',combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
@@ -313,7 +313,7 @@ class Skill_2(Command):
     _display_name = '憤怒爆發'
     skill_cool_down = 10
 
-    def __init__(self, direction='',jump='false'):
+    def __init__(self, direction='',jump='false',combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
 
@@ -334,7 +334,7 @@ class Skill_3(Command):
     _display_name = '靈氣之刃'
     skill_cool_down = 7
 
-    def __init__(self, direction='up',jump='false'):
+    def __init__(self, direction='up',jump='false',combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
@@ -361,7 +361,7 @@ class Skill_W(Command):
     _display_name = '空間斬'
     skill_cool_down = 20
 
-    def __init__(self, direction='',jump='false'):
+    def __init__(self, direction='',jump='false',combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
@@ -384,7 +384,7 @@ class Skill_A(Command):
     _display_name = '劍之幻象'
     skill_cool_down = 30
 
-    def __init__(self, direction='',jump='false'):
+    def __init__(self, direction='',jump='false',combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
@@ -409,7 +409,7 @@ class Skill_X(Command):
     _display_name = '閃光斬'
     skill_cool_down = 7
 
-    def __init__(self, direction='',jump='false'):
+    def __init__(self, direction='',jump='false',combo='false'):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
