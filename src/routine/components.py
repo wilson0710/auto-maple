@@ -406,7 +406,7 @@ class Move(Command):
                     global_error > settings.move_tolerance or \
                     abs(d_y) > settings.move_tolerance / 2:
                 # stop if other move trigger
-                if config.should_change_channel or config.enabled == False:
+                if (settings.auto_change_channel and config.should_change_channel) or config.enabled == False:
                     self._new_direction('')
                     break
                 if toggle:
