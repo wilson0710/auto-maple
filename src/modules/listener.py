@@ -77,14 +77,16 @@ class Listener(Configurable):
         if not config.enabled:
             Listener.recalibrate_minimap()      # Recalibrate only when being enabled.
             print('dk : ', settings.driver_key)
-            time.sleep(0.05)
+            time.sleep(0.5)
 
         config.enabled = not config.enabled
         utils.print_state()
 
         if config.enabled:
+            config.gui.view.status.set_start_btn('stop')
             winsound.Beep(784, 333)     # G5
         else:
+            config.gui.view.status.set_start_btn('start')
             winsound.Beep(523, 333)     # C5
             release_unreleased_key()
         time.sleep(0.267)

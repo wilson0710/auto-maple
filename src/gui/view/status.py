@@ -23,7 +23,7 @@ class Status(LabelFrame):
         self.r_label.grid(row=1, column=1, padx=5, pady=(0, 5), sticky=tk.E)
         self.r_entry = tk.Entry(self, textvariable=self.curr_routine, state=tk.DISABLED)
         self.r_entry.grid(row=1, column=2, padx=(0, 5), pady=(0, 5), sticky=tk.EW)
-        self.start_btn = tk.Button(self, textvariable=self.start_btn_text, width=6, command=self.toggle_script_enable)
+        self.start_btn = tk.Button(self, textvariable=self.start_btn_text, width=6, command=Listener.toggle_enabled())
         self.start_btn_text.set('start') 
         self.start_btn.grid(row=2, column=1,columnspan=2, padx=(0, 5), pady=(0, 5), sticky="")
     
@@ -32,12 +32,14 @@ class Status(LabelFrame):
 
     def set_routine(self, string):
         self.curr_routine.set(string)
+    
+    def set_start_btn(self, string):
+        self.start_btn_text.set(string)
 
-    def toggle_script_enable(self):
-        print('toggle_script_enable test')
-        if config.enabled:
-            Listener.toggle_enabled()
-            self.start_btn_text.set('start') 
-        else:
-            Listener.toggle_enabled()
-            self.start_btn_text.set('pause') 
+    # def toggle_script_enable(self):
+    #     print('toggle_script_enable test')
+    #     Listener.toggle_enabled()
+    #     if not config.enabled:
+    #         self.start_btn_text.set('start') 
+    #     else:
+    #         self.start_btn_text.set('pause') 
