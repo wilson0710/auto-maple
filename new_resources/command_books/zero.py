@@ -17,6 +17,7 @@ class Key:
     BUFF_F1 = 'f1' # 武公寶珠
     BUFF_PAGEUP = 'pageup' # 掌握時間
     BUFF_F5 = 'f5' # 優伊娜的心願
+    BUFF_5 = '5' # 幻靈武具
     
     # Buffs Toggle
 
@@ -223,7 +224,7 @@ class Teleport(BaseSkill):
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.08
+    combo_delay = 0.1
 
     # def main(self):
     #     CustomKey(name=self._display_name,key=Key.TELEPORT,direction=self.direction,jump=self.jump,delay=0.095).execute()
@@ -245,10 +246,10 @@ class Skill_Q(BaseSkill):
             if config.player_states['current_tag'] == 'beta':
                 utils.wait_for_is_standing(800)
             latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
-            if latest_beta_tag_duration > 3.28 and config.player_states['current_tag'] == 'beta':
+            if latest_beta_tag_duration > 3.33 and config.player_states['current_tag'] == 'beta':
                 config.player_states['alpha_tag'] = time.time()
-            elif latest_beta_tag_duration <= 3.28 and config.player_states['current_tag'] == 'beta':
-                time.sleep(3.28-(time.time() - config.player_states['beta_tag']))
+            elif latest_beta_tag_duration <= 3.33 and config.player_states['current_tag'] == 'beta':
+                time.sleep(3.33-(time.time() - config.player_states['beta_tag']))
                 config.player_states['alpha_tag'] = time.time()
             config.player_states['current_tag'] = 'alpha'
         else:
@@ -272,10 +273,10 @@ class Skill_A(BaseSkill):
             if config.player_states['current_tag'] == 'beta':
                 utils.wait_for_is_standing(800)
             latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
-            if latest_beta_tag_duration > 3.28 and config.player_states['current_tag'] == 'beta':
+            if latest_beta_tag_duration > 3.33 and config.player_states['current_tag'] == 'beta':
                 config.player_states['alpha_tag'] = time.time()
-            elif latest_beta_tag_duration <= 3.28 and config.player_states['current_tag'] == 'beta':
-                time.sleep(3.28-(time.time() - config.player_states['beta_tag']))
+            elif latest_beta_tag_duration <= 3.33 and config.player_states['current_tag'] == 'beta':
+                time.sleep(3.33-(time.time() - config.player_states['beta_tag']))
                 config.player_states['alpha_tag'] = time.time()
             config.player_states['current_tag'] = 'alpha'
         else:
@@ -300,10 +301,10 @@ class Skill_S(BaseSkill):
             if config.player_states['current_tag'] == 'beta':
                 utils.wait_for_is_standing(800)
             latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
-            if latest_beta_tag_duration > 3.28 and config.player_states['current_tag'] == 'beta':
+            if latest_beta_tag_duration > 3.33 and config.player_states['current_tag'] == 'beta':
                 config.player_states['alpha_tag'] = time.time()
-            elif latest_beta_tag_duration <= 3.28 and config.player_states['current_tag'] == 'beta':
-                time.sleep(3.28-(time.time() - config.player_states['beta_tag']))
+            elif latest_beta_tag_duration <= 3.33 and config.player_states['current_tag'] == 'beta':
+                time.sleep(3.33-(time.time() - config.player_states['beta_tag']))
                 config.player_states['alpha_tag'] = time.time()
             config.player_states['current_tag'] = 'alpha'
         else:
@@ -327,10 +328,10 @@ class Skill_D(BaseSkill):
             if config.player_states['current_tag'] == 'beta':
                 utils.wait_for_is_standing(800)
             latest_beta_tag_duration = time.time() - config.player_states['beta_tag']
-            if latest_beta_tag_duration > 3.28 and config.player_states['current_tag'] == 'beta':
+            if latest_beta_tag_duration > 3.33 and config.player_states['current_tag'] == 'beta':
                 config.player_states['alpha_tag'] = time.time()
-            elif latest_beta_tag_duration <= 3.28 and config.player_states['current_tag'] == 'beta':
-                time.sleep(3.28-(time.time() - config.player_states['beta_tag']))
+            elif latest_beta_tag_duration <= 3.33 and config.player_states['current_tag'] == 'beta':
+                time.sleep(3.33-(time.time() - config.player_states['beta_tag']))
                 config.player_states['alpha_tag'] = time.time()
             config.player_states['current_tag'] = 'alpha'
         else:
@@ -355,10 +356,10 @@ class Skill_R(BaseSkill):
             if config.player_states['current_tag'] == 'alpha':
                 utils.wait_for_is_standing(800)
             latest_alpha_tag_duration = time.time() - config.player_states['alpha_tag']
-            if latest_alpha_tag_duration > 3.28 and config.player_states['current_tag'] == 'alpha':
+            if latest_alpha_tag_duration > 3.33 and config.player_states['current_tag'] == 'alpha':
                 config.player_states['beta_tag'] = time.time()
-            elif latest_alpha_tag_duration <= 3.28 and config.player_states['current_tag'] == 'alpha':
-                time.sleep(3.28-(time.time() - config.player_states['alpha_tag']))
+            elif latest_alpha_tag_duration <= 3.33 and config.player_states['current_tag'] == 'alpha':
+                time.sleep(3.33-(time.time() - config.player_states['alpha_tag']))
                 config.player_states['beta_tag'] = time.time()
             config.player_states['current_tag'] = 'beta'
         else:
@@ -382,10 +383,10 @@ class Skill_W(BaseSkill):
             if config.player_states['current_tag'] == 'alpha':
                 utils.wait_for_is_standing(800)
             latest_alpha_tag_duration = time.time() - config.player_states['alpha_tag']
-            if latest_alpha_tag_duration > 3.28 and config.player_states['current_tag'] == 'alpha':
+            if latest_alpha_tag_duration > 3.33 and config.player_states['current_tag'] == 'alpha':
                 config.player_states['beta_tag'] = time.time()
-            elif latest_alpha_tag_duration <= 3.28 and config.player_states['current_tag'] == 'alpha':
-                time.sleep(3.28-(time.time() - config.player_states['alpha_tag']))
+            elif latest_alpha_tag_duration <= 3.33 and config.player_states['current_tag'] == 'alpha':
+                time.sleep(3.33-(time.time() - config.player_states['alpha_tag']))
                 config.player_states['beta_tag'] = time.time()
             config.player_states['current_tag'] = 'beta'
         else:
@@ -409,10 +410,10 @@ class Skill_E(BaseSkill):
             if config.player_states['current_tag'] == 'alpha':
                 utils.wait_for_is_standing(800)
             latest_alpha_tag_duration = time.time() - config.player_states['alpha_tag']
-            if latest_alpha_tag_duration > 3.28 and config.player_states['current_tag'] == 'alpha':
+            if latest_alpha_tag_duration > 3.33 and config.player_states['current_tag'] == 'alpha':
                 config.player_states['beta_tag'] = time.time()
-            elif latest_alpha_tag_duration <= 3.28 and config.player_states['current_tag'] == 'alpha':
-                time.sleep(3.28-(time.time() - config.player_states['alpha_tag']))
+            elif latest_alpha_tag_duration <= 3.33 and config.player_states['current_tag'] == 'alpha':
+                time.sleep(3.33-(time.time() - config.player_states['alpha_tag']))
                 config.player_states['beta_tag'] = time.time()
             config.player_states['current_tag'] = 'beta'
         else:
@@ -565,7 +566,17 @@ class Buff_F5(BaseSkill):
     skill_cool_down=230
     ground_skill=False
     buff_time=0
-    combo_delay = 0.2
+    combo_delay = 0.3
+
+class Buff_5(BaseSkill):
+    _display_name ='幻靈武具'
+    key=Key.BUFF_5
+    delay=0.45
+    rep_interval=0.25
+    skill_cool_down=172
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.1
 
 class SP_F12(BaseSkill):
     _display_name ='輪迴'

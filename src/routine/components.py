@@ -781,10 +781,12 @@ class ChangeChannel(Command):
                 check_points = utils.multi_match(frame, title_template, threshold=0.9)
                 if len(check_points) > 0:
                     press('esc') 
-                Listener.recalibrate_minimap()
+                # Listener.recalibrate_minimap()
+                # time.sleep(2)
                 config.map_changing = False
                 config.current_channel = self.target_channel
                 config.latest_change_channel_or_map = time.time()
                 config.should_change_channel = False
                 config.bot.rune_active = False
+                time.sleep(2)
                 break

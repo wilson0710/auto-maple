@@ -16,7 +16,7 @@ $, target=id, value=goat
     Walk, direction=right, duration=0.1
     Skill_D, direction=right, jump=true, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 *, x=110, y=57.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    SkillCombination, direction=, jump=false, target_skills=BUFF_PAGEUP|BUFF_F5, combo=true, wait=0.15, active_if_skill_ready=, active_if_skill_cd=BUFF_F1, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    SkillCombination, direction=, jump=false, target_skills=BUFF_PAGEUP|buff_f5, combo=true, wait=0.15, active_if_skill_ready=, active_if_skill_cd=BUFF_F1, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_E, direction=right, jump=false, rep=2, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Teleport, direction=up, jump=false, rep=1, duration=0, combo=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     FlashJump, direction=left, jump=true, combo=False, triple_jump=False, fast_jump=false
