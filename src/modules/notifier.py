@@ -98,7 +98,8 @@ class Notifier:
                     self._send_msg_to_line_notify("黑王出沒")
                     if settings.rent_frenzy == False and not settings.auto_change_channel:
                         self._alert('siren')
-                    config.should_change_channel = True
+                    elif settings.auto_change_channel:
+                        config.should_change_channel = True
 
                 if settings.rent_frenzy == False:
                     # Check for other players entering the map
@@ -125,7 +126,7 @@ class Notifier:
                 # not urgen detection 
                 if detection_i % 5==0:
                     # check for rune curse
-                    if settings.rent_frenzy == False and config.should_change_channel == False:
+                    if settings.rent_frenzy == False:
                         curse_frame = frame[0:height // 2, 0:width//2]
                         rune_curse_detector = utils.multi_match(curse_frame, RUNE_CURSE_TEMPLATE, threshold=0.9)
                         if len(rune_curse_detector) > 0:

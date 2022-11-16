@@ -103,12 +103,14 @@ class Adjust(Command):
                         key_down('left',down_time=0.02)
                         while config.enabled and d_x < -1 * threshold and walk_counter < 60:
                             walk_counter += 1
+                            time.sleep(0.01)
                             d_x = self.target[0] - config.player_pos[0]
                         key_up('left')
                     else:
                         key_down('right',down_time=0.02)
                         while config.enabled and d_x > threshold and walk_counter < 60:
                             walk_counter += 1
+                            time.sleep(0.01)
                             d_x = self.target[0] - config.player_pos[0]
                         key_up('right')
                     counter -= 1
@@ -176,7 +178,7 @@ class Teleport(BaseSkill):
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.26
+    combo_delay = 0.25
 
 class UpJump(Command):
     """Performs a up jump in the given direction."""

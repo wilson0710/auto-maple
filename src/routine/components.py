@@ -403,15 +403,16 @@ class Move(Command):
                 step("left", (-30,30))
             while config.enabled and counter > 0 and \
                     local_error > settings.move_tolerance and \
-                    global_error > settings.move_tolerance or \
-                    abs(d_y) > settings.move_tolerance / 2:
+                    global_error > settings.move_tolerance and \
+                    (abs(d_x) > settings.move_tolerance or \
+                    abs(d_y) > settings.move_tolerance / 2):
                 # stop if other move trigger
                 if (settings.auto_change_channel and config.should_change_channel) or config.enabled == False:
                     self._new_direction('')
                     break
                 if toggle:
                     d_x = point[0] - config.player_pos[0]
-                    if abs(d_x) > settings.move_tolerance / math.sqrt(2):
+                    if abs(d_x) > settings.move_tolerance :
                         if d_x < 0:
                             key = 'left'
                         else:
@@ -631,7 +632,7 @@ class BaseSkill(Command):
                 key_down(self.direction)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
-                key_down(self.key,down_time=0.06)
+                key_down(self.key,down_time=0.05)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
                 if i == (self.rep-1):
