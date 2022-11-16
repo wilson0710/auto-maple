@@ -652,12 +652,13 @@ class SkillCombination(Command):
     """auto select skill in this combination"""
     _display_name = '技能組合'
 
-    def __init__(self, direction='',jump='false',target_skills='',combo='false',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
+    def __init__(self, direction='',jump='false',target_skills='',combo='false',wait='0',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = jump
         self.target_skills = target_skills
         self.combo = combo
+        self.wait = float(wait)
         self.active_if_skill_ready = active_if_skill_ready
         self.active_if_skill_cd = active_if_skill_cd
         self.active_if_in_skill_buff = active_if_in_skill_buff
@@ -674,6 +675,8 @@ class SkillCombination(Command):
                 s = config.bot.command_book[combo_skills[0]]
                 if not s.get_is_skill_ready():
                     continue
+                if self.wait > 0:
+                    time.sleep(utils.rand_float(self.wait,self.wait*1.1))
                 s(direction=self.direction,jump=self.jump,combo="true").execute()
                 s = config.bot.command_book[combo_skills[1]]
                 s(direction=self.direction,jump="false",combo=self.combo).execute()
@@ -683,6 +686,8 @@ class SkillCombination(Command):
                 if not s.get_is_skill_ready():
                     continue
                 else:
+                    if self.wait > 0:
+                        time.sleep(utils.rand_float(self.wait,self.wait*1.1))
                     s(direction=self.direction,jump=self.jump,combo=self.combo).execute()
                     break
 
