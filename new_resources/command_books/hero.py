@@ -127,14 +127,14 @@ class Adjust(Command):
                     if d_x < 0:
                         key_down('left')
                         while config.enabled and d_x < -1 * threshold and walk_counter < 60:
-                            time.sleep(utils.rand_float(0.04, 0.055))
+                            time.sleep(utils.rand_float(0.01, 0.02))
                             walk_counter += 1
                             d_x = self.target[0] - config.player_pos[0]
                         key_up('left')
                     else:
                         key_down('right')
                         while config.enabled and d_x > threshold and walk_counter < 60:
-                            time.sleep(utils.rand_float(0.04, 0.055))
+                            time.sleep(utils.rand_float(0.01, 0.02))
                             walk_counter += 1
                             d_x = self.target[0] - config.player_pos[0]
                         key_up('right')
