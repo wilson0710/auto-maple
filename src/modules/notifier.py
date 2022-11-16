@@ -208,6 +208,9 @@ class Notifier:
                             config.should_change_channel = True
                         else:
                             self._alert('siren')
+                    elif config.bot.solve_rune_fail_count >= 3:
+                        self._send_msg_to_line_notify("多次解輪失敗")
+                        self._alert('siren')
                     else:
                         # check for rune is actually existing
                         if detection_i % 50 == 0:

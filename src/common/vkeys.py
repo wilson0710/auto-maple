@@ -194,7 +194,7 @@ def key_down(key,down_time=0.05):
     key_combination = []
     if "+" in key:
         key_combination = key.split("+")
-        print('key_combination')
+        # print('key_combination')
     else:
         key_combination.append(key)
 
