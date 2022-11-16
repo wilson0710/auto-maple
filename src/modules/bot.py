@@ -78,7 +78,7 @@ class Bot(Configurable):
             print('\n[~] Initialized detection algorithm')
         
         self.ready = True
-        solve_rune_fail_count = 0
+        self.solve_rune_fail_count = 0
 
         while True:
             if config.enabled and len(config.routine) > 0:
@@ -111,15 +111,15 @@ class Bot(Configurable):
                     if not model:
                         model = detection.load_model()
                     if self._solve_rune(model):
-                        solve_rune_fail_count = 0
+                        self.solve_rune_fail_count = 0
                     else:
-                        solve_rune_fail_count = solve_rune_fail_count + 1
-                    if solve_rune_fail_count >= 2 and settings.auto_change_channel:
+                        self.solve_rune_fail_count = self.solve_rune_fail_count + 1
+                    if self.solve_rune_fail_count >= 2 and settings.auto_change_channel:
                         print("max try, auto change channel")
                         change_action = components.ChangeChannel(max_rand=40)
                         change_action.execute()
-                    elif solve_rune_fail_count >= 2:
-                        # solve_rune_fail_count = 0
+                    elif self.solve_rune_fail_count >= 2:
+                        # self.solve_rune_fail_count = 0
                         pass
                 element.execute()
                 config.routine.next_step()
