@@ -272,7 +272,7 @@ class Skill_Q(BaseSkill):
     skill_cool_down=39
     ground_skill=True
     buff_time=0
-    combo_delay = 0.2
+    combo_delay = 0.3
     skill_image = IMAGE_DIR + 'skill_q.png'
 
 class Skill_W(BaseSkill):
