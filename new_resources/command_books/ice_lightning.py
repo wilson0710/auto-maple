@@ -72,7 +72,7 @@ def step(direction, target):
     if direction == 'down':
         # if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
         print("down stair")
-        if abs(d_y) >= 23 :
+        if abs(d_y) >= 25 :
             Fall(duration='0.15').execute()
         if abs(d_y) > 10 :
             Teleport(direction=direction).execute()
