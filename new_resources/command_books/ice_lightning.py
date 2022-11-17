@@ -52,6 +52,7 @@ def step(direction, target):
             Skill_A(combo='True').execute()
         elif abs(d_x) > 10:
             time.sleep(utils.rand_float(0.1, 0.15))
+        time.sleep(utils.rand_float(0.05, 0.1))
         utils.wait_for_is_standing(200)
     
     if direction == 'up':
@@ -60,7 +61,7 @@ def step(direction, target):
                 if abs(d_y) >= 40:
                     UpJump().execute()
                     Teleport(direction=direction,jump='true').execute()
-                elif abs(d_y) >= 24:
+                elif abs(d_y) >= 25:
                     Teleport(direction=direction,jump='true').execute()
                 else:
                     Teleport(direction=direction).execute()
