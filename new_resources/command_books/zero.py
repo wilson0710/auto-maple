@@ -456,7 +456,7 @@ class Skill_FA1(BaseSkill):
 class Skill_FA2(BaseSkill):
     _display_name ='暗影瞬閃a2'
     key=Key.SKILL_F
-    delay=0.4
+    delay=0.5
     rep_interval=0.25
     skill_cool_down=3
     ground_skill=False
@@ -493,7 +493,7 @@ class Skill_FB2(BaseSkill):
     skill_cool_down=3
     ground_skill=False
     buff_time=0
-    combo_delay = 0.4
+    combo_delay = 0.45
 
     def main(self):
         if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'beta':
