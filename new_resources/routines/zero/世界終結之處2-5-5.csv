@@ -78,6 +78,7 @@ $, target=id, value=goat
     Wait, duration=0.1
     Skill_FA2, direction=, jump=false, rep=1, duration=0.1, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     FlashJump, direction=right, jump=true, combo=False, triple_jump=False, fast_jump=false
+    Wait, duration=0.2
     Teleport, direction=up, jump=false, rep=1, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     WaitStanding, duration=0.5
 
