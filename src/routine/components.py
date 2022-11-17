@@ -502,7 +502,7 @@ class Walk(Command):
 
     def main(self):
         key_down(self.direction)
-        time.sleep(utils.rand_float(self.duration*0.8, self.duration*1.2))
+        time.sleep(utils.rand_float(self.duration*0.95, self.duration*1.1))
         key_up(self.direction)
 
 
