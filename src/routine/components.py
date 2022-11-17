@@ -394,16 +394,14 @@ class Move(Command):
         for i, point in enumerate(path):
             toggle = True
             self.prev_direction = ''
-            local_error = utils.distance(config.player_pos, point)
-            global_error = utils.distance(config.player_pos, self.target)
+            # local_error = utils.distance(config.player_pos, point)
+            # global_error = utils.distance(config.player_pos, self.target)
             d_x = point[0] - config.player_pos[0]
             d_y = point[1] - config.player_pos[1]
             # prevent change map error
             if config.player_pos[0] == 0 and config.player_pos[1] == 0:
                 step("left", (-30,30))
             while config.enabled and counter > 0 and \
-                    local_error > settings.move_tolerance and \
-                    global_error > settings.move_tolerance and \
                     (abs(d_x) > settings.move_tolerance or \
                     abs(d_y) > settings.move_tolerance / 2):
                 # stop if other move trigger
@@ -423,9 +421,17 @@ class Move(Command):
                             config.layout.add(*config.player_pos)
                         counter -= 1
                         time.sleep(0.02)
+                    else:
+                        if d_x < 0:
+                            key = 'left'
+                        else:
+                            key = 'right'
+                        self._new_direction(key)
+                        self._new_direction('')
                 else:
                     d_y = point[1] - config.player_pos[1]
-                    if abs(d_y) > settings.move_tolerance / 2:
+                    # if abs(d_y) > settings.move_tolerance / 2:
+                    if abs(d_y) >= 5:
                         if d_y < 0:
                             key = 'up' # if direction=up dont press up to avoid transporter
                             if abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
@@ -439,8 +445,8 @@ class Move(Command):
                             config.layout.add(*config.player_pos)
                         counter -= 1
                         time.sleep(0.02)
-                local_error = utils.distance(config.player_pos, point)
-                global_error = utils.distance(config.player_pos, self.target)
+                # local_error = utils.distance(config.player_pos, point)
+                # global_error = utils.distance(config.player_pos, self.target)
                 toggle = not toggle
             if self.prev_direction:
                 key_up(self.prev_direction)

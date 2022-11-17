@@ -77,7 +77,7 @@ def step(direction, target):
         utils.wait_for_is_standing(1000)
     
     if direction == 'up':
-        if abs(d_y) > 3 :
+        if abs(d_y) > 4 :
             if abs(d_y) >= 22:
                 Teleport(direction=direction,jump='true').execute()
             else:
@@ -119,23 +119,23 @@ class Adjust(Command):
         d_y = self.target[1] - config.player_pos[1]
         while config.enabled and counter > 0 and (abs(d_x) > threshold or abs(d_y) > threshold):
             if toggle:
-                if abs(d_x) > threshold:
-                    walk_counter = 0
-                    if d_x < 0:
-                        key_down('left',down_time=0.02)
-                        while config.enabled and d_x < -1 * threshold and walk_counter < 60:
-                            walk_counter += 1
-                            time.sleep(0.01)
-                            d_x = self.target[0] - config.player_pos[0]
-                        key_up('left')
-                    else:
-                        key_down('right',down_time=0.02)
-                        while config.enabled and d_x > threshold and walk_counter < 60:
-                            walk_counter += 1
-                            time.sleep(0.01)
-                            d_x = self.target[0] - config.player_pos[0]
-                        key_up('right')
-                    counter -= 1
+                # if abs(d_x) > threshold:
+                walk_counter = 0
+                if d_x < 0:
+                    key_down('left',down_time=0.02)
+                    while config.enabled and d_x < -1 * threshold and walk_counter < 60:
+                        walk_counter += 1
+                        time.sleep(0.01)
+                        d_x = self.target[0] - config.player_pos[0]
+                    key_up('left')
+                else:
+                    key_down('right',down_time=0.02)
+                    while config.enabled and d_x > threshold and walk_counter < 60:
+                        walk_counter += 1
+                        time.sleep(0.01)
+                        d_x = self.target[0] - config.player_pos[0]
+                    key_up('right')
+                counter -= 1
             else:
                 if abs(d_y) > settings.adjust_tolerance:
                     if d_y < 0:
@@ -466,6 +466,7 @@ class Skill_FA2(BaseSkill):
     def main(self):
         if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'alpha':
             return
+        self.active_if_skill_cd = 'skill_fa1'
         super().main()
 
 class Skill_FB1(BaseSkill):
@@ -497,6 +498,7 @@ class Skill_FB2(BaseSkill):
     def main(self):
         if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'beta':
             return
+        self.active_if_skill_cd = 'skill_fb2'
         super().main()
 
 class Skill_F2(BaseSkill):
@@ -518,6 +520,10 @@ class Skill_F22(BaseSkill):
     buff_time=0
     ground_skill=False
     combo_delay = 0.03
+
+    def main(self):
+        self.active_if_in_skill_buff = 'skill_f2'
+        super().main()
 
 class Skill_2(BaseSkill):
     _display_name ='蜘蛛之鏡'
@@ -558,6 +564,11 @@ class Buff_Pageup(BaseSkill):
     combo_delay = 0.2
     skill_image = IMAGE_DIR + 'buff_pageup.png'
 
+    def main(self):
+        if not self.active_if_skill_cd:
+            self.active_if_skill_cd = 'buff_f1'
+        super().main()
+
 class Buff_F5(BaseSkill):
     _display_name ='優伊娜的心願'
     key=Key.BUFF_F5
@@ -567,6 +578,11 @@ class Buff_F5(BaseSkill):
     ground_skill=False
     buff_time=0
     combo_delay = 0.3
+
+    def main(self):
+        if not self.active_if_skill_cd:
+            self.active_if_skill_cd = 'buff_f1'
+        super().main()
 
 class Buff_5(BaseSkill):
     _display_name ='幻靈武具'
