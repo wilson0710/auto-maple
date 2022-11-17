@@ -498,7 +498,7 @@ class Skill_FB2(BaseSkill):
     def main(self):
         if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'beta':
             return
-        self.active_if_skill_cd = 'skill_fb2'
+        self.active_if_skill_cd = 'skill_fb1'
         super().main()
 
 class Skill_F2(BaseSkill):
