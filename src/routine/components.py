@@ -769,6 +769,7 @@ class ChangeChannel(Command):
             time.sleep(utils.rand_float(0.3*0.8, 0.3*1.2))
             frame = config.capture.frame
             title_template = cv2.imread('assets/channel_change.png', 0)
+            ok_template = cv2.imread('assets/ok1.png', 0)
             points = utils.multi_match(frame, title_template, threshold=0.9)
             if len(points) > 0:
                 config.map_changing = True
@@ -784,10 +785,14 @@ class ChangeChannel(Command):
                     press('enter')
                 time.sleep(4)
                 # check if menu is opened
-                frame = config.capture.frame
-                check_points = utils.multi_match(frame, title_template, threshold=0.9)
-                if len(check_points) > 0:
-                    press('esc') 
+                for iii in range(2):
+                    frame = config.capture.frame
+                    check_points = utils.multi_match(frame, title_template, threshold=0.9)
+                    if len(check_points) > 0:
+                        press('esc') 
+                    check_points = utils.single_match_with_threshold(frame, ok_template, threshold=0.9)
+                    if len(check_points) > 0:
+                        press('esc') 
                 # Listener.recalibrate_minimap()
                 # time.sleep(2)
                 config.map_changing = False
