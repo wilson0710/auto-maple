@@ -81,6 +81,10 @@ SETTING_VALIDATORS = {
     'rent_frenzy':validate_boolean,
     'driver_key':validate_boolean,
     'auto_change_channel':validate_boolean,
+    'partner' :str,
+    'main_attack_skill_key' :str,
+    'frenzy_key' :str,
+    'home_scroll_key' :str,
 }
 
 
@@ -88,12 +92,17 @@ def reset():
     """Resets all settings to their default values."""
 
     global id, move_tolerance, adjust_tolerance, record_layout, buff_cooldown, rent_frenzy, platforms, driver_key
+    global partner, main_attack_skill_key, frenzy_key, home_scroll_key
     id = ""
     move_tolerance = 9
     adjust_tolerance = 2
     record_layout = False
     buff_cooldown = 180
     platforms = ""
+    partner = ''
+    main_attack_skill_key = ''
+    frenzy_key = ''
+    home_scroll_key = ''
     # rent_frenzy = False
     # driver_key = False
     
@@ -123,5 +132,11 @@ driver_key = False
 id = ""
 
 auto_change_channel = False
+
+#partner id
+partner = ''
+main_attack_skill_key = ''
+frenzy_key = ''
+home_scroll_key = ''
 
 reset()

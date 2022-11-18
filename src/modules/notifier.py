@@ -249,6 +249,7 @@ class Notifier:
 
         config.enabled = False
         config.listener.enabled = False
+        config.bot.solve_rune_fail_count = 0
         self.mixer.load(get_alert_path(name))
         self.mixer.set_volume(volume)
         self.mixer.play()

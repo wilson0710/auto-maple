@@ -52,7 +52,16 @@ def step(direction, target):
             Skill_A(combo='True').execute()
         elif abs(d_x) > 10:
             time.sleep(utils.rand_float(0.1, 0.15))
+        time.sleep(utils.rand_float(0.05, 0.1))
         utils.wait_for_is_standing(200)
+        d_x = target[0] - config.player_pos[0]
+        if abs(d_x) >= settings.move_tolerance and config.player_states['in_bottom_platform'] == False and len(settings.platforms) > 0:
+            print('back to ground')
+            key_up(direction)
+            time.sleep(utils.rand_float(0.3, 0.4))
+            Fall(duration='0.3').execute()
+            Teleport(direction='down').execute()
+            Skill_A(combo='True').execute()
     
     if direction == 'up':
         if abs(d_x) <= settings.move_tolerance:
@@ -60,23 +69,25 @@ def step(direction, target):
                 if abs(d_y) >= 40:
                     UpJump().execute()
                     Teleport(direction=direction,jump='true').execute()
-                elif abs(d_y) >= 24:
+                elif abs(d_y) >= 25:
                     Teleport(direction=direction,jump='true').execute()
                 else:
                     Teleport(direction=direction).execute()
                 utils.wait_for_is_standing(300)
+                Skill_A(combo='True').execute()
             else:
                 press(Key.JUMP, 1)
                 time.sleep(utils.rand_float(0.1, 0.15))
     if direction == 'down':
-        # if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
-        print("down stair")
-        if abs(d_y) >= 23 :
-            Fall(duration='0.15').execute()
-        if abs(d_y) > 10 :
-            Teleport(direction=direction).execute()
-        else:
-            Fall().execute()
+        if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
+            print("down stair")
+            if abs(d_y) >= 25 :
+                Fall(duration='0.2').execute()
+            if abs(d_y) > 10 :
+                Teleport(direction=direction).execute()
+                Skill_A(combo='True').execute()
+            else:
+                Fall(duration='0.3').execute()
         time.sleep(utils.rand_float(0.05, 0.08))
 
 class Adjust(Command):

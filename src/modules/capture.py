@@ -225,6 +225,7 @@ class Capture:
 
                     # check is_standing by settins.platforms
                     if settings.platforms != '':
+                        not_in_any_platform = True
                         temp_platforms = settings.platforms.split("|")
                         for platform_y in temp_platforms:
                             check_is_bottom = platform_y.split("b")
@@ -239,6 +240,7 @@ class Capture:
                                     config.player_states['is_standing'] = True
                                     config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
                                     done_check_is_standing = True
+                                    not_in_any_platform = False
                                     if is_bottom:
                                         config.player_states['in_bottom_platform'] = True
                                     else:
@@ -251,12 +253,14 @@ class Capture:
                                     config.player_states['is_standing'] = True
                                     config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
                                     done_check_is_standing = True
+                                    not_in_any_platform = False
                                     if is_bottom:
                                         config.player_states['in_bottom_platform'] = True
                                     else:
                                         config.player_states['in_bottom_platform'] = False
                                     break
-                        config.player_states['in_bottom_platform'] = False
+                        if not_in_any_platform == True:
+                            config.player_states['in_bottom_platform'] = False
                     if last_player_pos[1] == config.player_pos[1] and not config.player_states['is_standing']:
                         self.check_is_standing_count += 1
                         if self.check_is_standing_count >= 8:
