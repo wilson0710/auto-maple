@@ -493,7 +493,7 @@ class Skill_FB2(BaseSkill):
     skill_cool_down=3
     ground_skill=False
     buff_time=0
-    combo_delay = 0.45
+    combo_delay = 0.42
 
     def main(self):
         if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'beta':
