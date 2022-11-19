@@ -633,7 +633,7 @@ class BaseSkill(Command):
 
             if self.jump:
                 self.player_jump(self.direction)
-                time.sleep(utils.rand_float(0.02, 0.05))
+                time.sleep(utils.rand_float(0.05, 0.07))
             else:
                 key_down(self.direction)
             # time.sleep(utils.rand_float(0.03, 0.07))
