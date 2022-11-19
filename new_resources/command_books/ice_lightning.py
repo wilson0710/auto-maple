@@ -59,7 +59,7 @@ def step(direction, target):
             print('back to ground')
             key_up(direction)
             time.sleep(utils.rand_float(0.3, 0.4))
-            Fall(duration='0.3').execute()
+            Fall(duration='0.2').execute()
             Teleport(direction='down').execute()
             Skill_A(combo='True').execute()
     

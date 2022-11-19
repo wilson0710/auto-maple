@@ -440,6 +440,8 @@ class Move(Command):
                             key = 'down'
                             if config.player_states['in_bottom_platform'] == False:
                                 self._new_direction(key)
+                            elif abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
+                                self._new_direction('')
                         step(key, point)
                         if settings.record_layout:
                             config.layout.add(*config.player_pos)
