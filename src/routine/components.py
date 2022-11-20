@@ -274,7 +274,7 @@ class Command(Component):
         super().__init__(*args)
         self.id = self.__class__.__name__
         self._custom_id = self.id
-        self.set_my_last_cooldown(0)
+        # self.set_my_last_cooldown(0)
 
     def __str__(self):
         variables = self.__dict__
@@ -427,6 +427,7 @@ class Move(Command):
                         else:
                             key = 'right'
                         self._new_direction(key)
+                        time.sleep(0.1)
                         self._new_direction('')
                 else:
                     d_y = point[1] - config.player_pos[1]
@@ -792,9 +793,12 @@ class ChangeChannel(Command):
                     check_points = utils.multi_match(frame, title_template, threshold=0.9)
                     if len(check_points) > 0:
                         press('esc') 
+                    time.sleep(0.5)
+                    frame = config.capture.frame
                     check_points = utils.single_match_with_threshold(frame, ok_template, threshold=0.9)
                     if len(check_points) > 0:
                         press('esc') 
+                    time.sleep(0.5)
                 # Listener.recalibrate_minimap()
                 # time.sleep(2)
                 config.map_changing = False
@@ -802,5 +806,4 @@ class ChangeChannel(Command):
                 config.latest_change_channel_or_map = time.time()
                 config.should_change_channel = False
                 config.bot.rune_active = False
-                time.sleep(2)
                 break

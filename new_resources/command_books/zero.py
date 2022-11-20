@@ -567,6 +567,8 @@ class Buff_Pageup(BaseSkill):
     def main(self):
         if not self.active_if_skill_cd:
             self.active_if_skill_cd = 'buff_f1'
+        if not self.active_if_not_in_skill_buff:
+            self.active_if_not_in_skill_buff = 'skill_f2'
         super().main()
 
 class Buff_F5(BaseSkill):
@@ -582,6 +584,8 @@ class Buff_F5(BaseSkill):
     def main(self):
         if not self.active_if_skill_cd:
             self.active_if_skill_cd = 'buff_f1'
+        if not self.active_if_not_in_skill_buff:
+            self.active_if_not_in_skill_buff = 'skill_f2'
         super().main()
 
 class Buff_5(BaseSkill):

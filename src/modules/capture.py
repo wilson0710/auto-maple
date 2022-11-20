@@ -215,7 +215,6 @@ class Capture:
                     if find_bottom_half:
                         config.player_pos = (config.player_pos[0],config.player_pos[1]-1)
                     done_check_is_standing = False
-                    is_bottom = False
                     # print(config.player_pos)
                     # record if latest postion has been changed
                     if last_player_pos != config.player_pos or self.refresh_counting % 5 == 0:
@@ -225,9 +224,10 @@ class Capture:
 
                     # check is_standing by settins.platforms
                     if settings.platforms != '':
-                        not_in_any_platform = True
                         temp_platforms = settings.platforms.split("|")
                         for platform_y in temp_platforms:
+                            is_bottom = False
+                            not_in_any_platform = True
                             check_is_bottom = platform_y.split("b")
                             if len(check_is_bottom) == 2:
                                 temp_xy = check_is_bottom[1].split("*")
@@ -249,7 +249,7 @@ class Capture:
                             else:
                                 temp_x_range = temp_xy[0].split("~")
                                 if abs(int(temp_xy[1]) - int(config.player_pos[1])) <= 0\
-                                        and (int(temp_x_range[1]) > config.player_pos[0] and int(temp_x_range[0]) < config.player_pos[0]): 
+                                        and (int(temp_x_range[1]) >= config.player_pos[0] and int(temp_x_range[0]) <= config.player_pos[0]): 
                                     config.player_states['is_standing'] = True
                                     config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
                                     done_check_is_standing = True

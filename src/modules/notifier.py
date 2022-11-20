@@ -208,7 +208,7 @@ class Notifier:
                             config.should_change_channel = True
                         else:
                             self._alert('siren')
-                    elif config.bot.solve_rune_fail_count >= 3:
+                    elif config.bot.solve_rune_fail_count >= 3 and not settings.auto_change_channel:
                         self._send_msg_to_line_notify("多次解輪失敗")
                         self._alert('siren')
                     else:
