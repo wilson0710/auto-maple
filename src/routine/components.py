@@ -427,6 +427,7 @@ class Move(Command):
                         else:
                             key = 'right'
                         self._new_direction(key)
+                        time.sleep(0.1)
                         self._new_direction('')
                 else:
                     d_y = point[1] - config.player_pos[1]
