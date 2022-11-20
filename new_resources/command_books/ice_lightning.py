@@ -47,7 +47,7 @@ def step(direction, target):
     #     Skill_A().execute()
 
     if direction == 'left' or direction == 'right':
-        if abs(d_x) >= 15:
+        if abs(d_x) >= 17:
             Teleport(direction=direction,combo='true').execute()
             Skill_A(combo='True').execute()
         elif abs(d_x) > 10:
@@ -74,7 +74,7 @@ def step(direction, target):
                 else:
                     Teleport(direction=direction).execute()
                 utils.wait_for_is_standing(300)
-                Skill_A(combo='True').execute()
+                Skill_A(combo='False').execute()
             else:
                 press(Key.JUMP, 1)
                 time.sleep(utils.rand_float(0.1, 0.15))
