@@ -200,7 +200,7 @@ class Bot(Configurable):
 
         new_step = components.step
         new_cb = {}
-        for c in (components.Wait, components.Walk, components.Fall, components.SkillCombination, components.GoToMap, components.CustomKey, components.ChangeChannel,components.Player_jump,components.WaitStanding/
+        for c in (components.Wait, components.Walk, components.Fall, components.SkillCombination, components.GoToMap, components.CustomKey, components.ChangeChannel,components.Player_jump,components.WaitStanding, \
             components.EndScript ):
             new_cb[c.__name__.lower()] = c
 
