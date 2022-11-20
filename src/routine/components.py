@@ -427,6 +427,7 @@ class Move(Command):
                         else:
                             key = 'right'
                         self._new_direction(key)
+                        time.sleep(0.1)
                         self._new_direction('')
                 else:
                     d_y = point[1] - config.player_pos[1]
@@ -440,6 +441,8 @@ class Move(Command):
                             key = 'down'
                             if config.player_states['in_bottom_platform'] == False:
                                 self._new_direction(key)
+                            elif abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
+                                self._new_direction('')
                         step(key, point)
                         if settings.record_layout:
                             config.layout.add(*config.player_pos)
@@ -633,7 +636,7 @@ class BaseSkill(Command):
 
             if self.jump:
                 self.player_jump(self.direction)
-                time.sleep(utils.rand_float(0.02, 0.05))
+                time.sleep(utils.rand_float(0.05, 0.07))
             else:
                 key_down(self.direction)
             # time.sleep(utils.rand_float(0.03, 0.07))

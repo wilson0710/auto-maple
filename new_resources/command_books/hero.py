@@ -245,7 +245,7 @@ class UpJump(Command):
         utils.wait_for_is_standing(500)
         press(Key.UP_JUMP, 1)
         key_down(self.direction)
-        time.sleep(utils.rand_float(0.3, 0.4))
+        time.sleep(utils.rand_float(0.35, 0.4))
         if 'left' in self.direction or 'right' in self.direction:
             press(Key.JUMP, 1)
         key_up(self.direction)
