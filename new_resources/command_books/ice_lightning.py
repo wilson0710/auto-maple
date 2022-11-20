@@ -363,3 +363,10 @@ class Sp_F12(BaseSkill):
     def main(self):
         time.sleep(0.4)
         return super().main()
+
+class AutoHunting(Command):
+    _display_name ='自動走位狩獵'
+
+    def __init__(self,duration='180'):
+        super().__init__(locals())
+        self.duration = float(duration)

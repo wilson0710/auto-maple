@@ -807,3 +807,23 @@ class ChangeChannel(Command):
                 config.should_change_channel = False
                 config.bot.rune_active = False
                 break
+
+class EndScript(Command):
+    """ go to target channel """
+    _display_name = '結束腳本'
+
+    def __init__(self,should_back_home='true',home_scroll_key='f9'):
+        super().__init__(locals())
+        self.should_back_home = settings.validate_boolean(should_back_home)
+        self.home_scroll_key = home_scroll_key
+
+    def main(self):
+        if self.should_back_home:
+            if self.home_scroll_key:
+                press(self.home_scroll_key)
+            elif settings.home_scroll_key:
+                press(settings.home_scroll_key)
+            else:
+                pass
+        if config.enabled:
+            Listener.toggle_enabled()
