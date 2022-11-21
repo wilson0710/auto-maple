@@ -405,7 +405,7 @@ class Move(Command):
                     (abs(d_x) > settings.move_tolerance or \
                     abs(d_y) > settings.move_tolerance / 2):
                 # stop if other move trigger
-                if (settings.auto_change_channel and config.should_change_channel) or config.enabled == False:
+                if (settings.auto_change_channel and (config.should_change_channel)) or config.enabled == False:
                     self._new_direction('')
                     break
                 if toggle:
@@ -711,8 +711,8 @@ class GoToMap(Command):
 
     def main(self):
         wm = WorldMap()
-        if wm.check_if_in_correct_map(self.target_map):
-            return
+        # if wm.check_if_in_correct_map(self.target_map):
+        #     return
         press('n') # big map key
         time.sleep(utils.rand_float(0.3*0.8, 0.3*1.2))
         wm = WorldMap()
@@ -730,13 +730,13 @@ class GoToMap(Command):
                 pass
 
         press('enter')
-        time.sleep(1)
-        for _ in range(10):
-            if wm.check_if_in_correct_map(self.target_map):
-                break
-            time.sleep(0.3)
+        time.sleep(5)
+        # for _ in range(10):
+        #     if wm.check_if_in_correct_map(self.target_map):
+        #         break
+        #     time.sleep(0.3)
         Listener.recalibrate_minimap()
-        time.sleep(0.2)
+        time.sleep(4)
         config.map_changing = False
         config.latest_change_channel_or_map = time.time()
         config.bot.rune_active = False
