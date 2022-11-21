@@ -638,10 +638,10 @@ class BaseSkill(Command):
                 self.player_jump(self.direction)
                 time.sleep(utils.rand_float(0.05, 0.07))
             else:
-                key_down(self.direction)
+                key_down(self.direction,down_time=0.04)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
-                key_down(self.key,down_time=0.05)
+                key_down(self.key,down_time=0.07)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
                 if i == (self.rep-1):
@@ -788,17 +788,22 @@ class ChangeChannel(Command):
                     press('enter')
                 time.sleep(4)
                 # check if menu is opened
+                change_channel_failed = False
                 for iii in range(2):
                     frame = config.capture.frame
                     check_points = utils.multi_match(frame, title_template, threshold=0.9)
                     if len(check_points) > 0:
                         press('esc') 
+                        change_channel_failed = True
                     time.sleep(0.5)
                     frame = config.capture.frame
                     check_points = utils.single_match_with_threshold(frame, ok_template, threshold=0.9)
                     if len(check_points) > 0:
                         press('esc') 
+                        change_channel_failed = True
                     time.sleep(0.5)
+                if change_channel_failed == True:
+                    ChangeChannel(max_rand=30).execute()
                 # Listener.recalibrate_minimap()
                 # time.sleep(2)
                 config.map_changing = False
