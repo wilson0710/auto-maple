@@ -73,11 +73,12 @@ class Listener(Configurable):
         """Resumes or pauses the current routine. Plays a sound to notify the user."""
 
         config.bot.rune_active = False
-
+        config.should_solve_rune = False
+        
         if not config.enabled:
             Listener.recalibrate_minimap()      # Recalibrate only when being enabled.
             print('dk : ', settings.driver_key)
-            time.sleep(0.5)
+            time.sleep(3)
 
         config.enabled = not config.enabled
         utils.print_state()
