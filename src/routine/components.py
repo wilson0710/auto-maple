@@ -893,6 +893,8 @@ class DailyCombination(Command):
         auto_hunting = config.bot.command_book['autohunting']
         for t_map in map_list:
             auto_hunting('300',t_map).execute()
+            if not config.enabled:
+                break
 
 class FollowPartner(Command):
     """ follow partner's map and channel """

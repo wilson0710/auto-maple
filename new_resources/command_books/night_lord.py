@@ -389,7 +389,6 @@ class AutoHunting(Command):
             if toggle:
                 # right side
                 move((width-10),bottom_y).execute()
-                SkillCombination(direction='right',target_skills='skill_1|skill_d|skill_a').execute()
                 if config.player_pos[1] >= bottom_y:
                     print('new bottom')
                     bottom_y = config.player_pos[1]
@@ -402,7 +401,6 @@ class AutoHunting(Command):
             else:
                 # left side
                 move(10,bottom_y).execute()
-                SkillCombination(direction='left',target_skills='skill_1|skill_d|skill_a').execute()
                 if config.player_pos[1] >= bottom_y:
                     print('new bottom')
                     bottom_y = config.player_pos[1]
@@ -419,9 +417,9 @@ class AutoHunting(Command):
                 ChangeChannel(max_rand=40).execute()
                 continue
             move(width//2,bottom_y).execute()
-            UpJump().execute()
+            UpJump(jump='true').execute()
             SkillCombination(direction='left',target_skills='skill_w|skill_s|skill_e|skill_a').execute()
-            SkillCombination(direction='right',target_skills='skill_a').execute()
+            SkillCombination(direction='right',target_skills='skill_1|skill_d|skill_a').execute()
             toggle = not toggle
             
 
