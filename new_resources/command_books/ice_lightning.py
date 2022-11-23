@@ -428,7 +428,7 @@ class AutoHunting(Command):
                 print("current bottom : ", settings.platforms)
                 print("current player : ", str(config.player_pos[1]))
                 time.sleep(0.2)
-                TeleportCombination(direction='right',combo_skill='skill_q|skill_3|skill_s',combo_direction='right').execute()
+                TeleportCombination(direction='right',combo_skill='skill_q|skill_3|skill_s',combo_direction='left').execute()
                 TeleportCombination(direction='left',combo_skill='skill_a',combo2='false').execute()
                 UpJump(combo='true',direction='left').execute()
                 TeleportCombination(direction='up',combo_skill='skill_a').execute()
