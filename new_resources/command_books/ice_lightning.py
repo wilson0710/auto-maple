@@ -427,9 +427,9 @@ class AutoHunting(Command):
                     settings.platforms = 'b' + str(int(bottom_y))
                 print("current bottom : ", settings.platforms)
                 print("current player : ", str(config.player_pos[1]))
-                time.sleep(0.5)
-                SkillCombination(target_skills='skill_1|skill_w').execute()
-                TeleportCombination(direction='right',combo_skill='skill_q|skill_3|skill_s',combo_direction='left').execute()
+                time.sleep(0.2)
+                TeleportCombination(direction='right',combo_skill='skill_q|skill_3|skill_s',combo_direction='right').execute()
+                TeleportCombination(direction='left',combo_skill='skill_a',combo2='false').execute()
                 UpJump(combo='true',direction='left').execute()
                 TeleportCombination(direction='up',combo_skill='skill_a').execute()
             else:
@@ -441,9 +441,9 @@ class AutoHunting(Command):
                     bottom_y = config.player_pos[1]
                     settings.platforms = 'b' + str(int(bottom_y))
                 print("current bottom : ", settings.platforms)
-                time.sleep(0.5)
-                SkillCombination(target_skills='skill_1|skill_w').execute()
+                time.sleep(0.2)
                 TeleportCombination(direction='left',combo_skill='skill_q|skill_3|skill_s',combo_direction='right').execute()
+                TeleportCombination(direction='right',combo_skill='skill_a',combo2='false').execute()
                 UpJump(combo='true',direction='right').execute()
                 TeleportCombination(direction='up',combo_skill='skill_a').execute()
             
@@ -454,6 +454,7 @@ class AutoHunting(Command):
                 ChangeChannel(max_rand=40).execute()
                 continue
             move(width//2,bottom_y).execute()
+            SkillCombination(target_skills='skill_1|skill_w').execute()
             TeleportCombination(direction='up',combo_skill='skill_a',jump='true').execute()
             toggle = not toggle
             
