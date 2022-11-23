@@ -40,6 +40,7 @@ class Bot(Configurable):
         self.rune_closest_pos = (0, 0)      # Location of the Point closest to rune
         self.submodules = []
         self.module_name = None
+        self.model = None
         self.buff = components.Buff()
 
         self.command_book = {}
@@ -74,7 +75,7 @@ class Bot(Configurable):
 
         if not settings.rent_frenzy:
             print('\n[~] Initializing detection algorithm:\n')
-            model = detection.load_model()
+            self.model = detection.load_model()
             print('\n[~] Initialized detection algorithm')
         
         self.ready = True
@@ -108,9 +109,9 @@ class Bot(Configurable):
                             or utils.distance(config.bot.rune_pos, element.location) <= 40) \
                         and time.time() - float(config.latest_solved_rune) >= (15 * 60) \
                         or config.should_solve_rune) :
-                    if not model:
-                        model = detection.load_model()
-                    if self._solve_rune(model):
+                    if not self.model:
+                        self.model = detection.load_model()
+                    if self._solve_rune(self.model):
                         self.solve_rune_fail_count = 0
                     else:
                         self.solve_rune_fail_count = self.solve_rune_fail_count + 1
@@ -127,7 +128,7 @@ class Bot(Configurable):
                 time.sleep(0.01)
 
     @utils.run_if_enabled
-    def _solve_rune(self, model):
+    def _solve_rune(self, model=None):
         """
         Moves to the position of the rune and solves the arrow-key puzzle.
         :param model:   The TensorFlow model to classify with.
@@ -135,6 +136,8 @@ class Bot(Configurable):
         :return:        None
         """
 
+        if not model:
+            model = self.model
         move = self.command_book['move']
         move(*self.rune_pos).execute()
         adjust = self.command_book['adjust']
@@ -201,7 +204,7 @@ class Bot(Configurable):
         new_step = components.step
         new_cb = {}
         for c in (components.Wait, components.Walk, components.Fall, components.SkillCombination, components.GoToMap, components.CustomKey, components.ChangeChannel,components.Player_jump,components.WaitStanding, \
-            components.EndScript ):
+            components.EndScript, components.DailyCombination, components.FollowPartner ):
             new_cb[c.__name__.lower()] = c
 
         # Import the desired command book file

@@ -3,7 +3,7 @@
 import math
 from pickle import FALSE
 import time
-from src.common import config, settings, utils
+from src.common import config, settings, utils, remote_info
 from src.common.vkeys import click, key_down, key_up, press
 from src.routine.maps import WorldMap
 from src.modules.listener import Listener
@@ -398,6 +398,7 @@ class Move(Command):
             # global_error = utils.distance(config.player_pos, self.target)
             d_x = point[0] - config.player_pos[0]
             d_y = point[1] - config.player_pos[1]
+            
             # prevent change map error
             if config.player_pos[0] == 0 and config.player_pos[1] == 0:
                 step("left", (-30,30))
@@ -405,9 +406,10 @@ class Move(Command):
                     (abs(d_x) > settings.move_tolerance or \
                     abs(d_y) > settings.move_tolerance / 2):
                 # stop if other move trigger
-                if (settings.auto_change_channel and config.should_change_channel) or config.enabled == False:
+                if (settings.auto_change_channel and (config.should_change_channel)) or config.enabled == False:
                     self._new_direction('')
                     break
+                last_player_pos = config.player_pos
                 if toggle:
                     d_x = point[0] - config.player_pos[0]
                     if abs(d_x) > settings.move_tolerance :
@@ -421,6 +423,10 @@ class Move(Command):
                             config.layout.add(*config.player_pos)
                         counter -= 1
                         time.sleep(0.02)
+                        if last_player_pos[0] == config.player_pos[0] and last_player_pos[1] == config.player_pos[1]:
+                            config.player_states['is_stuck'] = True
+                        else:
+                            config.player_states['is_stuck'] = False
                     else:
                         if d_x < 0:
                             key = 'left'
@@ -448,6 +454,10 @@ class Move(Command):
                             config.layout.add(*config.player_pos)
                         counter -= 1
                         time.sleep(0.02)
+                    # if last_player_pos[0] == config.player_pos[0] and last_player_pos[1] == config.player_pos[1]:
+                    #     config.player_states['is_stuck'] = True
+                    # else:
+                    #     config.player_states['is_stuck'] = False
                 # local_error = utils.distance(config.player_pos, point)
                 # global_error = utils.distance(config.player_pos, self.target)
                 toggle = not toggle
@@ -614,12 +624,13 @@ class BaseSkill(Command):
     combo_delay = 0.1
     rep_interval_increase = 0
 
-    def __init__(self, direction='',jump='false',rep='1',duration='0',combo='false',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
+    def __init__(self, direction='',jump='false',rep='1',pre_delay='0',duration='0',combo='false',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
         self.rep = settings.validate_nonnegative_int(rep)
         self.duration = float(duration)
+        self.pre_delay = float(pre_delay)
         config.is_skill_ready_collector[self._custom_id] = True
         self.combo = settings.validate_boolean(combo)
         self.active_if_skill_ready = active_if_skill_ready
@@ -633,7 +644,8 @@ class BaseSkill(Command):
         if self.skill_cool_down == 0 or self.check_is_skill_ready():
             if self.ground_skill:
                 utils.wait_for_is_standing(1000)
-
+            if self.pre_delay > 0:
+                time.sleep(utils.rand_float(self.pre_delay*0.95, self.pre_delay*1.05))
             if self.jump:
                 self.player_jump(self.direction)
                 time.sleep(utils.rand_float(0.05, 0.07))
@@ -656,6 +668,21 @@ class BaseSkill(Command):
                 time.sleep(utils.rand_float(self.combo_delay*0.95, self.combo_delay*1.1))
             else:
                 time.sleep(utils.rand_float(self.delay*0.95, self.delay*1.1))
+
+class Frenzy(BaseSkill):
+    _display_name ='輪迴'
+    key="f12"
+    delay=0.5
+    rep_interval=0.2
+    skill_cool_down=60
+    ground_skill=True
+    buff_time=600
+    combo_delay = 0.1
+
+    def main(self):
+        if settings.frenzy_key:
+            self.key = settings.frenzy_key
+        return super().main()
 
 class SkillCombination(Command):
     """auto select skill in this combination"""
@@ -710,11 +737,11 @@ class GoToMap(Command):
         self.target_map = target_map
 
     def main(self):
-        wm = WorldMap()
-        if wm.check_if_in_correct_map(self.target_map):
-            return
+        # wm = WorldMap()
+        # if wm.check_if_in_correct_map(self.target_map):
+        #     return
         press('n') # big map key
-        time.sleep(utils.rand_float(0.3*0.8, 0.3*1.2))
+        time.sleep(utils.rand_float(2*0.9, 2*1.2))
         wm = WorldMap()
         config.map_changing = True
         if self.target_map in wm.maps_info:
@@ -730,25 +757,31 @@ class GoToMap(Command):
                 pass
 
         press('enter')
-        time.sleep(1)
-        for _ in range(10):
-            if wm.check_if_in_correct_map(self.target_map):
-                break
-            time.sleep(0.3)
+        time.sleep(2)
+        # for _ in range(10):
+        #     if wm.check_if_in_correct_map(self.target_map):
+        #         break
+        #     time.sleep(0.3)
         Listener.recalibrate_minimap()
-        time.sleep(0.2)
         config.map_changing = False
         config.latest_change_channel_or_map = time.time()
         config.bot.rune_active = False
-
+        if settings.id:
+            if len(config.my_remote_info) == 0:
+                config.my_remote_info = remote_info.get_user_info(settings.id)
+            config.my_remote_info[1] = self.target_map
+            config.my_remote_info = remote_info.update_user_info(settings.id,config.my_remote_info)
+        time.sleep(3)
 
 class ChangeChannel(Command):
     """ go to target channel """
     _display_name = '換頻'
     # skill_cool_down = 0
 
-    def __init__(self,target_channel='',max_rand='0'):
+    def __init__(self,target_channel='',max_rand='0',delay='5'):
         super().__init__(locals())
+        self.delay = float(delay)
+        self.max_rand = int(max_rand)
         if int(max_rand) > 0:
             self.max_rand = int(max_rand)
             self.next_line = False
@@ -760,13 +793,13 @@ class ChangeChannel(Command):
             self.target_channel = int(target_channel)
 
     def main(self):
-        time.sleep(5)
+        time.sleep(self.delay)
         if int(self.max_rand) > 0:
             while True:
                 self.target_channel = randint(1,int(self.max_rand))
                 if self.target_channel != config.current_channel:
                     break
-        for _ in range(5):
+        for _ in range(8):
             press('esc') # menu key
             press('enter',n=2) # select channel change key
             time.sleep(utils.rand_float(0.3*0.8, 0.3*1.2))
@@ -786,7 +819,7 @@ class ChangeChannel(Command):
                 else:
                     press('right',up_time=0.2) 
                     press('enter')
-                time.sleep(4)
+                time.sleep(2)
                 # check if menu is opened
                 change_channel_failed = False
                 for iii in range(2):
@@ -803,14 +836,23 @@ class ChangeChannel(Command):
                         change_channel_failed = True
                     time.sleep(0.5)
                 if change_channel_failed == True:
-                    ChangeChannel(max_rand=30).execute()
+                    ChangeChannel(max_rand=30,delay='1').execute()
+                    break
                 # Listener.recalibrate_minimap()
-                # time.sleep(2)
                 config.map_changing = False
                 config.current_channel = self.target_channel
                 config.latest_change_channel_or_map = time.time()
                 config.should_change_channel = False
                 config.bot.rune_active = False
+                time.sleep(3)
+                if config.should_change_channel and settings.auto_change_channel:
+                    ChangeChannel(max_rand=30,delay='1').execute()
+                    break
+                if settings.id:
+                    if len(config.my_remote_info) == 0:
+                        config.my_remote_info = remote_info.get_user_info(settings.id)
+                    config.my_remote_info[2] = self.target_channel
+                    config.my_remote_info = remote_info.update_user_info(settings.id,config.my_remote_info)
                 break
 
 class EndScript(Command):
@@ -832,3 +874,55 @@ class EndScript(Command):
                 pass
         if config.enabled:
             Listener.toggle_enabled()
+
+class DailyCombination(Command):
+    """ go to target channel """
+    _display_name = '每日任務組合包'
+
+    def __init__(self,maps='',remote='false'):
+        super().__init__(locals())
+        self.maps = maps
+        self.remote = settings.validate_boolean(remote)
+
+    def main(self):
+        if self.remote:
+            info = remote_info.get_user_info(settings.id) 
+            # daily column
+            self.maps = info[4]
+        map_list = self.maps.split('|')
+        auto_hunting = config.bot.command_book['autohunting']
+        for t_map in map_list:
+            auto_hunting('300',t_map).execute()
+            if not config.enabled:
+                break
+
+class FollowPartner(Command):
+    """ follow partner's map and channel """
+    _display_name = '跟隨夥伴'
+
+    def __init__(self,partner='',from_remote='true'):
+        super().__init__(locals())
+        self.partner = partner
+        self.from_remote = settings.validate_boolean(from_remote)
+
+    def main(self):
+        if settings.id:
+            if len(config.my_remote_info) == 0:
+                config.my_remote_info = remote_info.get_user_info(settings.id)
+            my_info = config.my_remote_info
+            my_map = my_info[1]
+            my_channel = int(my_info[2])
+            if self.from_remote:
+                self.partner = my_info[5]
+        else:
+            my_map = ''
+            my_channel = 0
+        if not self.partner:
+            return
+        partner_info = remote_info.get_user_info(self.partner) 
+        partner_map = partner_info[1]
+        partner_channel = int(partner_info[2])
+        if my_channel != partner_channel:
+            ChangeChannel(target_channel=str(partner_channel)).execute()
+        if my_map != partner_map:
+            GoToMap(partner_map).execute()

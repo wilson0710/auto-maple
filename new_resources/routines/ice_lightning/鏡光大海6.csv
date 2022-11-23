@@ -1,5 +1,5 @@
 $, target=id, value=veg
-$, target=move_tolerance, value=4
+$, target=move_tolerance, value=6
 $, target=auto_change_channel, value=true
 $, target=platforms, value=b63
 
@@ -16,12 +16,12 @@ $, target=platforms, value=b63
 *, x=101, y=63, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=skill_w, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     TeleportCombination, direction=left, combo_skill=skill_q|skill_a, combo_direction=left, jump=False, combo2=false
     Walk, direction=left, duration=0.04
-*, x=80, y=63.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=skill_w, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+*, x=81, y=63.000, frequency=1, skip=False, adjust=true, active_if_skill_ready=, active_if_skill_cd=skill_w, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     TeleportCombination, direction=up, combo_skill=skill_s|skill_a, combo_direction=, jump=False, combo2=true
 >, label=standard, frequency=1, skip=False, frequency_to_loop=False, active_if_skill_ready=, active_if_skill_cd=skill_w, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 
 @, label=fixed
-*, x=101, y=63, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+*, x=101, y=63, frequency=1, skip=False, adjust=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     TeleportCombination, direction=up, combo_skill=skill_w, combo_direction=, jump=False, combo2=False
     TeleportCombination, direction=down, combo_skill=skill_a, combo_direction=, jump=False, combo2=true
 *, x=79, y=63, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
@@ -29,7 +29,7 @@ $, target=platforms, value=b63
 *, x=79, y=49.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     TeleportCombination, direction=left, combo_skill=skill_s|skill_a, combo_direction=, jump=False, combo2=false
     TeleportCombination, direction=down, combo_skill=skill_a, combo_direction=, jump=False, combo2=true
-    Move, x=36, y=63, max_steps=10
+    Move, x=37, y=63, max_steps=10
     TeleportCombination, direction=up, combo_skill=skill_a, combo_direction=, jump=true, combo2=false
     Skill_D, direction=, jump=false, rep=1, duration=0.1, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Wait, duration=0.2

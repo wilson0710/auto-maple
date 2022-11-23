@@ -1,0 +1,15 @@
+$, target=move_tolerance, value=30
+$, target=home_scroll_key, value=f9
+$, target=auto_change_channel, value=true
+$, target=frenzy_key, value=f12
+*, x=-1, y=-1, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    AutoHunting, duration=180, map=鏡光大海4
+    EndScript, should_back_home=true, home_scroll_key=f9
+    AutoHunting, duration=180, map=那天的特雷亞非2
+    AutoHunting, duration=180, map=光之執行者
+    AutoHunting, duration=180, map=瓦列利安
+    AutoHunting, duration=180, map=不法者街道2
+    AutoHunting, duration=180, map=橢圓森林2
+    AutoHunting, duration=180, map=五道洞穴的上路
+    AutoHunting, duration=180, map=風化的悲傷之地
+    AutoHunting, duration=180, map=封閉地區3

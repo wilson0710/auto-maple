@@ -267,7 +267,6 @@ class Capture:
                             config.player_states['is_standing'] = True
                             config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
                             self.check_is_standing_count = 0
-                            # print('back to ground')
                     elif last_player_pos[1] != config.player_pos[1] and done_check_is_standing == False:
                         self.check_is_standing_count = 0
                         config.player_states['is_standing'] = False
