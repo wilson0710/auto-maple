@@ -73,14 +73,16 @@ class WorldMap():
         }
 
     def refresh_standard_point(self):
-        frame = config.capture.frame
-        point = utils.multi_match(frame, self.MAP_OPEN_PNG, threshold=0.9)
-        if len(point) > 0:
-            print("world map opened")
-            self.standard_point = (point[0][0]-431,point[0][1]-10)
-            return self.standard_point
-        else:
-            return False
+        for _ in range(10):
+            frame = config.capture.frame
+            point = utils.multi_match(frame, self.MAP_OPEN_PNG, threshold=0.95)
+            if len(point) > 0:
+                print("world map opened")
+                self.standard_point = (point[0][0]-431,point[0][1]-10)
+                return self.standard_point
+            else:
+                time.sleep(0.3)
+        return False
 
     def get_final_pos(self,x,y):
         return (lambda x : (self.standard_point[0]+x[0],self.standard_point[1]+x[1]))((x,y))

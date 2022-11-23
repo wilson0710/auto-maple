@@ -227,7 +227,7 @@ def multi_match(frame, template, threshold=0.95):
 
 def single_match_with_threshold(frame, template, threshold=0.95):
     """
-    Finds all matches in FRAME that are similar to TEMPLATE by at least THRESHOLD.
+    Finds max match in FRAME that are similar to TEMPLATE by at least THRESHOLD.
     :param frame:       The image in which to search.
     :param template:    The template to match with.
     :param threshold:   The minimum percentage of TEMPLATE that each result must match.
@@ -244,6 +244,42 @@ def single_match_with_threshold(frame, template, threshold=0.95):
         y = int(round(top_left[1] + template.shape[0] / 2))
         results.append((x, y))
     return results
+
+def single_match_with_digit(frame, template, threshold=0.95):
+    """
+    Finds max match in FRAME that are similar to TEMPLATE by at least THRESHOLD.
+    :param frame:       The image in which to search.
+    :param template:    The template to match with.
+    :param threshold:   The minimum percentage of TEMPLATE that each result must match.
+    :return:            An array of matches that exceed THRESHOLD.
+    """
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    result = cv2.matchTemplate(gray, template, cv2.TM_CCOEFF_NORMED)
+    results = []
+    _, score, _, top_left = cv2.minMaxLoc(result)
+    # print("score : ",score)
+    if score >= threshold:
+        x = round(top_left[0] + template.shape[1] / 2,1)
+        y = round(top_left[1] + template.shape[0] / 2,1)
+        results.append((x, y))
+    return results
+
+def convert_to_roundint(point):
+    """
+    Converts POINT into roundint coordinates in the range [0, 1] based on FRAME.
+    Normalizes the units of the vertical axis to equal those of the horizontal
+    axis by using config.mm_ratio.
+    :param point:   The point in absolute coordinates.
+    :param frame:   The image to use as a reference.
+    :return:        The given point in roundint coordinates.
+    """
+
+    # x = point[0] / frame.shape[1]
+    # y = point[1] / config.capture.minimap_ratio / frame.shape[0]
+    x = int(round(point[0]))
+    y = int(round(point[1])) 
+    return x, y
 
 def convert_to_relative(point, frame):
     """

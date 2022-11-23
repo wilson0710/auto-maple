@@ -27,6 +27,7 @@ player_states = {
   'fly_mode':True,
   'movement_state':0,
   'in_bottom_platform':False,
+  'is_stuck':False,
 }
 
 MOVEMENT_STATE_STANDING = 0
@@ -83,3 +84,6 @@ should_change_channel = False
 
 # should instant change channel
 should_solve_rune = False
+
+# my remote info
+my_remote_info = []
