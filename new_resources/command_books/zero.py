@@ -85,7 +85,7 @@ def step(direction, target):
             utils.wait_for_is_standing(300)
         else:
             press(Key.JUMP, 1)
-            time.sleep(utils.rand_float(0.1, 0.15))
+            time.sleep(utils.rand_float(0.2, 0.25))
     if direction == 'down':
         # if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
         print("down stair")
@@ -293,7 +293,7 @@ class Skill_S(BaseSkill):
     skill_cool_down=1
     ground_skill=False
     buff_time=0
-    combo_delay = 0.15
+    combo_delay = 0.2
     # skill_image = IMAGE_DIR + 'skill_s.png'
 
     def main(self):
@@ -422,6 +422,33 @@ class Skill_E(BaseSkill):
             config.player_states['current_tag'] = 'beta'
         super().main()
 
+class Skill_E1(BaseSkill):
+    _display_name ='迴旋突進收尾用1段'
+    key=Key.SKILL_E
+    delay=1.05
+    rep_interval=0.15
+    skill_cool_down=0.5
+    ground_skill=False
+    buff_time=0
+    combo_delay = 1.05
+
+    def main(self):
+        if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
+            if config.player_states['current_tag'] == 'alpha':
+                utils.wait_for_is_standing(800)
+            latest_alpha_tag_duration = time.time() - config.player_states['alpha_tag']
+            if latest_alpha_tag_duration > 3.33 and config.player_states['current_tag'] == 'alpha':
+                config.player_states['beta_tag'] = time.time()
+            elif latest_alpha_tag_duration <= 3.33 and config.player_states['current_tag'] == 'alpha':
+                time.sleep(3.33-(time.time() - config.player_states['alpha_tag']))
+                config.player_states['beta_tag'] = time.time()
+            config.player_states['current_tag'] = 'beta'
+        else:
+            config.player_states['beta_tag'] = time.time()
+            config.player_states['alpha_tag'] = time.time()-3
+            config.player_states['current_tag'] = 'beta'
+        super().main()
+
 class Buff_F1(BaseSkill):
     _display_name ='武公寶珠'
     key=Key.BUFF_F1
@@ -430,7 +457,7 @@ class Buff_F1(BaseSkill):
     skill_cool_down=143
     ground_skill=True
     buff_time=60
-    combo_delay = 0.15
+    combo_delay = 0.2
     skill_image = IMAGE_DIR + 'buff_f1.png'
 
     def main(self):
