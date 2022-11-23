@@ -454,6 +454,7 @@ class AutoHunting(Command):
                 ChangeChannel(max_rand=40).execute()
                 continue
             move(width//2,bottom_y).execute()
+            time.sleep(0.5)
             SkillCombination(target_skills='skill_1|skill_w').execute()
             TeleportCombination(direction='up',combo_skill='skill_a',jump='true').execute()
             toggle = not toggle

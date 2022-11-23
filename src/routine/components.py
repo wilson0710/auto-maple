@@ -907,8 +907,7 @@ class FollowPartner(Command):
 
     def main(self):
         if settings.id:
-            if len(config.my_remote_info) == 0:
-                config.my_remote_info = remote_info.get_user_info(settings.id)
+            config.my_remote_info = remote_info.get_user_info(settings.id)
             my_info = config.my_remote_info
             my_map = my_info[1]
             my_channel = int(my_info[2])
