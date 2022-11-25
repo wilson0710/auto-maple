@@ -44,25 +44,23 @@ def step(direction, target):
     d_x = target[0] - config.player_pos[0]
 
     if direction == 'left' or direction == 'right':
-        if abs(d_x) >= 16:
+        if abs(d_x) >= 18:
             if abs(d_x) >= 60:
-                FlashJump(direction='',triple_jump='true',fast_jump='true').execute()
+                FlashJump(direction='',triple_jump='true',fast_jump='false').execute()
                 SkillCombination(direction='',jump='false',target_skills='skill_a').execute()
             elif abs(d_x) >= 23:
-                FlashJump(direction='',triple_jump='false',fast_jump='true').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_a').execute()
-            else:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
                 SkillCombination(direction='',jump='false',target_skills='skill_a').execute()
-            # time.sleep(utils.rand_float(0.05, 0.12))
+            else:
+                SkillCombination(direction='',jump='true',target_skills='skill_a').execute()
+            time.sleep(utils.rand_float(0.05, 0.07))
             if abs(d_x) <= 22:
                 key_up(direction)
             if config.player_states['movement_state'] == config.MOVEMENT_STATE_FALLING:
                 SkillCombination(direction='',jump='false',target_skills='skill_a').execute()
             utils.wait_for_is_standing(200)
         else:
-            SkillCombination(direction='',jump='true',target_skills='skill_a').execute()
-            # time.sleep(utils.rand_float(0.05, 0.12))
+            time.sleep(utils.rand_float(0.08, 0.12))
             utils.wait_for_is_standing(200)
     
     if direction == 'up':
@@ -211,7 +209,7 @@ class FlashJump(Command):
         if not self.fast_jump:
             time.sleep(utils.rand_float(0.02, 0.04)) # fast flash jump gap
         else:
-            time.sleep(utils.rand_float(0.08, 0.12)) # slow flash jump gap
+            time.sleep(utils.rand_float(0.2, 0.25)) # slow flash jump gap
         if self.direction == 'up':
             press(Key.FLASH_JUMP, 1)
         else:
@@ -367,11 +365,12 @@ class AutoHunting(Command):
         settings.platforms = 'b' + str(int(bottom_y))
         while True:
             if settings.auto_change_channel and config.should_solve_rune:
+                Skill_A().execute()
                 config.bot._solve_rune()
                 continue
             if settings.auto_change_channel and config.should_change_channel:
                 ChangeChannel(max_rand=40).execute()
-                time.sleep(2)
+                Skill_A().execute()
                 continue
             Frenzy().execute()
             frame = config.capture.frame
@@ -415,6 +414,7 @@ class AutoHunting(Command):
                 continue
             if settings.auto_change_channel and config.should_change_channel:
                 ChangeChannel(max_rand=40).execute()
+                Skill_A().execute()
                 continue
             move(width//2,bottom_y).execute()
             UpJump(jump='true').execute()
