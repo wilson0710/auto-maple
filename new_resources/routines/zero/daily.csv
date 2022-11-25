@@ -1,5 +1,5 @@
-$, target=id, value=ewei
-$, target=move_tolerance, value=30
+$, target=id, value=goat
+$, target=move_tolerance, value=40
 $, target=home_scroll_key, value=f9
 $, target=auto_change_channel, value=true
 $, target=frenzy_key, value=f12

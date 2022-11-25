@@ -1,6 +1,7 @@
 from src.common import config, settings, utils
 import time
-from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill
+import cv2
+from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, ChangeChannel, GoToMap, Frenzy
 from src.common.vkeys import press, key_down, key_up
 
 IMAGE_DIR = config.RESOURCES_DIR + '/command_books/zero/'
@@ -634,3 +635,96 @@ class SP_F12(BaseSkill):
     ground_skill=True
     buff_time=600
     combo_delay = 0.2
+
+class AutoHunting(Command):
+    _display_name ='自動走位狩獵'
+
+    def __init__(self,duration='180',map=''):
+        super().__init__(locals())
+        self.duration = float(duration)
+        self.map = map
+
+    def main(self):
+        daily_complete_template = cv2.imread('assets/daily_complete.png', 0)
+        start_time = time.time()
+        toggle = True
+        move = config.bot.command_book['move']
+        GoToMap(target_map=self.map).execute()
+        Skill_A(rep='3').execute()
+        minimap = config.capture.minimap['minimap']
+        height, width, _n = minimap.shape
+        bottom_y = height - 30
+        # bottom_y = config.player_pos[1]
+        settings.platforms = 'b' + str(int(bottom_y))
+        while True:
+            if settings.auto_change_channel and config.should_solve_rune:
+                Skill_A(rep='3').execute()
+                config.bot._solve_rune()
+                continue
+            if settings.auto_change_channel and config.should_change_channel:
+                ChangeChannel(max_rand=40,delay='4').execute()
+                Skill_A(rep='3').execute()
+                continue
+            Frenzy().execute()
+            frame = config.capture.frame
+            point = utils.single_match_with_threshold(frame,daily_complete_template,0.9)
+            if len(point) > 0:
+                print("one daily end")
+                break
+            minimap = config.capture.minimap['minimap']
+            height, width, _n = minimap.shape
+            if time.time() - start_time >= self.duration:
+                break
+            if not config.enabled:
+                break
+            
+            if toggle:
+                # right side
+                move((width-20),bottom_y).execute()
+                if config.player_pos[1] >= bottom_y:
+                    print('new bottom')
+                    bottom_y = config.player_pos[1]
+                    settings.platforms = 'b' + str(int(bottom_y))
+                FlashJump(direction='right').execute()
+                Skill_Q(rep='3',direction='left').execute()
+                FlashJump(direction='left').execute()
+                Teleport(jump='false',direction='up').execute()
+                Skill_S(rep='2',direction='left').execute()
+                FlashJump(direction='left').execute()
+                Skill_D(direction='left').execute()
+                FlashJump(direction='left').execute()
+                Skill_D(direction='left').execute()
+                SkillCombination(direction='',target_skills='skill_f2|buff_f1|skill_f22').execute()
+            else:
+                # left side
+                move(20,bottom_y).execute()
+                if config.player_pos[1] >= bottom_y:
+                    print('new bottom')
+                    bottom_y = config.player_pos[1]
+                    settings.platforms = 'b' + str(int(bottom_y))
+                FlashJump(direction='left').execute()
+                Skill_Q(rep='3',direction='right').execute()
+                FlashJump(direction='right').execute()
+                Teleport(jump='false',direction='up').execute()
+                Skill_S(rep='2',direction='right').execute()
+                FlashJump(direction='right').execute()
+                Skill_D(direction='right').execute()
+                FlashJump(direction='right').execute()
+                Skill_D(direction='right').execute()
+                SkillCombination(direction='',target_skills='skill_f2|buff_f1|skill_f22').execute()
+            if settings.auto_change_channel and config.should_solve_rune:
+                config.bot._solve_rune()
+                continue
+            if settings.auto_change_channel and config.should_change_channel:
+                ChangeChannel(max_rand=40).execute()
+                Skill_A(rep='3').execute()
+                continue
+            toggle = not toggle
+            
+
+        if settings.home_scroll_key:
+            config.map_changing = True
+            press(settings.home_scroll_key)
+            time.sleep(5)
+            config.map_changing = False
+        return
