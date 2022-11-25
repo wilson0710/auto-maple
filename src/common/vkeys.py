@@ -199,7 +199,7 @@ def key_down(key,down_time=0.05):
         key_combination.append(key)
 
     if key == '':
-        return
+        pass
     else: 
         for k in key_combination:
             if k not in KEY_MAP.keys():
@@ -219,7 +219,7 @@ def key_down(key,down_time=0.05):
                 
                 if len(key_combination) > 1:
                     time.sleep(0.02 * (0.9 + 0.7 * random()))
-        time.sleep(down_time * (0.8 + 0.7 * random()))
+    time.sleep(down_time * (0.8 + 0.7 * random()))
 
 def pynput_key_down(key):
     if len(key) > 1:
@@ -243,7 +243,7 @@ def key_up(key,up_time=0.05):
         key_combination.append(key)
 
     if key == '':
-        return
+        pass
     else: 
         for k in key_combination:
             if k not in KEY_MAP.keys():
@@ -262,7 +262,7 @@ def key_up(key,up_time=0.05):
                     user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
                 if len(key_combination) > 1:
                     time.sleep(0.04 * (0.9 + 0.7 * random()))
-        time.sleep(up_time * (0.9 + 0.6 * random()))
+    time.sleep(up_time * (0.9 + 0.6 * random()))
 
     # if key == '':
     #     return 

@@ -46,13 +46,14 @@ def step(direction, target):
     # if not check_current_tag('alpha'):
     #     utils.wait_for_is_standing(1000)
     #     Skill_A().execute()
-    if config.player_states['is_stuck']:
+    if config.player_states['is_stuck'] and abs(d_x) >= 17:
         print("is stuck")
-        time.sleep(utils.rand_float(0.6, 0.7))
-        if d_x <= 0:
-            Fall(direction='left',duration='0.3')
-        else:
-            Fall(direction='right',duration='0.3')
+        time.sleep(utils.rand_float(0.2, 0.3))
+        press(Key.JUMP)
+        # if d_x <= 0:
+        #     Fall(direction='left',duration='0.3')
+        # else:
+        #     Fall(direction='right',duration='0.3')
         config.player_states['is_stuck'] = False
     if direction == 'left' or direction == 'right':
         if abs(d_x) >= 17:
@@ -91,13 +92,13 @@ def step(direction, target):
         if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
             print("down stair")
             if abs(d_y) >= 25 :
-                time.sleep(utils.rand_float(0.6, 0.7))
+                time.sleep(utils.rand_float(0.3, 0.4))
                 Fall(duration='0.3').execute()
             if abs(d_y) > 10 and utils.bernoulli(0.8):
                 Teleport(direction=direction).execute()
                 Skill_A(combo='True').execute()
             else:
-                time.sleep(utils.rand_float(0.6, 0.7))
+                time.sleep(utils.rand_float(0.3, 0.4))
                 Fall(duration='0.3').execute()
         time.sleep(utils.rand_float(0.05, 0.08))
 
@@ -195,12 +196,12 @@ class Teleport(BaseSkill):
     _display_name ='瞬移'
     _distance = 27
     key=Key.TELEPORT
-    delay=0.4
+    delay=0.53
     rep_interval=0.3
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.12
 
 class UpJump(Command):
     """Performs a up jump in the given direction."""
@@ -225,12 +226,12 @@ class UpJump(Command):
 class Skill_A(BaseSkill):
     _display_name ='閃電連擊'
     key=Key.SKILL_A
-    delay=0.55
+    delay=0.54
     rep_interval=0.2
     skill_cool_down=0
     ground_skill=True
     buff_time=0
-    combo_delay = 0.08
+    combo_delay = 0.24
     
 class TeleportCombination(Command):
     """teleport with other skill."""
@@ -265,7 +266,7 @@ class Skill_S(BaseSkill):
     skill_cool_down=5
     ground_skill=True
     buff_time=0
-    combo_delay = 0.25
+    combo_delay = 0.45
 
 class Skill_D(BaseSkill):
     _display_name ='閃電球'
@@ -275,7 +276,7 @@ class Skill_D(BaseSkill):
     skill_cool_down=0
     ground_skill=True
     buff_time=120
-    combo_delay = 0.15
+    combo_delay = 0.25
 
 class Skill_DD(BaseSkill):
     _display_name ='放置閃電球'
@@ -285,28 +286,28 @@ class Skill_DD(BaseSkill):
     skill_cool_down=27
     ground_skill=True
     buff_time=50
-    combo_delay = 0.2
+    combo_delay = 0.35
 
 class Skill_Q(BaseSkill):
     _display_name ='落雷凝聚'
     key=Key.SKILL_Q
-    delay=0.5
+    delay=0.6
     rep_interval=0.2
     skill_cool_down=39
     ground_skill=True
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.25
     skill_image = IMAGE_DIR + 'skill_q.png'
 
 class Skill_W(BaseSkill):
     _display_name ='冰河紀元'
     key=Key.SKILL_W
-    delay=0.55
+    delay=0.6
     rep_interval=0.2
     skill_cool_down=58
     ground_skill=True
     buff_time=12
-    combo_delay = 0.15
+    combo_delay = 0.25
     skill_image = IMAGE_DIR + 'skill_w.png'
 
 class Skill_E(BaseSkill):
@@ -317,35 +318,35 @@ class Skill_E(BaseSkill):
     skill_cool_down=43
     ground_skill=True
     buff_time=0
-    combo_delay = 1
+    combo_delay = 0.9
     skill_image = IMAGE_DIR + 'skill_e.png'
 
 class Skill_1(BaseSkill):
     _display_name ='冰雪之精神'
     key=Key.SKILL_1
-    delay=0.48
+    delay=0.5
     rep_interval=0.2
     skill_cool_down=114
     ground_skill=True
     buff_time=25
-    combo_delay = 0.08
+    combo_delay = 0.2
     skill_image = IMAGE_DIR + 'skill_1.png'
 
 class Skill_3(BaseSkill):
     _display_name ='眾神之雷'
     key=Key.SKILL_3
-    delay=0.52
+    delay=0.55
     rep_interval=0.2
     skill_cool_down=114
     ground_skill=True
     buff_time=30
-    combo_delay = 0.1
+    combo_delay = 0.2
     skill_image = IMAGE_DIR + 'skill_3.png'
 
 class Skill_F1(BaseSkill):
     _display_name ='魔力無限'
     key=Key.SKILL_F1
-    delay=0.46
+    delay=0.5
     rep_interval=0.2
     skill_cool_down=180
     ground_skill=True
@@ -355,12 +356,12 @@ class Skill_F1(BaseSkill):
 class Skill_2(BaseSkill):
     _display_name ='蜘蛛之鏡'
     key=Key.SKILL_2
-    delay=0.5
+    delay=0.8
     rep_interval=0.25
     skill_cool_down=240
     ground_skill=False
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.45
 
 class Sp_F12(BaseSkill):
     _display_name ='輪迴'
@@ -370,7 +371,7 @@ class Sp_F12(BaseSkill):
     skill_cool_down=60
     ground_skill=True
     buff_time=600
-    combo_delay = 0.1
+    combo_delay = 0.3
 
     def main(self):
         time.sleep(0.4)
@@ -402,7 +403,6 @@ class AutoHunting(Command):
                 continue
             if settings.auto_change_channel and config.should_change_channel:
                 ChangeChannel(max_rand=40).execute()
-                time.sleep(2)
                 continue
             Sp_F12().execute()
             frame = config.capture.frame
