@@ -533,7 +533,7 @@ class Fall(Command):
     def main(self):
         utils.wait_for_is_standing(500)
         key_down('down')
-        press(config.jump_button, 1, down_time=0.05,up_time=self.duration)
+        press(config.jump_button, 1, down_time=0.07,up_time=self.duration)
         key_up('down')
         if self.direction != '':
             key_down(self.direction)
@@ -763,7 +763,6 @@ class GoToMap(Command):
         #         break
         #     time.sleep(0.3)
         Listener.recalibrate_minimap()
-        config.map_changing = False
         config.latest_change_channel_or_map = time.time()
         config.bot.rune_active = False
         if settings.id:
@@ -771,7 +770,8 @@ class GoToMap(Command):
                 config.my_remote_info = remote_info.get_user_info(settings.id)
             config.my_remote_info[1] = self.target_map
             config.my_remote_info = remote_info.update_user_info(settings.id,config.my_remote_info)
-        time.sleep(3)
+        time.sleep(2)
+        config.map_changing = False
 
 class ChangeChannel(Command):
     """ go to target channel """
@@ -844,7 +844,7 @@ class ChangeChannel(Command):
                 config.latest_change_channel_or_map = time.time()
                 config.should_change_channel = False
                 config.bot.rune_active = False
-                time.sleep(3)
+                time.sleep(2.5)
                 if config.should_change_channel and settings.auto_change_channel:
                     ChangeChannel(max_rand=30,delay='1').execute()
                     break
