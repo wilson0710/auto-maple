@@ -154,7 +154,8 @@ class Notifier:
                     revive_frame = frame[height//2-100:height//2+200, width //2-150:width//2+150]
                     revive_confirm = utils.multi_match(revive_frame, REVIVE_CONFIRM_TEMPLATE, threshold=0.9)
                     if len(revive_confirm) > 0:
-                        self._send_msg_to_line_notify("角色死亡")
+                        if settings.rent_frenzy == False:
+                            self._send_msg_to_line_notify("角色死亡")
                         revive_confirm_pos = min(revive_confirm, key=lambda p: p[0])
                         target = (
                             round(revive_confirm_pos[0] + config.capture.window['left']+(width //2-150)),

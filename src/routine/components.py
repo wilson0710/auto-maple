@@ -757,20 +757,22 @@ class GoToMap(Command):
                 pass
 
         press('enter')
-        time.sleep(2)
+        config.should_change_channel = False
+        config.bot.rune_active = False
+        config.latest_change_channel_or_map = time.time()
+        time.sleep(2.5)
         # for _ in range(10):
         #     if wm.check_if_in_correct_map(self.target_map):
         #         break
         #     time.sleep(0.3)
         Listener.recalibrate_minimap()
-        config.latest_change_channel_or_map = time.time()
-        config.bot.rune_active = False
         if settings.id:
-            if len(config.my_remote_info) == 0:
-                config.my_remote_info = remote_info.get_user_info(settings.id)
+            # if len(config.my_remote_info) == 0:
+            config.my_remote_info = remote_info.get_user_info(settings.id)
             config.my_remote_info[1] = self.target_map
             config.my_remote_info = remote_info.update_user_info(settings.id,config.my_remote_info)
-        time.sleep(2)
+        else:
+            time.sleep(2)
         config.map_changing = False
 
 class ChangeChannel(Command):
@@ -819,7 +821,7 @@ class ChangeChannel(Command):
                 else:
                     press('right',up_time=0.2) 
                     press('enter')
-                time.sleep(2)
+                time.sleep(1)
                 # check if menu is opened
                 change_channel_failed = False
                 for iii in range(2):
@@ -828,12 +830,13 @@ class ChangeChannel(Command):
                     if len(check_points) > 0:
                         press('esc') 
                         change_channel_failed = True
-                    time.sleep(0.5)
+                        time.sleep(0.5)
                     frame = config.capture.frame
                     check_points = utils.single_match_with_threshold(frame, ok_template, threshold=0.9)
                     if len(check_points) > 0:
                         press('esc') 
                         change_channel_failed = True
+                        time.sleep(0.5)
                     time.sleep(0.5)
                 if change_channel_failed == True:
                     ChangeChannel(max_rand=30,delay='1').execute()
@@ -844,13 +847,13 @@ class ChangeChannel(Command):
                 config.latest_change_channel_or_map = time.time()
                 config.should_change_channel = False
                 config.bot.rune_active = False
-                time.sleep(2.5)
+                time.sleep(3)
                 if config.should_change_channel and settings.auto_change_channel:
                     ChangeChannel(max_rand=30,delay='1').execute()
                     break
                 if settings.id:
-                    if len(config.my_remote_info) == 0:
-                        config.my_remote_info = remote_info.get_user_info(settings.id)
+                    # if len(config.my_remote_info) == 0:
+                    config.my_remote_info = remote_info.get_user_info(settings.id)
                     config.my_remote_info[2] = self.target_channel
                     config.my_remote_info = remote_info.update_user_info(settings.id,config.my_remote_info)
                 break
