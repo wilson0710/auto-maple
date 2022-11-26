@@ -20,6 +20,7 @@ $, target=id, value=goat
     Skill_Q, direction=left, jump=false, rep=3, pre_delay=0, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Teleport, direction=left, jump=false, rep=1, pre_delay=0, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Walk, direction=right, duration=0.1
+    CustomKey, name=f10, key=f10, direction=, jump=false, delay=0.5, rep=1, rep_interval=0.3, rep_interval_increase=0, duration=0, cool_down=7320, ground_skill=true, buff_time=, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     SkillCombination, direction=, jump=false, target_skills=buff_f1|buff_pageup|skill_f2|buff_f5|sp_f12|buff_5, combo=true, wait=0.05, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 
 @, label=range
