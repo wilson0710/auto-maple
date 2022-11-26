@@ -772,7 +772,7 @@ class GoToMap(Command):
             config.my_remote_info[1] = self.target_map
             config.my_remote_info = remote_info.update_user_info(settings.id,config.my_remote_info)
         else:
-            time.sleep(2)
+            time.sleep(2.2)
         config.map_changing = False
 
 class ChangeChannel(Command):
