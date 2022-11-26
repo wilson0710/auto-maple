@@ -653,7 +653,7 @@ class BaseSkill(Command):
                 key_down(self.direction,down_time=0.04)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
-                key_down(self.key,down_time=0.07)
+                key_down(self.key,down_time=0.08)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
                 if i == (self.rep-1):
@@ -842,12 +842,12 @@ class ChangeChannel(Command):
                     ChangeChannel(max_rand=30,delay='1').execute()
                     break
                 # Listener.recalibrate_minimap()
-                config.map_changing = False
                 config.current_channel = self.target_channel
                 config.latest_change_channel_or_map = time.time()
                 config.should_change_channel = False
                 config.bot.rune_active = False
                 time.sleep(3)
+                config.map_changing = False
                 if config.should_change_channel and settings.auto_change_channel:
                     ChangeChannel(max_rand=30,delay='1').execute()
                     break

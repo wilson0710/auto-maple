@@ -387,7 +387,7 @@ class AutoHunting(Command):
             
             if toggle:
                 # right side
-                move((width-10),bottom_y).execute()
+                move((width-20),bottom_y).execute()
                 if config.player_pos[1] >= bottom_y:
                     print('new bottom')
                     bottom_y = config.player_pos[1]
@@ -399,7 +399,7 @@ class AutoHunting(Command):
                 SkillCombination(direction='left',target_skills='skill_w|skill_s|skill_e|skill_a').execute()
             else:
                 # left side
-                move(10,bottom_y).execute()
+                move(20,bottom_y).execute()
                 if config.player_pos[1] >= bottom_y:
                     print('new bottom')
                     bottom_y = config.player_pos[1]
