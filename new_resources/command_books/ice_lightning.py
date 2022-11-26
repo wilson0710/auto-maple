@@ -1,7 +1,7 @@
 from src.common import config, settings, utils
 import time
 import cv2
-from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel
+from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, WaitStanding
 from src.common.vkeys import press, key_down, key_up
 
 IMAGE_DIR = config.RESOURCES_DIR + '/command_books/ice_lightning/'
@@ -50,6 +50,7 @@ def step(direction, target):
         print("is stuck")
         time.sleep(utils.rand_float(0.2, 0.3))
         press(Key.JUMP)
+        WaitStanding(duration='1').execute()
         # if d_x <= 0:
         #     Fall(direction='left',duration='0.3')
         # else:
@@ -62,7 +63,7 @@ def step(direction, target):
         elif abs(d_x) > 10:
             time.sleep(utils.rand_float(0.25, 0.35))
         else:
-            time.sleep(utils.rand_float(0.1, 0.15))
+            time.sleep(utils.rand_float(0.01, 0.015))
         utils.wait_for_is_standing(200)
         # d_x = target[0] - config.player_pos[0]
         # if abs(d_x) >= settings.move_tolerance and config.player_states['in_bottom_platform'] == False and len(settings.platforms) > 0:
@@ -419,7 +420,7 @@ class AutoHunting(Command):
             
             if toggle:
                 # right side
-                move((width-10),bottom_y).execute()
+                move((width-20),bottom_y).execute()
                 Teleport(direction='down').execute()
                 if config.player_pos[1] >= bottom_y:
                     print('new bottom')
@@ -434,7 +435,7 @@ class AutoHunting(Command):
                 TeleportCombination(direction='up',combo_skill='skill_a').execute()
             else:
                 # left side
-                move(10,bottom_y).execute()
+                move(20,bottom_y).execute()
                 Teleport(direction='down').execute()
                 if config.player_pos[1] >= bottom_y:
                     print('new bottom')
