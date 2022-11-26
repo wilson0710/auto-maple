@@ -776,7 +776,7 @@ class GoToMap(Command):
             config.my_remote_info[1] = self.target_map
             config.my_remote_info = remote_info.update_user_info(settings.id,config.my_remote_info)
         else:
-            time.sleep(2)
+            time.sleep(2.2)
         config.map_changing = False
 
 class ChangeChannel(Command):
@@ -846,12 +846,12 @@ class ChangeChannel(Command):
                     ChangeChannel(max_rand=30,delay='1').execute()
                     break
                 # Listener.recalibrate_minimap()
-                config.map_changing = False
                 config.current_channel = self.target_channel
                 config.latest_change_channel_or_map = time.time()
                 config.should_change_channel = False
                 config.bot.rune_active = False
                 time.sleep(3)
+                config.map_changing = False
                 if config.should_change_channel and settings.auto_change_channel:
                     ChangeChannel(max_rand=30,delay='1').execute()
                     break
