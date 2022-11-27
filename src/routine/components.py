@@ -126,7 +126,7 @@ class Point(Component):
                     config.should_solve_rune or config.enabled == False):
                     break
                 command.execute()
-        time.sleep(utils.rand_float(0.02, 0.08))
+        time.sleep(utils.rand_float(0.01, 0.03))
         self._increment_counter()
 
     @utils.run_if_enabled

@@ -11,7 +11,7 @@ import keyboard as kb
 import requests
 from src.common.vkeys import key_down, key_up, press, click
 from src.routine.components import Point
-
+from src.common.vkeys import release_unreleased_key
 
 # A rune's symbol on the minimap
 RUNE_RANGES = (
@@ -147,6 +147,10 @@ class Notifier:
                     conversation = utils.multi_match(conversation_frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
                     if len(conversation) > 0:
                         print("stop conversation")
+                        # config.enabled = False
+                        release_unreleased_key()
+                        # config.enabled = True
+                        time.sleep(0.1)
                         press("esc",1)
                         time.sleep(0.1)
 
@@ -199,6 +203,7 @@ class Notifier:
                             distances = list(map(distance_to_rune, config.routine.sequence))
                             index = np.argmin(distances)
                             config.bot.rune_closest_pos = config.routine[index].location
+                            print('rune_closest_pos : ',config.bot.rune_closest_pos)
                             config.bot.rune_active = True
                             rune_check_count = 0
                             self._ping('rune_appeared', volume=0.75)

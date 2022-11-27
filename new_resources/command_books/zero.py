@@ -66,11 +66,25 @@ def step(direction, target):
     if direction == 'left' or direction == 'right':
         if abs(d_x) > 20:
             if abs(d_x) >= 40:
-                Teleport(direction=direction).execute()
-                FlashJump(direction=direction).execute()
+                if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
+                    if config.player_states['current_tag'] == 'alpha':
+                        Skill_S(rep='2').execute()
+                        Teleport(direction=direction).execute()
+                    else:
+                        Teleport(direction=direction).execute()
+                        FlashJump(direction=direction).execute()
+                        Skill_W(rep='2').execute()
+                else:
+                    Teleport(direction=direction).execute()
+                    FlashJump(direction=direction).execute()
             else:
                 if utils.bernoulli(0.3+0.4*(abs(d_x)-10)/100):
                     FlashJump(direction=direction).execute()
+                    if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
+                        if config.player_states['current_tag'] == 'alpha':
+                            Skill_A(rep='2').execute()
+                        else:
+                            Skill_W(rep='2').execute()
                 else:
                     Teleport(direction=direction).execute()
         elif abs(d_x) > 10:
@@ -687,14 +701,15 @@ class AutoHunting(Command):
                     settings.platforms = 'b' + str(int(bottom_y))
                 FlashJump(direction='right').execute()
                 Skill_Q(rep='3',direction='left').execute()
-                FlashJump(direction='left').execute()
-                Teleport(jump='false',direction='up').execute()
+                Skill_E(rep='2').execute()
+                Teleport(direction='up').execute()
+                Teleport(direction='left').execute()
+                FlashJump(direction='left',jump='true').execute()
+                Skill_W(rep='2').execute()
                 Skill_S(rep='2',direction='left').execute()
                 FlashJump(direction='left').execute()
-                Skill_D(direction='left').execute()
-                FlashJump(direction='left').execute()
-                Skill_D(direction='left').execute()
-                SkillCombination(direction='',target_skills='skill_f2|buff_f1|skill_f22').execute()
+                Skill_D(direction='left',rep='2').execute()
+                SkillCombination(direction='',target_skills='skill_f2|skill_2|buff_f1|skill_f22').execute()
             else:
                 # left side
                 move(20,bottom_y).execute()
@@ -704,14 +719,15 @@ class AutoHunting(Command):
                     settings.platforms = 'b' + str(int(bottom_y))
                 FlashJump(direction='left').execute()
                 Skill_Q(rep='3',direction='right').execute()
-                FlashJump(direction='right').execute()
-                Teleport(jump='false',direction='up').execute()
+                Skill_E(rep='2').execute()
+                Teleport(direction='up').execute()
+                Teleport(direction='right').execute()
+                FlashJump(direction='right',jump='true').execute()
+                Skill_W(rep='2').execute()
                 Skill_S(rep='2',direction='right').execute()
                 FlashJump(direction='right').execute()
-                Skill_D(direction='right').execute()
-                FlashJump(direction='right').execute()
-                Skill_D(direction='right').execute()
-                SkillCombination(direction='',target_skills='skill_f2|buff_f1|skill_f22').execute()
+                Skill_D(direction='right',rep='2').execute()
+                SkillCombination(direction='',target_skills='skill_f2|skill_2|buff_f1|skill_f22').execute()
             if settings.auto_change_channel and config.should_solve_rune:
                 config.bot._solve_rune()
                 continue
