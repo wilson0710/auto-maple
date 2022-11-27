@@ -623,6 +623,7 @@ class BaseSkill(Command):
     buff_time=0
     combo_delay = 0.1
     rep_interval_increase = 0
+    fast_rep=False
 
     def __init__(self, direction='',jump='false',rep='1',pre_delay='0',duration='0',combo='false',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
         super().__init__(locals())
@@ -646,14 +647,17 @@ class BaseSkill(Command):
                 utils.wait_for_is_standing(1000)
             if self.pre_delay > 0:
                 time.sleep(utils.rand_float(self.pre_delay*0.95, self.pre_delay*1.05))
-            if self.jump:
+            if self.jump and not self.ground_skill:
                 self.player_jump(self.direction)
-                time.sleep(utils.rand_float(0.05, 0.07))
+                time.sleep(utils.rand_float(0.04, 0.05))
             else:
                 key_down(self.direction,down_time=0.04)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
-                key_down(self.key,down_time=0.08)
+                if self.fast_rep:
+                    key_down(self.key,down_time=0.04)
+                else:
+                    key_down(self.key,down_time=0.08)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
                 if i == (self.rep-1):
