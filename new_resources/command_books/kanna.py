@@ -80,13 +80,13 @@ def step(direction, target):
             if abs(d_y) > 3 :
                 if abs(d_y) >= 40:
                     UpJump().execute()
-                    Teleport(direction=direction,jump='true',combo='true').execute()
+                    Teleport(direction=direction,combo='false').execute()
                 elif abs(d_y) >= 25:
-                    Teleport(direction=direction,jump='true',combo='true').execute()
+                    Teleport(direction=direction,jump='true',combo='false').execute()
                 else:
-                    Teleport(direction=direction,combo='true').execute()
+                    Teleport(direction=direction,combo='false').execute()
                 utils.wait_for_is_standing(300)
-                Skill_1(combo='false').execute()
+                # Skill_1(combo='false').execute()
             else:
                 press(Key.JUMP, 1)
                 time.sleep(utils.rand_float(0.1, 0.15))
@@ -97,8 +97,8 @@ def step(direction, target):
                 time.sleep(utils.rand_float(0.15, 0.8))
                 Fall(duration='0.3').execute()
             if abs(d_y) > 10:
-                Teleport(direction=direction,combo='true').execute()
-                Skill_1(combo='false').execute()
+                Teleport(direction=direction,combo='false').execute()
+                # Skill_1(combo='false').execute()
             else:
                 time.sleep(utils.rand_float(0.15, 0.2))
                 Fall(duration='0.3').execute()
