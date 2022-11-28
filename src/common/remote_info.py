@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 
 REMOTE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzpGcS0Een8ukM9QMWgWw-3m9ISPc5cWQQXQVmpz7Ao3fYNAiQbZYFzHzpRhPLXWKI4bw/exec'
 
@@ -16,9 +17,14 @@ def get_user_info(id):
         'json': '[]'
     }
     r = requests.get(REMOTE_SHEET_URL, params = params)
-    content = json.loads(r.content)
-    print("succeed, result : ",content['result'])
-    return content['result']
+    if r.content:
+        content = json.loads(r.content)
+        print("succeed, result : ",content['result'])
+        return content['result']
+    else:
+        print("retry remote info")
+        time.sleep(1)
+        return get_user_info(id)
     
 def update_user_info(id,info):
     """
@@ -34,6 +40,10 @@ def update_user_info(id,info):
         'json': json.dumps(info)
     }
     r = requests.get(REMOTE_SHEET_URL, params = params)
-    content = json.loads(r.content)
-    print("succeed, result : ",content['result'])
-    return content['result']
+    if r.content:
+        content = json.loads(r.content)
+        return content['result']
+    else:
+        print("retry remote info")
+        time.sleep(1)
+        return update_user_info(id,info)
