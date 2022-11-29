@@ -173,7 +173,8 @@ class Capture:
                 elif not config.enabled and len(self.recording_frames) > 0:
                     for index in range(len(self.recording_frames)):
                         cv2.imwrite('./recording/r_' + str(index) + '.png',self.recording_frames[index])
-
+                    self.recording_frames = []
+                    
                 # Take screenshot
                 minimap = self.screenshot_in_bg(self.handle,mm_tl[0],mm_tl[1],mm_br[0]-mm_tl[0],mm_br[1]-mm_tl[1])
                 if minimap is None:

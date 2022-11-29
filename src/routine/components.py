@@ -289,15 +289,15 @@ class Command(Component):
     def player_jump(self,direction=""):
         utils.wait_for_is_standing(1500)
         key_down(direction)
-        press(config.jump_button, 1,up_time=0.05)
-        for i in range(100): # maximum time : 2s
+        press(config.jump_button, 1,up_time=0.02)
+        for i in range(200): # maximum time : 2s
             if config.player_states['movement_state'] == config.MOVEMENT_STATE_JUMPING:
-                time.sleep(utils.rand_float(0.02, 0.04))
+                time.sleep(utils.rand_float(0.01, 0.015))
                 break
             if i % 10 == 9:
-                press(config.jump_button, 1,up_time=0.05)
+                press(config.jump_button, 1,up_time=0.02)
             else:
-                time.sleep(0.02)
+                time.sleep(0.01)
             
     def check_should_active(self):
         '''
@@ -492,7 +492,6 @@ def step(direction, target):
     print("\n[!] Function 'step' not implemented in current command book, aborting process.")
     config.enabled = False
 
-
 class Wait(Command):
     """Waits for a set amount of time."""
 
@@ -503,8 +502,6 @@ class Wait(Command):
     def main(self):
         time.sleep(utils.rand_float(self.duration*0.95, self.duration*1.05))
         
-
-
 class Walk(Command):
     """Walks in the given direction for a set amount of time."""
 
@@ -517,7 +514,6 @@ class Walk(Command):
         key_down(self.direction)
         time.sleep(utils.rand_float(self.duration*0.95, self.duration*1.1))
         key_up(self.direction)
-
 
 class Fall(Command):
     """
@@ -540,7 +536,6 @@ class Fall(Command):
             press(config.jump_button, 2, down_time=0.05,up_time=0.03)
             key_up(self.direction,up_time=0.03)
         time.sleep(utils.rand_float(0.02, 0.03))
-
 
 class Buff(Command):
     """Undefined 'buff' command for the default command book."""
@@ -610,7 +605,6 @@ class WaitStanding(Command):
 
     def main(self):
         utils.wait_for_is_standing(self.duration*1000)
-        print("WaitStanding end")
 
 class BaseSkill(Command):
     """pre define base skill class """
@@ -649,7 +643,7 @@ class BaseSkill(Command):
                 time.sleep(utils.rand_float(self.pre_delay*0.95, self.pre_delay*1.05))
             if self.jump and not self.ground_skill:
                 self.player_jump(self.direction)
-                time.sleep(utils.rand_float(0.04, 0.05))
+                time.sleep(utils.rand_float(0.02, 0.035))
             else:
                 key_down(self.direction,down_time=0.04)
             # time.sleep(utils.rand_float(0.03, 0.07))

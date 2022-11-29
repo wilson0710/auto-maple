@@ -149,8 +149,8 @@ class Bot(Configurable):
                 press("right", 1, down_time=0.2,up_time=0.3) 
             press(self.config['Interact'], 1, down_time=0.1,up_time=0.1) # Inherited from Configurable
             print('\nSolving rune:')
-            time.sleep(0.5)
-            for _ in range(3):
+            time.sleep(0.8)
+            for _ in range(5):
                 if self.rune_active == False:
                     break
                 frame = config.capture.frame

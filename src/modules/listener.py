@@ -78,7 +78,7 @@ class Listener(Configurable):
         if not config.enabled:
             Listener.recalibrate_minimap()      # Recalibrate only when being enabled.
             print('dk : ', settings.driver_key)
-            time.sleep(3)
+            time.sleep(1)
 
         config.enabled = not config.enabled
         utils.print_state()
