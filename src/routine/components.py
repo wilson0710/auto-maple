@@ -126,7 +126,7 @@ class Point(Component):
                     config.should_solve_rune or config.enabled == False):
                     break
                 command.execute()
-        time.sleep(utils.rand_float(0.01, 0.03))
+        time.sleep(utils.rand_float(0.02, 0.05))
         self._increment_counter()
 
     @utils.run_if_enabled
@@ -292,7 +292,7 @@ class Command(Component):
         press(config.jump_button, 1,up_time=0.02)
         for i in range(200): # maximum time : 2s
             if config.player_states['movement_state'] == config.MOVEMENT_STATE_JUMPING:
-                time.sleep(utils.rand_float(0.01, 0.015))
+                time.sleep(utils.rand_float(0.01, 0.03))
                 break
             if i % 10 == 9:
                 press(config.jump_button, 1,up_time=0.02)
@@ -643,13 +643,13 @@ class BaseSkill(Command):
                 time.sleep(utils.rand_float(self.pre_delay*0.95, self.pre_delay*1.05))
             if self.jump and not self.ground_skill:
                 self.player_jump(self.direction)
-                time.sleep(utils.rand_float(0.02, 0.035))
+                time.sleep(utils.rand_float(0.02, 0.05))
             else:
                 key_down(self.direction,down_time=0.04)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
                 if self.fast_rep:
-                    key_down(self.key,down_time=0.04)
+                    key_down(self.key,down_time=0.045)
                 else:
                     key_down(self.key,down_time=0.08)
                 if self.duration != 0:
