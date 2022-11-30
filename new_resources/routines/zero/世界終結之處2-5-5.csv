@@ -2,6 +2,7 @@ $, target=platforms, value=b77|96~130*57|21~56*58|102~130*43|106~129*33
 $, target=move_tolerance, value=15
 $, target=auto_change_channel, value=True
 $, target=id, value=goat
+$, target=rune_cd_min, value=10
 
 @, label=regular
 *, x=110, y=57.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
