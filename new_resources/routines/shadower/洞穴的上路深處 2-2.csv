@@ -58,7 +58,6 @@ $, target=rune_cd_min, value=10
     Fall, direction=left, duration=0.1
     SkillCombination, direction=, jump=false, target_skills=skill_3|skill_a, combo=true, wait=0, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_S, direction=, jump=false, rep=1, pre_delay=0, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    Fall, direction=, duration=0.05
-    Skill_AS, direction=, jump=false, rep=1, pre_delay=0, duration=0, combo=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Fall, direction=, duration=0.3
 >, label=standard, frequency=1, skip=False, frequency_to_loop=False, active_if_skill_ready=, active_if_skill_cd=skill_d, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 >, label=fixed, frequency=1, skip=False, frequency_to_loop=False, active_if_skill_ready=skill_d, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=

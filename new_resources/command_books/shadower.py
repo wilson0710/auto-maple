@@ -302,7 +302,7 @@ class Skill_AS(BaseSkill):
     _display_name = '冷血連擊+楓炸'
     _distance = 27
     key=Skill_A.key
-    delay=float(Skill_A.delay - 0.2)
+    delay=float(Skill_A.delay - 0.24)
     rep_interval=0.5
     skill_cool_down=0
     ground_skill=False
@@ -313,6 +313,7 @@ class Skill_AS(BaseSkill):
     def main(self):
         super().main()
         Skill_S().execute()
+        time.sleep(utils.rand_float(0.04,0.07))
 
 class Skill_W(BaseSkill):
     _display_name = '穢土轉生'
