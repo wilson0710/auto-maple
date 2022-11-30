@@ -17,11 +17,11 @@ def get_user_info(id):
         'json': '[]'
     }
     r = requests.get(REMOTE_SHEET_URL, params = params)
-    if r.content:
+    try:
         content = json.loads(r.content)
         print("succeed, result : ",content['result'])
         return content['result']
-    else:
+    except:
         print("retry remote info")
         time.sleep(1)
         return get_user_info(id)
@@ -40,10 +40,11 @@ def update_user_info(id,info):
         'json': json.dumps(info)
     }
     r = requests.get(REMOTE_SHEET_URL, params = params)
-    if r.content:
+    try:
         content = json.loads(r.content)
+        print("succeed, result : ",content['result'])
         return content['result']
-    else:
+    except:
         print("retry remote info")
         time.sleep(1)
         return update_user_info(id,info)
