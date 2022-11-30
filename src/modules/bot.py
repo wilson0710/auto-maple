@@ -103,10 +103,17 @@ class Bot(Configurable):
 
                 # Execute next Point in the routine
                 element = config.routine[config.routine.index]
+                if self.rune_active and isinstance(element, Point):
+                    print('rune active')
+                    print('latest_solved_rune : ',time.time() - float(config.latest_solved_rune),'s')
+                    if element.location == self.rune_closest_pos:
+                        print('closet point')
+                    if utils.distance(config.bot.rune_pos, element.location) <= 40:
+                        print('distance < 40')
                 if self.rune_active and \
                     (isinstance(element, Point) \
                         and (element.location == self.rune_closest_pos or utils.distance(config.bot.rune_pos, element.location) <= 40) \
-                        and time.time() - float(config.latest_solved_rune) >= (15 * 60) \
+                        and time.time() - float(config.latest_solved_rune) >= (int(settings.rune_cd_min) * 60) \
                         or config.should_solve_rune) :
                     if not self.model:
                         self.model = detection.load_model()

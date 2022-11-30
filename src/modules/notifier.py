@@ -207,7 +207,7 @@ class Notifier:
                             config.bot.rune_active = True
                             rune_check_count = 0
                             self._ping('rune_appeared', volume=0.75)
-                    elif now - rune_start_time > self.rune_alert_delay and now - config.latest_solved_rune >= (60 * 15 + self.rune_alert_delay):     # Alert if rune hasn't been solved
+                    elif now - rune_start_time > self.rune_alert_delay and now - config.latest_solved_rune >= (60 * int(settings.rune_cd_min) + self.rune_alert_delay):     # Alert if rune hasn't been solved
                         config.bot.rune_active = False
                         self._send_msg_to_line_notify("解輪耗時過久")
                         if settings.auto_change_channel:
@@ -222,12 +222,14 @@ class Notifier:
                         if detection_i % 50 == 0:
                             filtered = utils.filter_color(minimap, RUNE_RANGES)
                             matches = utils.multi_match(filtered, RUNE_TEMPLATE, threshold=0.9)
-                            if not matches:
+                            if len(matches) == 0:
                                 if rune_check_count >= 10:
                                     rune_check_count = 0
                                     config.bot.rune_active = False
                                 else:
                                     rune_check_count = rune_check_count + 1
+                            else:
+                                rune_check_count = 0
 
                 detection_i = detection_i + 1
             time.sleep(self.notifier_delay)

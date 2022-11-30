@@ -45,23 +45,24 @@ def step(direction, target):
     d_x = target[0] - config.player_pos[0]
 
     if direction == 'left' or direction == 'right':
-        if abs(d_x) >= 18:
+        if abs(d_x) >= 16:
             if abs(d_x) >= 60:
                 FlashJump(direction='',triple_jump='true',fast_jump='false').execute()
                 SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
-            elif abs(d_x) >= 23:
+            elif abs(d_x) >= 28:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
                 SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
             else:
-                SkillCombination(direction='',jump='true',target_skills='skill_as').execute()
-            time.sleep(utils.rand_float(0.05, 0.07))
-            if abs(d_x) <= 22:
-                key_up(direction)
+                Skill_C().execute()
+                Skill_S().execute()
+            time.sleep(utils.rand_float(0.04, 0.06))
+            # if abs(d_x) <= 22:
+            #     key_up(direction)
             if config.player_states['movement_state'] == config.MOVEMENT_STATE_FALLING:
                 SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
             utils.wait_for_is_standing(200)
         else:
-            time.sleep(utils.rand_float(0.08, 0.12))
+            time.sleep(utils.rand_float(0.05, 0.08))
             utils.wait_for_is_standing(200)
     
     if direction == 'up':
@@ -283,7 +284,7 @@ class Skill_D(BaseSkill):
     rep_interval=0.5
     skill_cool_down=57
     ground_skill=True
-    buff_time=60
+    buff_time=57
     combo_delay = 0.5
 
 class Skill_S(BaseSkill):

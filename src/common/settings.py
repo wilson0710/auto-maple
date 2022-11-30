@@ -85,6 +85,7 @@ SETTING_VALIDATORS = {
     'main_attack_skill_key' :str,
     'frenzy_key' :str,
     'home_scroll_key' :str,
+    'rune_cd_min' : validate_nonnegative_int,
 }
 
 
@@ -103,6 +104,7 @@ def reset():
     main_attack_skill_key = ''
     frenzy_key = ''
     home_scroll_key = ''
+    rune_cd_min = 15
     # rent_frenzy = False
     # driver_key = False
     
@@ -132,6 +134,8 @@ driver_key = False
 id = ""
 
 auto_change_channel = False
+
+rune_cd_min = 15
 
 #partner id
 partner = ''
