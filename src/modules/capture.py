@@ -59,7 +59,7 @@ class Capture:
         """Initializes this Capture object's main thread."""
 
         config.capture = self
-        self.capture_gap_sec = 0.022
+        self.capture_gap_sec = 0.015
         self.frame = None
         self.minimap = None
         self.minimap_ratio = 1
@@ -162,8 +162,8 @@ class Capture:
                 # refresh whole game frame every 0.5s
                 if self.refresh_counting % 5 == 0:
                     self.frame = self.screenshot_in_bg(self.handle,0,0,self.window['width'],self.window['height'])
-                    if self.refresh_counting % 20 == 0:
-                        cv2.imwrite('./test.png',self.frame)
+                    # if self.refresh_counting % 20 == 0:
+                    #     cv2.imwrite('./test.png',self.frame)
 
                 # save pic every 1s, max 60 pic
                 if self.refresh_counting % 80 == 0 and config.enabled:
@@ -289,8 +289,6 @@ class Capture:
                             config.player_states['is_standing'] = True
                             config.player_states['movement_state'] = config.MOVEMENT_STATE_STANDING
                 
-
-
                 # Package display information to be polled by GUI
                 self.minimap = {
                     'minimap': minimap,
@@ -304,7 +302,7 @@ class Capture:
                     self.ready = True
                 self.refresh_counting = self.refresh_counting + 1
                 if settings.rent_frenzy:
-                    time.sleep(self.capture_gap_sec*5)
+                    time.sleep(self.capture_gap_sec*10)
                 else:
                     time.sleep(self.capture_gap_sec)
                 
