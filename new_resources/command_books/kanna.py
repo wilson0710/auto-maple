@@ -309,9 +309,9 @@ class Skill_E(BaseSkill):
     key=Key.SKILL_E
     delay=0.3
     rep_interval=0.2
-    skill_cool_down=90
+    skill_cool_down=83
     ground_skill=True
-    buff_time=35
+    buff_time=38
     combo_delay = 0.2
 
 class Skill_1(BaseSkill):
@@ -374,7 +374,7 @@ class Buff_5(BaseSkill):
     key=Key.BUFF_5
     delay=0.2
     rep_interval=0.1
-    skill_cool_down=180
+    skill_cool_down=235
     ground_skill=True
     buff_time=60
     combo_delay = 0.2
@@ -404,9 +404,9 @@ class Skill_R(BaseSkill):
     key=Key.SKILL_R
     delay=0.4
     rep_interval=0.1
-    skill_cool_down=220
+    skill_cool_down=205
     ground_skill=True
-    buff_time=50
+    buff_time=58
     combo_delay = 0.25
     
 class Sp_F12(BaseSkill):
