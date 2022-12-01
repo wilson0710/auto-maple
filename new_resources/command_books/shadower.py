@@ -195,12 +195,13 @@ class FlashJump(Command):
     """Performs a flash jump in the given direction."""
     _display_name = '二段跳'
 
-    def __init__(self, direction="",jump='false',combo='False',triple_jump="False",fast_jump="false"):
+    def __init__(self, direction="",jump='false',combo='False',triple_jump="False",fast_jump="false",reverse_triple='false'):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.triple_jump = settings.validate_boolean(triple_jump)
         self.fast_jump = settings.validate_boolean(fast_jump)
         self.jump = settings.validate_boolean(jump)
+        self.reverse_triple = settings.validate_boolean(reverse_triple)
 
     def main(self):
         if not self.jump:
@@ -212,14 +213,24 @@ class FlashJump(Command):
             time.sleep(utils.rand_float(0.02, 0.04)) # fast flash jump gap
         else:
             time.sleep(utils.rand_float(0.2, 0.25)) # slow flash jump gap
-        if self.direction == 'up':
-            press(Key.FLASH_JUMP, 1)
-        else:
-            press(Key.FLASH_JUMP, 1,down_time=0.06,up_time=0.01)
-            if self.triple_jump:
-                time.sleep(utils.rand_float(0.05, 0.08))
-                press(Key.FLASH_JUMP, 1,down_time=0.07,up_time=0.04) # if this job can do triple jump
+        press(Key.FLASH_JUMP, 1,down_time=0.06,up_time=0.01)
         key_up(self.direction,up_time=0.01)
+        if self.triple_jump:
+            time.sleep(utils.rand_float(0.03, 0.05))
+            # reverse_direction
+            reverse_direction = ''
+            if self.reverse_triple:
+                if self.direction == 'left':
+                    reverse_direction = 'right'
+                elif self.direction == 'right':
+                    reverse_direction = 'left'
+                print('reverse_direction : ',reverse_direction)
+                key_down(reverse_direction,down_time=0.05)
+            else:
+                time.sleep(utils.rand_float(0.02, 0.03))
+            press(Key.FLASH_JUMP, 1,down_time=0.07,up_time=0.04) # if this job can do triple jump
+            if self.reverse_triple:
+                key_up(reverse_direction,up_time=0.01)
         time.sleep(utils.rand_float(0.01, 0.02))
 
 class UpJump(BaseSkill):
@@ -302,7 +313,7 @@ class Skill_AS(BaseSkill):
     _display_name = '冷血連擊+楓炸'
     _distance = 27
     key=Skill_A.key
-    delay=float(Skill_A.delay - 0.2)
+    delay=0.05
     rep_interval=0.5
     skill_cool_down=0
     ground_skill=False
@@ -313,6 +324,7 @@ class Skill_AS(BaseSkill):
     def main(self):
         super().main()
         Skill_S().execute()
+        time.sleep(utils.rand_float(0.2*0.95, 0.2*1.1))
 
 class Skill_W(BaseSkill):
     _display_name = '穢土轉生'
