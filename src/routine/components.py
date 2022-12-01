@@ -304,17 +304,17 @@ class Command(Component):
         '''
             check should active command if pass all conditions
         '''
-        if self.active_if_skill_ready:
-            if not utils.get_if_skill_ready(self.active_if_skill_ready.lower()):
+        if hasattr(self,'active_if_skill_ready'):
+            if self.active_if_skill_ready and not utils.get_if_skill_ready(self.active_if_skill_ready.lower()):
                 return False
-        if self.active_if_skill_cd:
-            if utils.get_if_skill_ready(self.active_if_skill_cd.lower()):
+        if hasattr(self,'active_if_skill_cd'):
+            if self.active_if_skill_cd and utils.get_if_skill_ready(self.active_if_skill_cd.lower()):
                 return False
-        if self.active_if_in_skill_buff:
-            if not utils.get_is_in_skill_buff(self.active_if_in_skill_buff.lower()):
+        if hasattr(self,'active_if_in_skill_buff'):
+            if self.active_if_in_skill_buff and not utils.get_is_in_skill_buff(self.active_if_in_skill_buff.lower()):
                 return False
-        if self.active_if_not_in_skill_buff:
-            if utils.get_is_in_skill_buff(self.active_if_not_in_skill_buff.lower()):
+        if hasattr(self,'active_if_not_in_skill_buff'):
+            if self.active_if_not_in_skill_buff and utils.get_is_in_skill_buff(self.active_if_not_in_skill_buff.lower()):
                 return False
         return True
 
@@ -334,6 +334,22 @@ class Command(Component):
     @classmethod
     def set_is_skill_ready(cls,is_ready):
         config.is_skill_ready_collector[cls.__name__] = is_ready
+
+    @classmethod
+    def get_should_active(cls):
+        if hasattr(cls,'active_if_skill_ready'):
+            if cls.active_if_skill_ready and not utils.get_if_skill_ready(cls.active_if_skill_ready.lower()):
+                return False
+        if hasattr(cls,'active_if_skill_cd'):
+            if cls.active_if_skill_cd and utils.get_if_skill_ready(cls.active_if_skill_cd.lower()):
+                return False
+        if hasattr(cls,'active_if_in_skill_buff'):
+            if cls.active_if_in_skill_buff and not utils.get_is_in_skill_buff(cls.active_if_in_skill_buff.lower()):
+                return False
+        if hasattr(cls,'active_if_not_in_skill_buff'):
+            if cls.active_if_not_in_skill_buff and utils.get_is_in_skill_buff(cls.active_if_not_in_skill_buff.lower()):
+                return False
+        return True
 
     @classmethod
     def get_is_skill_ready(cls):
@@ -537,7 +553,6 @@ class Fall(Command):
             press(config.jump_button, 2, down_time=0.05,up_time=0.03)
             key_up(self.direction,up_time=0.02)
         
-
 class Buff(Command):
     """Undefined 'buff' command for the default command book."""
 
@@ -629,10 +644,14 @@ class BaseSkill(Command):
         self.pre_delay = float(pre_delay)
         config.is_skill_ready_collector[self._custom_id] = True
         self.combo = settings.validate_boolean(combo)
-        self.active_if_skill_ready = active_if_skill_ready
-        self.active_if_skill_cd = active_if_skill_cd
-        self.active_if_in_skill_buff = active_if_in_skill_buff
-        self.active_if_not_in_skill_buff = active_if_not_in_skill_buff
+        if active_if_skill_ready:
+            self.active_if_skill_ready = active_if_skill_ready
+        if active_if_skill_cd:
+            self.active_if_skill_cd = active_if_skill_cd
+        if active_if_in_skill_buff:
+            self.active_if_in_skill_buff = active_if_in_skill_buff
+        if active_if_not_in_skill_buff:
+            self.active_if_not_in_skill_buff = active_if_not_in_skill_buff
 
     def main(self):
         if not self.check_should_active():
@@ -708,7 +727,7 @@ class SkillCombination(Command):
             if "+" in skill:
                 combo_skills = skill.split('+')
                 s = config.bot.command_book[combo_skills[0]]
-                if not s.get_is_skill_ready():
+                if not s.get_is_skill_ready() or not s.get_should_active():
                     continue
                 if self.wait > 0:
                     time.sleep(utils.rand_float(self.wait,self.wait*1.1))
@@ -718,9 +737,10 @@ class SkillCombination(Command):
                 break
             else:
                 s = config.bot.command_book[skill]
-                if not s.get_is_skill_ready():
+                if not s.get_is_skill_ready() or not s.get_should_active():
                     continue
                 else:
+                    print('selected skill : ', skill)
                     if self.wait > 0:
                         time.sleep(utils.rand_float(self.wait,self.wait*1.1))
                     s(direction=self.direction,jump=self.jump,combo=self.combo).execute()
