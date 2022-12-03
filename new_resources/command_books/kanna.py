@@ -15,6 +15,7 @@ class Key:
     # Buffs
     BUFF_5 = '5' # 鬼夜叉:大鬼封魂陣
     BUFF_6 = '6' # 影朋花狐2
+    BUFF_7 = '7' # 曉之陣:集結
     # Buffs Toggle
 
     # Attack Skills
@@ -29,6 +30,7 @@ class Key:
     SKILL_Z = 'z' # 恢復靈力
     SKILL_T = 't' # 幽暗
     SKILL_2 = '2' # 雙天狗
+    SKILL_3 = '3' # 破邪連擊符
     SKILL_4 = '4' # 一鬼踐踏
 
     # special Skills
@@ -309,9 +311,9 @@ class Skill_E(BaseSkill):
     key=Key.SKILL_E
     delay=0.3
     rep_interval=0.2
-    skill_cool_down=83
+    skill_cool_down=81
     ground_skill=True
-    buff_time=38
+    buff_time=40
     combo_delay = 0.2
 
 class Skill_1(BaseSkill):
@@ -369,6 +371,16 @@ class Skill_2(BaseSkill):
     buff_time=0
     combo_delay = 0.1
 
+class Skill_3(BaseSkill):
+    _display_name ='破邪連擊符'
+    key=Key.SKILL_3
+    delay=0.5
+    rep_interval=0.1
+    skill_cool_down=60
+    ground_skill=True
+    buff_time=0
+    combo_delay = 0.3
+
 class Buff_5(BaseSkill):
     _display_name ='鬼夜叉:大鬼封魂陣'
     key=Key.BUFF_5
@@ -389,6 +401,16 @@ class Buff_6(BaseSkill):
     buff_time=500
     combo_delay = 0.2
 
+class Buff_7(BaseSkill):
+    _display_name ='曉之陣:集結'
+    key=Key.BUFF_7
+    delay=0.5
+    rep_interval=0.1
+    skill_cool_down=120
+    ground_skill=True
+    buff_time=30
+    combo_delay = 0.2
+
 class skill_4(BaseSkill):
     _display_name ='一鬼踐踏'
     key=Key.SKILL_4
@@ -404,9 +426,9 @@ class Skill_R(BaseSkill):
     key=Key.SKILL_R
     delay=0.4
     rep_interval=0.1
-    skill_cool_down=205
+    skill_cool_down=200
     ground_skill=True
-    buff_time=58
+    buff_time=72
     combo_delay = 0.25
     
 class Sp_F12(BaseSkill):
