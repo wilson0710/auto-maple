@@ -103,13 +103,6 @@ class Bot(Configurable):
 
                 # Execute next Point in the routine
                 element = config.routine[config.routine.index]
-                if self.rune_active and isinstance(element, Point):
-                    print('rune active')
-                    print('latest_solved_rune : ',time.time() - float(config.latest_solved_rune),'s')
-                    if element.location == self.rune_closest_pos:
-                        print('closet point')
-                    if utils.distance(config.bot.rune_pos, element.location) <= 40:
-                        print('distance < 40')
                 if self.rune_active and \
                     (isinstance(element, Point) \
                         and (element.location == self.rune_closest_pos or utils.distance(config.bot.rune_pos, element.location) <= 40) \
@@ -154,9 +147,9 @@ class Bot(Configurable):
                 press("left", 1, down_time=0.1,up_time=0.3) 
             elif ii == 2:
                 press("right", 1, down_time=0.2,up_time=0.3) 
-            press(self.config['Interact'], 1, down_time=0.1,up_time=0.1) # Inherited from Configurable
+            press(self.config['Interact'], 1, down_time=0.15,up_time=0.1) # Inherited from Configurable
             print('\nSolving rune:')
-            time.sleep(0.8)
+            time.sleep(1.5)
             for _ in range(5):
                 if self.rune_active == False:
                     break
@@ -175,11 +168,12 @@ class Bot(Configurable):
                         for _ in range(3):
                             time.sleep(0.3)
                             frame = config.capture.frame
-                            rune_buff = utils.multi_match(frame[:frame.shape[0] // 8, :],
+                            rune_buff = utils.single_match_with_threshold(frame[:frame.shape[0] // 8, :],
                                                         RUNE_BUFF_TEMPLATE,
-                                                        threshold=0.9)
-                            if rune_buff:
+                                                        threshold=0.92)
+                            if len(rune_buff) > 0:
                                 rune_buff_pos = min(rune_buff, key=lambda p: p[0])
+                                print('rune_buff_pos : ', rune_buff_pos)
                                 target = (
                                     round(rune_buff_pos[0] + config.capture.window['left']),
                                     round(rune_buff_pos[1] + config.capture.window['top'])

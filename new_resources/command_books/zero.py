@@ -474,10 +474,7 @@ class Buff_F1(BaseSkill):
     buff_time=60
     combo_delay = 0.2
     skill_image = IMAGE_DIR + 'buff_f1.png'
-
-    def main(self):
-        self.active_if_not_in_skill_buff = 'buff_f1'
-        super().main()
+    active_if_not_in_skill_buff = 'buff_f1'
 
 class Skill_FA1(BaseSkill):
     _display_name ='暗影瞬閃a1'
@@ -504,11 +501,11 @@ class Skill_FA2(BaseSkill):
     ground_skill=False
     buff_time=0
     combo_delay = 0.2
+    active_if_skill_cd = 'skill_fa1'
 
     def main(self):
         if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'alpha':
             return
-        self.active_if_skill_cd = 'skill_fa1'
         super().main()
 
 class Skill_FB1(BaseSkill):
@@ -536,11 +533,11 @@ class Skill_FB2(BaseSkill):
     ground_skill=False
     buff_time=0
     combo_delay = 0.42
+    active_if_skill_cd = 'skill_fb1'
 
     def main(self):
         if not 'current_tag' in config.player_states and config.player_states['current_tag'] != 'beta':
             return
-        self.active_if_skill_cd = 'skill_fb1'
         super().main()
 
 class Skill_F2(BaseSkill):
@@ -562,10 +559,7 @@ class Skill_F22(BaseSkill):
     buff_time=0
     ground_skill=False
     combo_delay = 0.03
-
-    def main(self):
-        self.active_if_in_skill_buff = 'skill_f2'
-        super().main()
+    active_if_in_skill_buff = 'skill_f2'
 
 class Skill_2(BaseSkill):
     _display_name ='蜘蛛之鏡'
@@ -605,13 +599,8 @@ class Buff_Pageup(BaseSkill):
     buff_time=0
     combo_delay = 0.2
     skill_image = IMAGE_DIR + 'buff_pageup.png'
-
-    def main(self):
-        if not self.active_if_skill_cd:
-            self.active_if_skill_cd = 'buff_f1'
-        if not self.active_if_not_in_skill_buff:
-            self.active_if_not_in_skill_buff = 'skill_f2'
-        super().main()
+    active_if_skill_cd = 'buff_f1'
+    active_if_not_in_skill_buff = 'skill_f2'
 
 class Buff_F5(BaseSkill):
     _display_name ='優伊娜的心願'
@@ -622,13 +611,8 @@ class Buff_F5(BaseSkill):
     ground_skill=False
     buff_time=0
     combo_delay = 0.3
-
-    def main(self):
-        if not self.active_if_skill_cd:
-            self.active_if_skill_cd = 'buff_f1'
-        if not self.active_if_not_in_skill_buff:
-            self.active_if_not_in_skill_buff = 'skill_f2'
-        super().main()
+    active_if_skill_cd = 'buff_f1'
+    active_if_not_in_skill_buff = 'skill_f2'
 
 class Buff_5(BaseSkill):
     _display_name ='幻靈武具'
@@ -701,15 +685,17 @@ class AutoHunting(Command):
                     settings.platforms = 'b' + str(int(bottom_y))
                 FlashJump(direction='right').execute()
                 Skill_Q(rep='3',direction='left').execute()
+                Teleport(direction='left').execute()
                 Skill_E(rep='2').execute()
                 Teleport(direction='up').execute()
-                Teleport(direction='left').execute()
                 FlashJump(direction='left',jump='true').execute()
-                Skill_W(rep='2').execute()
+                Skill_W(rep='2').execute() 
+                SkillCombination(direction='',combo='true',target_skills='skill_3|Skill_FB1|skill_f2|skill_2|buff_f1|buff_f5|buff_pageup|skill_f22|Skill_FB2|Skill_E1').execute()
+                time.sleep(0.2)
                 Skill_S(rep='2',direction='left').execute()
                 FlashJump(direction='left').execute()
                 Skill_D(direction='left',rep='2').execute()
-                SkillCombination(direction='',target_skills='skill_f2|skill_2|buff_f1|skill_f22').execute()
+                SkillCombination(direction='',target_skills='skill_f2|skill_2|Skill_FA1|Skill_FA2|skill_f22').execute()
             else:
                 # left side
                 move(20,bottom_y).execute()
@@ -719,15 +705,17 @@ class AutoHunting(Command):
                     settings.platforms = 'b' + str(int(bottom_y))
                 FlashJump(direction='left').execute()
                 Skill_Q(rep='3',direction='right').execute()
+                Teleport(direction='right').execute()
                 Skill_E(rep='2').execute()
                 Teleport(direction='up').execute()
-                Teleport(direction='right').execute()
                 FlashJump(direction='right',jump='true').execute()
                 Skill_W(rep='2').execute()
+                SkillCombination(direction='',combo='true',target_skills='skill_3|Skill_FB1|skill_f2|skill_2|buff_f1|buff_f5|buff_pageup|skill_f22|Skill_FB2|Skill_E1').execute()
+                time.sleep(0.2)
                 Skill_S(rep='2',direction='right').execute()
                 FlashJump(direction='right').execute()
                 Skill_D(direction='right',rep='2').execute()
-                SkillCombination(direction='',target_skills='skill_f2|skill_2|buff_f1|skill_f22').execute()
+                SkillCombination(direction='',target_skills='skill_f2|skill_2|Skill_FA1|Skill_FA2|skill_f22').execute()
             if settings.auto_change_channel and config.should_solve_rune:
                 config.bot._solve_rune()
                 continue
