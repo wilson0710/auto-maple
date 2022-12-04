@@ -82,7 +82,9 @@ def step(direction, target):
     
     if direction == 'up':
         if abs(d_x) <= settings.move_tolerance and not config.player_states['is_keydown_skill']:
-            time.sleep(utils.rand_float(0.2, 0.3))
+            time.sleep(utils.rand_float(0.2, 0.25))
+            key_up('left')
+            key_up('right')
             if abs(d_y) > 3 :
                 if abs(d_y) >= 40:
                     UpJump().execute()
@@ -99,7 +101,7 @@ def step(direction, target):
         if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
             print("down stair")
             if not config.player_states['is_keydown_skill']:
-                if abs(d_y) >= 25 :
+                if abs(d_y) >= 27 :
                     time.sleep(utils.rand_float(0.2, 0.3))
                     Fall(duration='0.1').execute()
                 if abs(d_y) > 10:
