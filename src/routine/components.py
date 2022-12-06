@@ -635,7 +635,10 @@ class BaseSkill(Command):
     rep_interval_increase = 0
     fast_rep=False
 
-    def __init__(self, direction='',jump='false',rep='1',pre_delay='0',duration='0',combo='false',active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''):
+    def __init__(self, direction='',jump='false',rep='1',pre_delay='0',duration='0',\
+            key_down_skill= 'false',key_up_skill= 'false',combo='false',\
+            active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''\
+            ):
         super().__init__(locals())
         self.direction = settings.validate_arrows(direction)
         self.jump = settings.validate_boolean(jump)
@@ -644,6 +647,8 @@ class BaseSkill(Command):
         self.pre_delay = float(pre_delay)
         config.is_skill_ready_collector[self._custom_id] = True
         self.combo = settings.validate_boolean(combo)
+        self.key_down_skill = settings.validate_boolean(key_down_skill)
+        self.key_up_skill = settings.validate_boolean(key_up_skill)
         if active_if_skill_ready:
             self.active_if_skill_ready = active_if_skill_ready
         if active_if_skill_cd:
@@ -654,9 +659,9 @@ class BaseSkill(Command):
             self.active_if_not_in_skill_buff = active_if_not_in_skill_buff
 
     def main(self):
-        if not self.check_should_active():
+        if not self.check_should_active() and not self.key_up_skill:
             return False
-        if self.skill_cool_down == 0 or self.check_is_skill_ready():
+        if self.skill_cool_down == 0 or self.check_is_skill_ready() or self.key_up_skill:
             if self.ground_skill:
                 utils.wait_for_is_standing(1000)
             if self.pre_delay > 0:
@@ -665,18 +670,22 @@ class BaseSkill(Command):
                 self.player_jump(self.direction)
                 time.sleep(utils.rand_float(0.02, 0.05))
             else:
-                key_down(self.direction,down_time=0.04)
+                if not self.key_up_skill:
+                    key_down(self.direction,down_time=0.04)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
-                if self.fast_rep:
-                    key_down(self.key,down_time=0.045)
-                else:
-                    key_down(self.key,down_time=0.08)
+                if not self.key_up_skill:
+                    if self.fast_rep:
+                        key_down(self.key,down_time=0.045)
+                    else:
+                        key_down(self.key,down_time=0.08)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
                 if i == (self.rep-1):
-                    key_up(self.direction,up_time=0.01)
-                key_up(self.key,up_time=0.04)
+                    if not self.key_down_skill:
+                        key_up(self.direction,up_time=0.01)
+                if not self.key_down_skill:
+                    key_up(self.key,up_time=0.04)
                 if i != (self.rep-1):
                     ret_interval = self.rep_interval+self.rep_interval_increase*i
                     time.sleep(utils.rand_float(ret_interval*0.95, ret_interval*1.05))
@@ -688,8 +697,14 @@ class BaseSkill(Command):
                 time.sleep(utils.rand_float(self.delay*0.95, self.delay*1.1))
             return True
         else:
+            if self.key_down_skill:
+                config.player_states['is_keydown_skill'] = True
+            if self.key_up_skill:
+                config.player_states['is_keydown_skill'] = False
             return False
             
+            
+
 class Frenzy(BaseSkill):
     _display_name ='輪迴'
     key="f12"
@@ -759,6 +774,8 @@ class GoToMap(Command):
         self.target_map = target_map
 
     def main(self):
+        if settings.id:
+            remote_info.get_remote_async(settings.id)
         # wm = WorldMap()
         # if wm.check_if_in_correct_map(self.target_map):
         #     return
@@ -790,9 +807,10 @@ class GoToMap(Command):
         Listener.recalibrate_minimap()
         if settings.id:
             # if len(config.my_remote_info) == 0:
-            config.my_remote_info = remote_info.get_user_info(settings.id)
-            config.my_remote_info[1] = self.target_map
-            config.my_remote_info = remote_info.update_user_info(settings.id,config.my_remote_info)
+            remote_info.wait_for_get(settings.id)
+            config.remote_infos[str(settings.id)][1] = self.target_map
+            remote_info.update_remote_async(settings.id,config.remote_infos[str(settings.id)])
+            time.sleep(1)        
         else:
             time.sleep(2.2)
         config.map_changing = False
@@ -817,6 +835,8 @@ class ChangeChannel(Command):
             self.target_channel = int(target_channel)
 
     def main(self):
+        if settings.id:
+            remote_info.get_remote_async(settings.id)
         time.sleep(self.delay)
         if int(self.max_rand) > 0:
             while True:
@@ -875,9 +895,9 @@ class ChangeChannel(Command):
                     break
                 if settings.id:
                     # if len(config.my_remote_info) == 0:
-                    config.my_remote_info = remote_info.get_user_info(settings.id)
-                    config.my_remote_info[2] = self.target_channel
-                    config.my_remote_info = remote_info.update_user_info(settings.id,config.my_remote_info)
+                    remote_info.wait_for_get(settings.id)
+                    config.remote_infos[str(settings.id)][2] = self.target_channel
+                    remote_info.update_remote_async(settings.id,config.remote_infos[str(settings.id)])
                 break
 
 class EndScript(Command):
@@ -932,8 +952,8 @@ class FollowPartner(Command):
 
     def main(self):
         if settings.id:
-            config.my_remote_info = remote_info.get_user_info(settings.id)
-            my_info = config.my_remote_info
+            remote_info.get_remote_async(settings.id)
+            my_info = remote_info.wait_for_get(settings.id)
             my_map = my_info[1]
             my_channel = int(my_info[2])
             if self.from_remote:

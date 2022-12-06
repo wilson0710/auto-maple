@@ -28,6 +28,7 @@ player_states = {
   'movement_state':0,
   'in_bottom_platform':False,
   'is_stuck':False,
+  'is_keydown_skill':False,
 }
 
 MOVEMENT_STATE_STANDING = 0
@@ -87,3 +88,5 @@ should_solve_rune = False
 
 # my remote info
 my_remote_info = []
+
+remote_infos = {}

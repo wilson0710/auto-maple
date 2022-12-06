@@ -15,6 +15,7 @@ class Key:
     # Buffs
     BUFF_5 = '5' # 鬼夜叉:大鬼封魂陣
     BUFF_6 = '6' # 影朋花狐2
+    BUFF_7 = '7' # 曉之陣:集結
     # Buffs Toggle
 
     # Attack Skills
@@ -29,6 +30,7 @@ class Key:
     SKILL_Z = 'z' # 恢復靈力
     SKILL_T = 't' # 幽暗
     SKILL_2 = '2' # 雙天狗
+    SKILL_3 = '3' # 破邪連擊符
     SKILL_4 = '4' # 一鬼踐踏
 
     # special Skills
@@ -56,15 +58,18 @@ def step(direction, target):
         #     Fall(direction='right',duration='0.3')
         config.player_states['is_stuck'] = False
     if direction == 'left' or direction == 'right':
-        if abs(d_x) >= 21:
-            Skill_1x3(jump='true',combo='true').execute()
-        if abs(d_x) >= 17:
-            Teleport(direction=direction,combo='true').execute()
-        elif abs(d_x) > 10:
-            Skill_1x3(jump='true',combo='true').execute()
-            # WaitStanding(duration='0.8').execute()
+        if not config.player_states['is_keydown_skill']:
+            if abs(d_x) >= 23:
+                Skill_1x3(jump='true',combo='true').execute()
+            if abs(d_x) >= 17:
+                Teleport(direction=direction,combo='true').execute()
+            elif abs(d_x) > 10:
+                Skill_1x3(jump='true',combo='true').execute()
+                # WaitStanding(duration='0.8').execute()
+            else:
+                time.sleep(utils.rand_float(0.08, 0.1))
         else:
-            time.sleep(utils.rand_float(0.1, 0.15))
+            time.sleep(utils.rand_float(0.1, 0.12))
         # utils.wait_for_is_standing(200)
         # d_x = target[0] - config.player_pos[0]
         # if abs(d_x) >= settings.move_tolerance and config.player_states['in_bottom_platform'] == False and len(settings.platforms) > 0:
@@ -76,33 +81,42 @@ def step(direction, target):
         #     Skill_A(combo='True').execute()
     
     if direction == 'up':
-        if abs(d_x) <= settings.move_tolerance:
+        if abs(d_x) <= settings.move_tolerance and not config.player_states['is_keydown_skill']:
+            time.sleep(utils.rand_float(0.2, 0.25))
+            key_up('left')
+            key_up('right')
             if abs(d_y) > 3 :
                 if abs(d_y) >= 40:
                     UpJump().execute()
-                    Teleport(direction=direction,combo='false').execute()
+                    Teleport(direction=direction,combo='true').execute()
                 elif abs(d_y) >= 25:
-                    Teleport(direction=direction,jump='true',combo='false').execute()
+                    Teleport(direction=direction,jump='true',combo='true').execute()
                 else:
-                    Teleport(direction=direction,combo='false').execute()
-                utils.wait_for_is_standing(300)
-                # Skill_1(combo='false').execute()
+                    Teleport(direction=direction,combo='true').execute()
+                Skill_1(combo='false').execute()
             else:
-                press(Key.JUMP, 1)
-                time.sleep(utils.rand_float(0.1, 0.15))
+                Skill_1(jump='true',combo='false').execute()
+            WaitStanding('1').execute()
     if direction == 'down':
         if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
             print("down stair")
-            if abs(d_y) >= 25 :
-                time.sleep(utils.rand_float(0.15, 0.8))
-                Fall(duration='0.3').execute()
-            if abs(d_y) > 10:
-                Teleport(direction=direction,combo='false').execute()
-                # Skill_1(combo='false').execute()
+            if not config.player_states['is_keydown_skill']:
+                if abs(d_y) >= 27 :
+                    time.sleep(utils.rand_float(0.2, 0.3))
+                    Fall(duration='0.1').execute()
+                if abs(d_y) > 10:
+                    time.sleep(utils.rand_float(0.2, 0.3))
+                    Teleport(direction=direction,combo='false').execute()
+                    # Skill_1(combo='false').execute()
+                else:
+                    time.sleep(utils.rand_float(0.2, 0.3))
+                    Fall(duration='0.2').execute()
+                Skill_1(combo='false').execute()
             else:
-                time.sleep(utils.rand_float(0.15, 0.2))
-                Fall(duration='0.3').execute()
+                time.sleep(utils.rand_float(0.05, 0.08))
+                Fall(duration='0.2').execute()
         time.sleep(utils.rand_float(0.05, 0.08))
+        WaitStanding('1').execute()
 
 class Adjust(Command):
     """Fine-tunes player position using small movements."""
@@ -309,9 +323,9 @@ class Skill_E(BaseSkill):
     key=Key.SKILL_E
     delay=0.3
     rep_interval=0.2
-    skill_cool_down=83
+    skill_cool_down=81
     ground_skill=True
-    buff_time=38
+    buff_time=40
     combo_delay = 0.2
 
 class Skill_1(BaseSkill):
@@ -369,6 +383,16 @@ class Skill_2(BaseSkill):
     buff_time=0
     combo_delay = 0.1
 
+class Skill_3(BaseSkill):
+    _display_name ='破邪連擊符'
+    key=Key.SKILL_3
+    delay=0.5
+    rep_interval=0.1
+    skill_cool_down=60
+    ground_skill=True
+    buff_time=0
+    combo_delay = 0.1
+
 class Buff_5(BaseSkill):
     _display_name ='鬼夜叉:大鬼封魂陣'
     key=Key.BUFF_5
@@ -389,6 +413,16 @@ class Buff_6(BaseSkill):
     buff_time=500
     combo_delay = 0.2
 
+class Buff_7(BaseSkill):
+    _display_name ='曉之陣:集結'
+    key=Key.BUFF_7
+    delay=0.5
+    rep_interval=0.1
+    skill_cool_down=120
+    ground_skill=True
+    buff_time=38
+    combo_delay = 0.2
+
 class skill_4(BaseSkill):
     _display_name ='一鬼踐踏'
     key=Key.SKILL_4
@@ -404,9 +438,9 @@ class Skill_R(BaseSkill):
     key=Key.SKILL_R
     delay=0.4
     rep_interval=0.1
-    skill_cool_down=205
+    skill_cool_down=200
     ground_skill=True
-    buff_time=58
+    buff_time=72
     combo_delay = 0.25
     
 class Sp_F12(BaseSkill):
@@ -465,33 +499,34 @@ class AutoHunting(Command):
             
             if toggle:
                 # right side
-                move((width-10),bottom_y).execute()
-                Teleport(direction='down').execute()
+                move((width-30),bottom_y).execute()
                 if config.player_pos[1] >= bottom_y:
                     print('new bottom')
                     bottom_y = config.player_pos[1]
                     settings.platforms = 'b' + str(int(bottom_y))
                 print("current bottom : ", settings.platforms)
                 print("current player : ", str(config.player_pos[1]))
-                time.sleep(0.2)
-                TeleportCombination(direction='right',combo_skill='skill_q|skill_3|skill_s',combo_direction='left').execute()
-                TeleportCombination(direction='left',combo_skill='skill_a',combo2='false').execute()
+                SkillCombination(direction='right',target_skills='skill_e|skill_s|buff_7|buff_5|skill_t|skill_a',combo='true',jump='true').execute()
+                Skill_2().execute()
+                Teleport(direction='left').execute()
                 UpJump(combo='true',direction='left').execute()
-                TeleportCombination(direction='up',combo_skill='skill_a').execute()
+                SkillCombination(direction='left',target_skills='skill_e|skill_s|buff_7|buff_5|skill_t|skill_a',combo='true',jump='true').execute()
+                Skill_2().execute()
             else:
                 # left side
-                move(10,bottom_y).execute()
+                move(30,bottom_y).execute()
                 Teleport(direction='down').execute()
                 if config.player_pos[1] >= bottom_y:
                     print('new bottom')
                     bottom_y = config.player_pos[1]
                     settings.platforms = 'b' + str(int(bottom_y))
                 print("current bottom : ", settings.platforms)
-                time.sleep(0.2)
-                TeleportCombination(direction='left',combo_skill='skill_q|skill_3|skill_s',combo_direction='right').execute()
-                TeleportCombination(direction='right',combo_skill='skill_a',combo2='false').execute()
+                SkillCombination(direction='left',target_skills='skill_e|skill_s|buff_7|buff_5|skill_t|skill_a',combo='true',jump='true').execute()
+                Skill_2().execute()
+                Teleport(direction='right').execute()
                 UpJump(combo='true',direction='right').execute()
-                TeleportCombination(direction='up',combo_skill='skill_a').execute()
+                SkillCombination(direction='right',target_skills='skill_e|skill_s|buff_7|buff_5|skill_t|skill_a',combo='true',jump='true').execute()
+                Skill_2().execute()
             
             if settings.auto_change_channel and config.should_solve_rune:
                 config.bot._solve_rune()
@@ -500,9 +535,9 @@ class AutoHunting(Command):
                 ChangeChannel(max_rand=40).execute()
                 continue
             move(width//2,bottom_y).execute()
-            time.sleep(0.5)
-            SkillCombination(target_skills='skill_1|skill_w').execute()
-            TeleportCombination(direction='up',combo_skill='skill_a',jump='true').execute()
+            time.sleep(0.4)
+            SkillCombination(direction='',target_skills='skill_r|skill_w|skill_q|skill_4',combo='true').execute()
+            Skill_2().execute()
             toggle = not toggle
             
 
