@@ -205,14 +205,17 @@ class FlashJump(Command):
 
     def main(self):
         if not self.jump:
-            self.player_jump(self.direction)
+            utils.wait_for_is_standing()
+            if not self.fast_jump:
+                self.player_jump(self.direction)
+                time.sleep(utils.rand_float(0.02, 0.04)) # fast flash jump gap
+            else:
+                key_down(self.direction,down_time=0.05)
+                press(Key.JUMP,down_time=0.06,up_time=0.05)
         else:
             key_down(self.direction,down_time=0.05)
-            press(Key.JUMP,down_time=0.04,up_time=0.02)
-        if not self.fast_jump:
-            time.sleep(utils.rand_float(0.02, 0.04)) # fast flash jump gap
-        else:
-            time.sleep(utils.rand_float(0.2, 0.25)) # slow flash jump gap
+            press(Key.JUMP,down_time=0.06,up_time=0.05)
+        
         press(Key.FLASH_JUMP, 1,down_time=0.06,up_time=0.01)
         key_up(self.direction,up_time=0.01)
         if self.triple_jump:
@@ -313,7 +316,7 @@ class Skill_AS(BaseSkill):
     _display_name = '冷血連擊+楓炸'
     _distance = 27
     key=Skill_A.key
-    delay=0.05
+    delay=0.06
     rep_interval=0.5
     skill_cool_down=0
     ground_skill=False
@@ -324,7 +327,7 @@ class Skill_AS(BaseSkill):
     def main(self):
         super().main()
         Skill_S().execute()
-        time.sleep(utils.rand_float(0.2*0.95, 0.2*1.1))
+        time.sleep(utils.rand_float(0.19*0.95, 0.19*1.1))
 
 class Skill_W(BaseSkill):
     _display_name = '穢土轉生'

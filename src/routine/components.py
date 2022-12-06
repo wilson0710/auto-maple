@@ -544,13 +544,13 @@ class Fall(Command):
     def main(self):
         utils.wait_for_is_standing(800)
         time.sleep(utils.rand_float(0.03, 0.05))
-        key_down('down',down_time=0.05)
-        press(config.jump_button, 1, down_time=0.15,up_time=0.02)
+        key_down('down',down_time=0.06)
+        press(config.jump_button, 1, down_time=0.09,up_time=0.02)
         key_up('down',up_time=self.duration)
         # time.sleep(utils.rand_float(0.02, 0.03))
         if self.direction != '':
             key_down(self.direction)
-            press(config.jump_button, 2, down_time=0.05,up_time=0.03)
+            press(config.jump_button, 2, down_time=0.05,up_time=0.05)
             key_up(self.direction,up_time=0.02)
         
 class Buff(Command):
