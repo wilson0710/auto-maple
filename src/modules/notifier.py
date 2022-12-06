@@ -147,12 +147,14 @@ class Notifier:
                     conversation = utils.multi_match(conversation_frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
                     if len(conversation) > 0:
                         print("stop conversation")
-                        # config.enabled = False
-                        release_unreleased_key()
-                        # config.enabled = True
-                        time.sleep(0.1)
-                        press("esc",1)
-                        time.sleep(0.1)
+                        conversation_pos = min(conversation, key=lambda p: p[0])
+                        target = (
+                            round(conversation_pos[0] +(width //2-250)),
+                            round(conversation_pos[1] +(height//2-250))
+                        )
+                        utils.game_window_click(target)
+                        time.sleep(1)
+                        utils.game_window_click((700,100), button='right')
 
                     # check for unexpected dead
                     revive_frame = frame[height//2-100:height//2+200, width //2-150:width//2+150]
@@ -162,12 +164,12 @@ class Notifier:
                             self._send_msg_to_line_notify("角色死亡")
                         revive_confirm_pos = min(revive_confirm, key=lambda p: p[0])
                         target = (
-                            round(revive_confirm_pos[0] + config.capture.window['left']+(width //2-150)),
-                            round(revive_confirm_pos[1] + config.capture.window['top']+(height//2-100))
+                            round(revive_confirm_pos[0] +(width //2-150)),
+                            round(revive_confirm_pos[1] +(height//2-100))
                         )
-                        click(target, button='left')
-                        time.sleep(3)
-                        click((700,100), button='right')
+                        utils.game_window_click(target)
+                        time.sleep(1)
+                        utils.game_window_click((700,100), button='right')
 
                 
                 # Check for skill cd

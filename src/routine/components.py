@@ -655,7 +655,7 @@ class BaseSkill(Command):
 
     def main(self):
         if not self.check_should_active():
-            return
+            return False
         if self.skill_cool_down == 0 or self.check_is_skill_ready():
             if self.ground_skill:
                 utils.wait_for_is_standing(1000)
@@ -686,7 +686,10 @@ class BaseSkill(Command):
                 time.sleep(utils.rand_float(self.combo_delay*0.95, self.combo_delay*1.1))
             else:
                 time.sleep(utils.rand_float(self.delay*0.95, self.delay*1.1))
-
+            return True
+        else:
+            return False
+            
 class Frenzy(BaseSkill):
     _display_name ='輪迴'
     key="f12"

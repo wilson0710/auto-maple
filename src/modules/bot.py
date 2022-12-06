@@ -142,7 +142,7 @@ class Bot(Configurable):
         adjust = self.command_book['adjust']
         adjust(*self.rune_pos).execute()
         time.sleep(0.2)   
-        for ii in range(3):
+        for ii in range(2):
             if ii == 1:
                 press("left", 1, down_time=0.1,up_time=0.3) 
             elif ii == 2:
@@ -164,26 +164,29 @@ class Bot(Configurable):
                         print('Solution found, entering result')
                         for arrow in solution:
                             press(arrow, 1, down_time=0.1)
-                        time.sleep(1)
-                        for _ in range(3):
-                            time.sleep(0.3)
+                        time.sleep(0.8)
+                        find_rune_buff = False
+                        for _ in range(2):
+                            time.sleep(0.5)
                             frame = config.capture.frame
-                            rune_buff = utils.single_match_with_threshold(frame[:frame.shape[0] // 8, :],
+                            rune_buff = utils.multi_match(frame[:frame.shape[0] // 8, :],
                                                         RUNE_BUFF_TEMPLATE,
-                                                        threshold=0.92)
+                                                        threshold=0.93)
                             if len(rune_buff) > 0:
                                 rune_buff_pos = min(rune_buff, key=lambda p: p[0])
                                 print('rune_buff_pos : ', rune_buff_pos)
                                 target = (
-                                    round(rune_buff_pos[0] + config.capture.window['left']),
-                                    round(rune_buff_pos[1] + config.capture.window['top'])
+                                    round(rune_buff_pos[0]),
+                                    round(rune_buff_pos[1])
                                 )
-                                click(target, button='right')
+                                utils.game_window_click(target, button='right')
                                 config.latest_solved_rune = time.time()
                                 config.should_solve_rune = False
                                 self.rune_active = False
-                                click((config.capture.window['left']+700,config.capture.window['top']+120), button='right')
-                                return True
+                                find_rune_buff = True
+                                utils.game_window_click((700,120), button='right')
+                        if find_rune_buff:
+                            return True
             press("left", 1, down_time=0.05,up_time=0.1)
             press("right", 1, down_time=0.05,up_time=0.1)
             if self.rune_active == False:
