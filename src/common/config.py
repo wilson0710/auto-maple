@@ -88,3 +88,5 @@ should_solve_rune = False
 
 # my remote info
 my_remote_info = []
+
+remote_infos = {}

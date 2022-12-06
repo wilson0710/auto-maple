@@ -12,3 +12,4 @@ tensorflow-gpu
 pynput
 pywinio
 clipboard
+requests

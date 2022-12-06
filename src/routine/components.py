@@ -769,6 +769,8 @@ class GoToMap(Command):
         self.target_map = target_map
 
     def main(self):
+        if settings.id:
+            remote_info.get_remote_async(settings.id)
         # wm = WorldMap()
         # if wm.check_if_in_correct_map(self.target_map):
         #     return
@@ -800,9 +802,10 @@ class GoToMap(Command):
         Listener.recalibrate_minimap()
         if settings.id:
             # if len(config.my_remote_info) == 0:
-            config.my_remote_info = remote_info.get_user_info(settings.id)
-            config.my_remote_info[1] = self.target_map
-            config.my_remote_info = remote_info.update_user_info(settings.id,config.my_remote_info)
+            remote_info.wait_for_get(settings.id)
+            config.remote_infos[str(settings.id)][1] = self.target_map
+            remote_info.update_remote_async(settings.id,config.remote_infos[str(settings.id)])
+            time.sleep(1)        
         else:
             time.sleep(2.2)
         config.map_changing = False
@@ -827,6 +830,8 @@ class ChangeChannel(Command):
             self.target_channel = int(target_channel)
 
     def main(self):
+        if settings.id:
+            remote_info.get_remote_async(settings.id)
         time.sleep(self.delay)
         if int(self.max_rand) > 0:
             while True:
@@ -885,9 +890,9 @@ class ChangeChannel(Command):
                     break
                 if settings.id:
                     # if len(config.my_remote_info) == 0:
-                    config.my_remote_info = remote_info.get_user_info(settings.id)
-                    config.my_remote_info[2] = self.target_channel
-                    config.my_remote_info = remote_info.update_user_info(settings.id,config.my_remote_info)
+                    remote_info.wait_for_get(settings.id)
+                    config.remote_infos[str(settings.id)][2] = self.target_channel
+                    remote_info.update_remote_async(settings.id,config.remote_infos[str(settings.id)])
                 break
 
 class EndScript(Command):
@@ -942,8 +947,8 @@ class FollowPartner(Command):
 
     def main(self):
         if settings.id:
-            config.my_remote_info = remote_info.get_user_info(settings.id)
-            my_info = config.my_remote_info
+            remote_info.get_remote_async(settings.id)
+            my_info = remote_info.wait_for_get(settings.id)
             my_map = my_info[1]
             my_channel = int(my_info[2])
             if self.from_remote:
