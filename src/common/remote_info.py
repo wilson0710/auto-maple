@@ -13,7 +13,8 @@ def run_async(callback):
                 out = func(*args, **kwargs)
                 callback(out)
                 return out
-
+            new_loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(new_loop)
             return asyncio.get_event_loop().run_in_executor(None, __exec)
 
         return wrapper
@@ -22,9 +23,7 @@ def run_async(callback):
 
 
 def _callback(*args):
-    print(str(args[0][0]))
     config.remote_infos[str(args[0][0])] = args[0]
-    print(config.remote_infos[str(args[0][0])])
 
 # Must provide a callback function, callback func will be executed after the func completes execution !!
 @run_async(_callback)
