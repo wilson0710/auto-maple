@@ -160,7 +160,7 @@ class Capture:
                     self.refresh_counting = 0
                     break
                 # refresh whole game frame every 0.5s
-                if self.refresh_counting % 5 == 0:
+                if self.refresh_counting % 3 == 0:
                     self.frame = self.screenshot_in_bg(self.handle,0,0,self.window['width'],self.window['height'])
                     # if self.refresh_counting % 20 == 0:
                     #     cv2.imwrite('./test.png',self.frame)
@@ -302,7 +302,7 @@ class Capture:
                     self.ready = True
                 self.refresh_counting = self.refresh_counting + 1
                 if settings.rent_frenzy:
-                    time.sleep(self.capture_gap_sec*10)
+                    time.sleep(self.capture_gap_sec*4)
                 else:
                     time.sleep(self.capture_gap_sec)
                 

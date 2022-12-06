@@ -215,7 +215,7 @@ class FlashJump(Command):
             self.player_jump(self.direction)
         else:
             key_down(self.direction,down_time=0.05)
-            press(Key.JUMP,down_time=0.04,up_time=0.02)
+            press(Key.JUMP,down_time=0.04,up_time=0.05)
         if not self.fast_jump:
             time.sleep(utils.rand_float(0.02, 0.04)) # fast flash jump gap
         else:
@@ -414,11 +414,11 @@ class Skill_E(BaseSkill):
     _display_name ='迴旋突進'
     key=Key.SKILL_E
     delay=0.3
-    rep_interval=0.15
+    rep_interval=0.1
     skill_cool_down=0.5
     ground_skill=False
     buff_time=0
-    combo_delay = 0.2
+    combo_delay = 0.12
 
     def main(self):
         if 'beta_tag' in config.player_states and 'alpha_tag' in config.player_states and 'current_tag' in config.player_states:
@@ -602,6 +602,11 @@ class Buff_Pageup(BaseSkill):
     active_if_skill_cd = 'buff_f1'
     active_if_not_in_skill_buff = 'skill_f2'
 
+    def main(self):
+        if super().main():
+            config.is_skill_ready_collector['Buff_F1'] = True
+            config.is_skill_ready_collector['Skill_3'] = True
+
 class Buff_F5(BaseSkill):
     _display_name ='優伊娜的心願'
     key=Key.BUFF_F5
@@ -613,6 +618,11 @@ class Buff_F5(BaseSkill):
     combo_delay = 0.3
     active_if_skill_cd = 'buff_f1'
     active_if_not_in_skill_buff = 'skill_f2'
+
+    def main(self):
+        if super().main():
+            config.is_skill_ready_collector['Buff_F1'] = True
+            config.is_skill_ready_collector['Skill_3'] = True
 
 class Buff_5(BaseSkill):
     _display_name ='幻靈武具'
