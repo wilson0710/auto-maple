@@ -42,6 +42,10 @@ FIONA_LIE_DETECTOR_TEMPLATE = cv2.imread('assets/fiona_lie_detector.png',0)
 # rune curse image
 RUNE_CURSE_TEMPLATE = cv2.imread('assets/rune_curse.png',0)
 
+# The rune's buff icon
+RUNE_BUFF_TEMPLATE = cv2.imread('assets/rune_buff_template.jpg', 0)
+RUNE_BUFF_TEMPLATE_BOTTOM = cv2.imread('assets/rune_buff_template_bottom.jpg', 0)
+
 def get_alert_path(name):
     return os.path.join(Notifier.ALERTS_DIR, f'{name}.mp3')
 
@@ -232,6 +236,18 @@ class Notifier:
                                     rune_check_count = rune_check_count + 1
                             else:
                                 rune_check_count = 0
+                        
+                            # check in rune buff
+                            rune_buff = utils.multi_match(frame[:35, :],
+                                            RUNE_BUFF_TEMPLATE,
+                                            threshold=0.93)
+                            rune_buff_bottom = utils.multi_match(frame[:35, :],
+                                            RUNE_BUFF_TEMPLATE_BOTTOM,
+                                            threshold=0.93)
+                            if len(rune_buff) > 0 or len(rune_buff_bottom) > 0:
+                                config.bot.in_rune_buff = True
+                            else:
+                                config.bot.in_rune_buff = False
 
                 detection_i = detection_i + 1
             time.sleep(self.notifier_delay)

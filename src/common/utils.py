@@ -6,6 +6,7 @@ import cv2
 import time
 import threading
 import numpy as np
+import matplotlib.pyplot as plt
 from src.common import config, settings
 from random import random
 from ctypes import windll
@@ -205,7 +206,7 @@ def single_match(frame, template):
     return top_left, bottom_right
 
 
-def multi_match(frame, template, threshold=0.95):
+def multi_match(frame, template, threshold=0.95,save_result = False):
     """
     Finds all matches in FRAME that are similar to TEMPLATE by at least THRESHOLD.
     :param frame:       The image in which to search.
@@ -219,10 +220,25 @@ def multi_match(frame, template, threshold=0.95):
     locations = np.where(result >= threshold)
     locations = list(zip(*locations[::-1]))
     results = []
+    if save_result:
+        img_disp = gray.copy()
     for p in locations:
         x = int(round(p[0] + template.shape[1] / 2))
         y = int(round(p[1] + template.shape[0] / 2))
         results.append((x, y))
+        if save_result:
+            right_bottom = (p[0] + template.shape[1], p[1] + template.shape[0])
+            cv2.rectangle(img_disp, p,right_bottom, (0,255,0), 5, 8, 0 )
+    if save_result:
+        fig,ax = plt.subplots(3,1)
+        fig.suptitle('match_template')
+        ax[0].set_title('img_src')
+        ax[0].imshow(cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)) 
+        ax[1].set_title('img_templ')
+        ax[1].imshow(template,'gray') 
+        ax[2].set_title('img_disp')
+        ax[2].imshow(cv2.cvtColor(img_disp,cv2.COLOR_BGR2RGB)) 
+        plt.savefig('plot.png') 
     return results
 
 def single_match_with_threshold(frame, template, threshold=0.95):

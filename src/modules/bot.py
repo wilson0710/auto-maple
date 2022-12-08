@@ -20,7 +20,6 @@ from src.common.interfaces import Configurable
 # The rune's buff icon
 RUNE_BUFF_TEMPLATE = cv2.imread('assets/rune_buff_template.jpg', 0)
 
-
 class Bot(Configurable):
     """A class that interprets and executes user-defined routines."""
 
@@ -36,6 +35,7 @@ class Bot(Configurable):
         config.bot = self
 
         self.rune_active = False
+        self.in_rune_buff = False
         self.rune_pos = (0, 0)
         self.rune_closest_pos = (0, 0)      # Location of the Point closest to rune
         self.submodules = []
@@ -107,7 +107,8 @@ class Bot(Configurable):
                     (isinstance(element, Point) \
                         and (element.location == self.rune_closest_pos or utils.distance(config.bot.rune_pos, element.location) <= 40) \
                         and time.time() - float(config.latest_solved_rune) >= (int(settings.rune_cd_min) * 60) \
-                        or config.should_solve_rune) :
+                        or config.should_solve_rune \
+                        or not self.in_rune_buff) :
                     if not self.model:
                         self.model = detection.load_model()
                     if self._solve_rune(self.model):
@@ -169,9 +170,9 @@ class Bot(Configurable):
                         for _ in range(2):
                             time.sleep(0.5)
                             frame = config.capture.frame
-                            rune_buff = utils.multi_match(frame[:frame.shape[0] // 8, :],
+                            rune_buff = utils.multi_match(frame[:35, :],
                                                         RUNE_BUFF_TEMPLATE,
-                                                        threshold=0.93)
+                                                        threshold=0.93,save_result=True)
                             if len(rune_buff) > 0:
                                 rune_buff_pos = min(rune_buff, key=lambda p: p[0])
                                 print('rune_buff_pos : ', rune_buff_pos)
@@ -183,6 +184,7 @@ class Bot(Configurable):
                                 config.latest_solved_rune = time.time()
                                 config.should_solve_rune = False
                                 self.rune_active = False
+                                self.in_rune_buff = True
                                 find_rune_buff = True
                                 utils.game_window_click((700,120), button='right')
                         if find_rune_buff:
