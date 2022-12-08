@@ -172,10 +172,10 @@ Auto Maple has the ability to automatically solve "runes", or in-game arrow key 
 download visual studio
 install c++桌面開發套件
 
-# bcdedit /set nointegritychecks on
-# bcdedit /set testsigning on
+### bcdedit /set nointegritychecks on
+### bcdedit /set testsigning on
 reboot pc
-
+pip install numpy --upgrade
 <ol>
     
   <li>
