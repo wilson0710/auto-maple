@@ -13,3 +13,4 @@ pynput
 pywinio
 clipboard
 requests
+matplotlib
