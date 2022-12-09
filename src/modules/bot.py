@@ -172,7 +172,7 @@ class Bot(Configurable):
                             frame = config.capture.frame
                             rune_buff = utils.multi_match(frame[:35, :],
                                                         RUNE_BUFF_TEMPLATE,
-                                                        threshold=0.93,save_result=True)
+                                                        threshold=0.93)
                             if len(rune_buff) > 0:
                                 rune_buff_pos = min(rune_buff, key=lambda p: p[0])
                                 print('rune_buff_pos : ', rune_buff_pos)
