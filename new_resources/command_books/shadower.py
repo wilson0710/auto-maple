@@ -73,12 +73,13 @@ def step(direction, target):
                 time.sleep(utils.rand_float(0.1, 0.15))
                 press(Key.ROPE, 1)
                 time.sleep(utils.rand_float(1.2, 1.5))
-            elif abs(d_y) < 15:
+            elif abs(d_y) <= 17:
                 UpJump().execute()
                 SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
             else:
                 press(Key.ROPE, 1)
                 time.sleep(utils.rand_float(1.2, 1.5))
+                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
             utils.wait_for_is_standing(300)
         else:
             press(Key.JUMP, 1)
@@ -87,13 +88,13 @@ def step(direction, target):
     if direction == 'down':
         down_duration = 0.04
         if abs(d_y) > 20:
-            down_duration = 0.14
+            down_duration = 0.3
         elif abs(d_y) > 13:
-            down_duration = 0.1
+            down_duration = 0.2
         
         if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
             print("down stair")
-            if abs(d_x) >= 2:
+            if abs(d_x) >= 5:
                 if d_x > 0:
                     Fall(direction='right',duration=down_duration).execute()
                 else:
