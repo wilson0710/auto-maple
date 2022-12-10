@@ -108,7 +108,7 @@ class Bot(Configurable):
                         and (element.location == self.rune_closest_pos or utils.distance(config.bot.rune_pos, element.location) <= 40) \
                         and time.time() - float(config.latest_solved_rune) >= (int(settings.rune_cd_min) * 60) \
                         or config.should_solve_rune \
-                        or not self.in_rune_buff) :
+                        and not self.in_rune_buff) :
                     if not self.model:
                         self.model = detection.load_model()
                     if self._solve_rune(self.model):

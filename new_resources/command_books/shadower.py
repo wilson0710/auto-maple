@@ -1,6 +1,6 @@
 from src.common import config, settings, utils
 import time
-from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy
+from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy,Player_jump
 from src.common.vkeys import press, key_down, key_up
 import cv2
 
@@ -88,9 +88,9 @@ def step(direction, target):
     if direction == 'down':
         down_duration = 0.04
         if abs(d_y) > 20:
-            down_duration = 0.3
+            down_duration = 0.4
         elif abs(d_y) > 13:
-            down_duration = 0.2
+            down_duration = 0.22
         
         if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
             print("down stair")
@@ -99,11 +99,21 @@ def step(direction, target):
                     Fall(direction='right',duration=down_duration).execute()
                 else:
                     Fall(direction='left',duration=down_duration).execute()
+                
             else:
                 Fall(direction='',duration=down_duration).execute()
-            SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
-        time.sleep(utils.rand_float(0.02, 0.05))
-        utils.wait_for_is_standing(300)
+                if d_x > 0:
+                    key_down('left')
+                    press(Key.JUMP)
+                    key_up('left')
+                else:
+                    key_down('right')
+                    press(Key.JUMP)
+                    key_up('right')
+            SkillCombination(direction='',jump='true',target_skills='skill_as').execute()
+                
+        time.sleep(utils.rand_float(0.1, 0.15))
+        utils.wait_for_is_standing(500)
 
 class Adjust(Command):
     """Fine-tunes player position using small movements."""
