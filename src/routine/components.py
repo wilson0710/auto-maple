@@ -454,14 +454,14 @@ class Move(Command):
                 else:
                     d_y = point[1] - config.player_pos[1]
                     # if abs(d_y) > settings.move_tolerance / 2:
-                    if abs(d_y) >= 5:
+                    if abs(d_y) >= 3:
                         if d_y < 0:
                             key = 'up' # if direction=up dont press up to avoid transporter
                             if abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
                                 self._new_direction('')
                         else:
                             key = 'down'
-                            if config.player_states['in_bottom_platform'] == False:
+                            if not config.player_states['in_bottom_platform']:
                                 self._new_direction(key)
                             elif abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
                                 self._new_direction('')
@@ -703,8 +703,6 @@ class BaseSkill(Command):
                 config.player_states['is_keydown_skill'] = False
             return False
             
-            
-
 class Frenzy(BaseSkill):
     _display_name ='輪迴'
     key="f12"
