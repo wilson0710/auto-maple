@@ -67,6 +67,8 @@ def step(direction, target):
     
     if direction == 'up':
         utils.wait_for_is_standing(500)
+        if abs(d_x) > settings.move_tolerance:
+            return
         if abs(d_y) > 6 :
             if abs(d_y) > 36:
                 press(Key.JUMP, 1)
@@ -86,6 +88,8 @@ def step(direction, target):
             time.sleep(utils.rand_float(0.1, 0.15))
 
     if direction == 'down':
+        if abs(d_x) > settings.move_tolerance:
+            return
         down_duration = 0.04
         if abs(d_y) > 20:
             down_duration = 0.4
@@ -110,7 +114,7 @@ def step(direction, target):
                     key_down('right')
                     press(Key.JUMP)
                     key_up('right')
-            SkillCombination(direction='',jump='true',target_skills='skill_as').execute()
+            SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
                 
         time.sleep(utils.rand_float(0.1, 0.15))
         utils.wait_for_is_standing(500)

@@ -108,7 +108,7 @@ class Bot(Configurable):
                         and (element.location == self.rune_closest_pos or utils.distance(config.bot.rune_pos, element.location) <= 40) \
                         and time.time() - float(config.latest_solved_rune) >= (int(settings.rune_cd_min) * 60) \
                         or config.should_solve_rune \
-                        and not self.in_rune_buff) :
+                        or not self.in_rune_buff) :
                     if not self.model:
                         self.model = detection.load_model()
                     if self._solve_rune(self.model):
@@ -138,11 +138,15 @@ class Bot(Configurable):
 
         if not model:
             model = self.model
-        move = self.command_book['move']
-        move(*self.rune_pos).execute()
-        adjust = self.command_book['adjust']
-        adjust(*self.rune_pos).execute()
-        time.sleep(0.2)   
+        if self.in_rune_buff:
+            print('in rune buff, quit solve rune')
+            return True
+        for _ in range(2):
+            move = self.command_book['move']
+            move(*self.rune_pos).execute()
+            adjust = self.command_book['adjust']
+            adjust(*self.rune_pos).execute()
+        time.sleep(0.5)   
         for ii in range(2):
             if ii == 1:
                 press("left", 1, down_time=0.1,up_time=0.3) 
