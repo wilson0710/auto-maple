@@ -454,14 +454,14 @@ class Move(Command):
                 else:
                     d_y = point[1] - config.player_pos[1]
                     # if abs(d_y) > settings.move_tolerance / 2:
-                    if abs(d_y) >= 5:
+                    if abs(d_y) >= 3:
                         if d_y < 0:
                             key = 'up' # if direction=up dont press up to avoid transporter
                             if abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
                                 self._new_direction('')
                         else:
                             key = 'down'
-                            if config.player_states['in_bottom_platform'] == False:
+                            if not config.player_states['in_bottom_platform']:
                                 self._new_direction(key)
                             elif abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
                                 self._new_direction('')
@@ -703,8 +703,6 @@ class BaseSkill(Command):
                 config.player_states['is_keydown_skill'] = False
             return False
             
-            
-
 class Frenzy(BaseSkill):
     _display_name ='輪迴'
     key="f12"
@@ -904,12 +902,21 @@ class EndScript(Command):
     """ go to target channel """
     _display_name = '結束腳本'
 
-    def __init__(self,should_back_home='true',home_scroll_key='f9'):
+    def __init__(self,should_back_home='true',home_scroll_key='f9',end_time=''):
         super().__init__(locals())
         self.should_back_home = settings.validate_boolean(should_back_home)
         self.home_scroll_key = home_scroll_key
+        self.end_time = end_time
 
     def main(self):
+        if self.end_time != '':
+            hour_min = self.end_time.split(':')
+            cur_time = time.localtime()   
+            if int(cur_time.tm_hour) == int(hour_min[0]) and int(cur_time.tm_min) == int(hour_min[1]):
+                pass
+            else:
+                return
+            
         if self.should_back_home:
             if self.home_scroll_key:
                 press(self.home_scroll_key)
