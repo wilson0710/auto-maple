@@ -90,17 +90,18 @@ def step(direction, target):
                 press(Key.JUMP, 1)
                 time.sleep(utils.rand_float(0.1, 0.15))
     if direction == 'down':
-        if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
-            print("down stair")
-            if abs(d_y) >= 25 :
-                time.sleep(utils.rand_float(0.3, 0.4))
-                Fall(duration='0.3').execute()
-            if abs(d_y) > 10 and utils.bernoulli(0.8):
-                Teleport(direction=direction).execute()
-                Skill_A(combo='True').execute()
-            else:
-                time.sleep(utils.rand_float(0.3, 0.4))
-                Fall(duration='0.3').execute()
+        if abs(d_x) <= settings.move_tolerance:
+            if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
+                print("down stair")
+                if abs(d_y) >= 25 :
+                    time.sleep(utils.rand_float(0.3, 0.4))
+                    Fall(duration='0.3').execute()
+                if abs(d_y) > 10 and utils.bernoulli(0.8):
+                    Teleport(direction=direction).execute()
+                    Skill_A(combo='True').execute()
+                else:
+                    time.sleep(utils.rand_float(0.3, 0.4))
+                    Fall(duration='0.3').execute()
         time.sleep(utils.rand_float(0.05, 0.08))
 
 class Adjust(Command):
@@ -421,7 +422,7 @@ class AutoHunting(Command):
             if toggle:
                 # right side
                 move((width-20),bottom_y).execute()
-                Teleport(direction='down').execute()
+                # Teleport(direction='down').execute()
                 if config.player_pos[1] >= bottom_y:
                     print('new bottom')
                     bottom_y = config.player_pos[1]
@@ -436,7 +437,7 @@ class AutoHunting(Command):
             else:
                 # left side
                 move(20,bottom_y).execute()
-                Teleport(direction='down').execute()
+                # Teleport(direction='down').execute()
                 if config.player_pos[1] >= bottom_y:
                     print('new bottom')
                     bottom_y = config.player_pos[1]
@@ -457,7 +458,7 @@ class AutoHunting(Command):
             move(width//2,bottom_y).execute()
             time.sleep(0.5)
             SkillCombination(target_skills='skill_1|skill_w').execute()
-            TeleportCombination(direction='up',combo_skill='skill_a',jump='true').execute()
+            # TeleportCombination(direction='up',combo_skill='skill_a',jump='true').execute()
             toggle = not toggle
             
 
