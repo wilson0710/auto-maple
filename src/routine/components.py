@@ -695,12 +695,12 @@ class BaseSkill(Command):
                 time.sleep(utils.rand_float(self.combo_delay*0.95, self.combo_delay*1.1))
             else:
                 time.sleep(utils.rand_float(self.delay*0.95, self.delay*1.1))
+            # if self.key_up_skill:
+            config.player_states['is_keydown_skill'] = False
             return True
         else:
             if self.key_down_skill:
                 config.player_states['is_keydown_skill'] = True
-            if self.key_up_skill:
-                config.player_states['is_keydown_skill'] = False
             return False
             
 class Frenzy(BaseSkill):
