@@ -74,7 +74,11 @@ def step(direction, target):
         #     Skill_A(combo='True').execute()
     
     if direction == 'up':
-        if abs(d_x) <= settings.move_tolerance:
+        
+        if abs(d_x) <= settings.move_tolerance and not config.player_states['is_keydown_skill']:
+            time.sleep(utils.rand_float(0.2, 0.25))
+            key_up('left')
+            key_up('right')
             if abs(d_y) > 3 :
                 if abs(d_y) >= 35:
                     UpJump().execute()
@@ -84,7 +88,7 @@ def step(direction, target):
                 else:
                     Teleport(direction=direction).execute()
                 utils.wait_for_is_standing(300)
-                Skill_A(combo='False').execute()
+                Skill_S(combo='False').execute()
             else:
                 press(Key.JUMP, 1)
                 time.sleep(utils.rand_float(0.1, 0.15))
@@ -97,10 +101,10 @@ def step(direction, target):
                     Fall(duration='0.3').execute()
                 if abs(d_y) > 10 and utils.bernoulli(0.8):
                     Teleport(direction=direction).execute()
-                    Skill_A(combo='True').execute()
+                    Skill_S(combo='True').execute()
                 else:
                     time.sleep(utils.rand_float(0.2, 0.3))
-                    Fall(duration='0.3').execute()
+                    Fall(duration='0.2').execute()
         time.sleep(utils.rand_float(0.05, 0.08))
         utils.wait_for_is_standing(800)
 
@@ -232,12 +236,12 @@ class UpJump(Command):
 class Skill_A(BaseSkill):
     _display_name ='火焰之襲'
     key=Key.SKILL_A
-    delay=0.6
+    delay=0.65
     rep_interval=0.2
     skill_cool_down=0
     ground_skill=True
     buff_time=0
-    combo_delay = 0.24
+    combo_delay = 0.28
     
 class TeleportCombination(Command):
     """teleport with other skill."""
@@ -267,12 +271,12 @@ class TeleportCombination(Command):
 class Skill_S(BaseSkill):
     _display_name ='末日烈焰'
     key=Key.SKILL_S
-    delay=0.6
+    delay=0.65
     rep_interval=0.2
     skill_cool_down=0
     ground_skill=True
     buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.28
 
 class Skill_D(BaseSkill):
     _display_name ='藍焰斬'
