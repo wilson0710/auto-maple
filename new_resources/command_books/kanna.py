@@ -296,7 +296,11 @@ class Skill_D(BaseSkill):
     skill_cool_down=90
     ground_skill=False
     buff_time=0
-    combo_delay = 0.5
+    combo_delay = 0.7
+
+    def main(self):
+        self.duration = 2
+        return super().main()
 
 class Skill_Q(BaseSkill):
     _display_name ='鬼夜叉老大'
