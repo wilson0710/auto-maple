@@ -27,12 +27,13 @@ class Key:
     SKILL_E = 'e' # 暴風雪
     SKILL_F = 'f' # 
     SKILL_F1 = 'f1' # 魔力無限
-    SKILL_F2 = 'f2' # 
+    SKILL_F2 = 'f2' # 魔力無限2
     SKILL_2 = '2' # 蜘蛛之鏡
     SKILL_3 = '3' # 
 
     # special Skills
     SP_F12 = 'f12' # 輪迴
+    CTRL = 'ctrl'
 
 def step(direction, target):
     """
@@ -75,7 +76,10 @@ def step(direction, target):
         #     Skill_A(combo='True').execute()
     
     if direction == 'up':
-        if abs(d_x) <= settings.move_tolerance:
+        if abs(d_x) <= settings.move_tolerance and not config.player_states['is_keydown_skill']:
+            time.sleep(utils.rand_float(0.2, 0.25))
+            key_up('left')
+            key_up('right')
             if abs(d_y) > 3 :
                 if abs(d_y) >= 40:
                     UpJump().execute()
@@ -88,15 +92,17 @@ def step(direction, target):
                 Skill_A(combo='False').execute()
             else:
                 press(Key.JUMP, 1)
-                time.sleep(utils.rand_float(0.1, 0.15))
+                time.sleep(utils.rand_float(0.2, 0.25))
     if direction == 'down':
         if abs(d_x) <= settings.move_tolerance:
+            key_up('left')
+            key_up('right')
             if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
                 print("down stair")
                 if abs(d_y) >= 25 :
                     time.sleep(utils.rand_float(0.2, 0.3))
                     Fall(duration='0.3').execute()
-                if abs(d_y) > 10 and utils.bernoulli(0.8):
+                if abs(d_y) > 10 and utils.bernoulli(0.9):
                     Teleport(direction=direction,combo='true').execute()
                     Skill_A(combo='True').execute()
                 else:
@@ -158,6 +164,7 @@ class Buff(Command):
 
     def __init__(self):
         super().__init__(locals())
+        self.cd10_buff_time = 0
         self.cd120_buff_time = 0
         self.cd150_buff_time = 0
         self.cd180_buff_time = 0
@@ -169,16 +176,20 @@ class Buff(Command):
     def main(self):
         # buffs = [Key.SPEED_INFUSION, Key.HOLY_SYMBOL, Key.SHARP_EYE, Key.COMBAT_ORDERS, Key.ADVANCED_BLESSING]
         now = time.time()
-        utils.wait_for_is_standing(1000)
+        
         if self.cd120_buff_time == 0 or now - self.cd120_buff_time > 121:
-            # time.sleep(utils.rand_float(0.1, 0.2))
-            # Skill_D().execute()
             self.cd120_buff_time = now
+        if self.cd10_buff_time == 0 or now - self.cd10_buff_time > 11:
+            Skill_F1(pre_delay=0.25,active_if_not_in_skill_buff='skill_f2').execute()
+            Skill_F2(pre_delay=0.25,active_if_not_in_skill_buff='skill_f1').execute()
+            self.cd10_buff_time = now
         if self.cd150_buff_time == 0 or now - self.cd150_buff_time > 151:
+            time.sleep(utils.rand_float(0.3, 0.4))
+            press(Key.CTRL, 1,up_time=0.5)
             self.cd150_buff_time = now
         if self.cd180_buff_time == 0 or now - self.cd180_buff_time > 181:
-            time.sleep(utils.rand_float(0.3, 0.4))
-            press(Key.SKILL_F1, 1,up_time=0.2)
+            # time.sleep(utils.rand_float(0.2, 0.3))
+            # Skill_F1().execute()
             self.cd180_buff_time = now
         if self.cd200_buff_time == 0 or now - self.cd200_buff_time > 200:
             self.cd200_buff_time = now
@@ -204,7 +215,7 @@ class Teleport(BaseSkill):
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.16
+    combo_delay = 0.15
 
 class UpJump(Command):
     """Performs a up jump in the given direction."""
@@ -300,7 +311,7 @@ class Skill_Q(BaseSkill):
     ground_skill=True
     buff_time=0
     combo_delay = 0.25
-    skill_image = IMAGE_DIR + 'skill_q.png'
+    # skill_image = IMAGE_DIR + 'skill_q.png'
 
 class Skill_W(BaseSkill):
     _display_name ='冰河紀元'
@@ -322,7 +333,7 @@ class Skill_E(BaseSkill):
     ground_skill=True
     buff_time=0
     combo_delay = 0.9
-    skill_image = IMAGE_DIR + 'skill_e.png'
+    # skill_image = IMAGE_DIR + 'skill_e.png'
 
 class Skill_1(BaseSkill):
     _display_name ='冰雪之精神'
@@ -333,14 +344,14 @@ class Skill_1(BaseSkill):
     ground_skill=True
     buff_time=25
     combo_delay = 0.2
-    skill_image = IMAGE_DIR + 'skill_1.png'
+    # skill_image = IMAGE_DIR + 'skill_1.png'
 
 class Skill_3(BaseSkill):
     _display_name ='眾神之雷'
     key=Key.SKILL_3
     delay=0.55
     rep_interval=0.2
-    skill_cool_down=114
+    skill_cool_down=54
     ground_skill=True
     buff_time=30
     combo_delay = 0.2
@@ -349,12 +360,23 @@ class Skill_3(BaseSkill):
 class Skill_F1(BaseSkill):
     _display_name ='魔力無限'
     key=Key.SKILL_F1
-    delay=0.5
+    delay=0.4
     rep_interval=0.2
     skill_cool_down=180
     ground_skill=True
-    buff_time=69
+    buff_time=80
     combo_delay = 0.2
+
+class Skill_F2(BaseSkill):
+    _display_name ='魔力無限2'
+    key=Key.SKILL_F2
+    delay=0.8
+    rep_interval=0.2
+    skill_cool_down=240
+    ground_skill=True
+    buff_time=80
+    combo_delay = 0.2
+    skill_image = IMAGE_DIR + 'skill_f2.png'
 
 class Skill_2(BaseSkill):
     _display_name ='蜘蛛之鏡'
@@ -457,7 +479,7 @@ class AutoHunting(Command):
                 ChangeChannel(max_rand=40).execute()
                 continue
             move(width//2,bottom_y).execute()
-            time.sleep(0.5)
+            time.sleep(0.35)
             SkillCombination(target_skills='skill_1|skill_w').execute()
             # TeleportCombination(direction='up',combo_skill='skill_a',jump='true').execute()
             toggle = not toggle

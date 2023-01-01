@@ -645,7 +645,8 @@ class BaseSkill(Command):
         self.rep = settings.validate_nonnegative_int(rep)
         self.duration = float(duration)
         self.pre_delay = float(pre_delay)
-        config.is_skill_ready_collector[self._custom_id] = True
+        if not self._custom_id in config.is_skill_ready_collector:
+            config.is_skill_ready_collector[self._custom_id] = True
         self.combo = settings.validate_boolean(combo)
         self.key_down_skill = settings.validate_boolean(key_down_skill)
         self.key_up_skill = settings.validate_boolean(key_up_skill)

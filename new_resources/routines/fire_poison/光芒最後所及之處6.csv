@@ -18,6 +18,8 @@ $, target=platforms, value=b58
     TeleportCombination, direction=up, combo_skill=skill_a, combo_direction=left, jump=False, combo2=true
     TeleportCombination, direction=down, combo_skill=skill_a, combo_direction=, jump=False, combo2=true
     TeleportCombination, direction=down, combo_skill=skill_s, combo_direction=, jump=False, combo2=true
+    EndScript, should_back_home=true, home_scroll_key=f9, end_time=1:10
+    CustomKey, name=f10, key=f10, direction=, jump=false, delay=0.3, rep=1, rep_interval=0.3, rep_interval_increase=0, duration=0, cool_down=7260, ground_skill=true, buff_time=0, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 *, x=125, y=42.000, frequency=1, skip=False, adjust=False, active_if_skill_ready=skill_d, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     TeleportCombination, direction=right, combo_skill=skill_d, combo_direction=, jump=False, combo2=true
     TeleportCombination, direction=right, combo_skill=skill_s, combo_direction=, jump=False, combo2=true
