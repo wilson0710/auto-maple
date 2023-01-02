@@ -20,6 +20,7 @@ class Key:
     BUFF_1 = '1' # 黃金卡牌
     BUFF_F1 = 'f1' # 全集中守護
     BUFF_F2 = 'f2' # 好戲上場
+    BUFF_CTRL = 'CTRL' # 露西妲寶珠
 
     # Buffs Toggle
     BUFF_6 = '6' # 集中打擊
@@ -51,8 +52,10 @@ def step(direction, target):
         if abs(d_x) >= 16:
             if abs(d_x) >= 60:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
+                time.sleep(utils.rand_float(0.5, 0.6))
             elif abs(d_x) >= 28:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
+                time.sleep(utils.rand_float(0.5, 0.6))
             else:
                 Skill_A(jump='true').execute()
             time.sleep(utils.rand_float(0.04, 0.06))
@@ -170,6 +173,7 @@ class Buff(Command):
     def __init__(self):
         super().__init__(locals())
         self.cd120_buff_time = 0
+        self.cd150_buff_time = 0
         self.cd180_buff_time = 0
         self.cd200_buff_time = 0
         self.cd240_buff_time = 0
@@ -184,6 +188,11 @@ class Buff(Command):
             # press(Key.BUFF_1, 2)
             # time.sleep(utils.rand_float(0.6, 0.8))
             self.cd120_buff_time = now
+        if self.cd150_buff_time == 0 or now - self.cd150_buff_time > 150:
+            # press(Key.BUFF_1, 2)
+            # time.sleep(utils.rand_float(0.6, 0.8))
+            self.cd150_buff_time = now
+            Buff_ctrl().execute()
         if self.cd180_buff_time == 0 or now - self.cd180_buff_time > 180:
             press('shift', 1,up_time=0.1)
             press('down', 1,up_time=0.4)
@@ -440,4 +449,15 @@ class Skill_A(BaseSkill):
     skill_cool_down=0
     ground_skill=False
     buff_time=0
+    combo_delay = 0.25
+
+class Buff_ctrl(BaseSkill):
+    _display_name = '露西妲寶珠'
+    _distance = 0
+    key=Key.BUFF_CTRL
+    delay=0.8
+    rep_interval=0.5
+    skill_cool_down=150
+    ground_skill=True
+    buff_time=120
     combo_delay = 0.25
