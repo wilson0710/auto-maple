@@ -636,7 +636,7 @@ class BaseSkill(Command):
     fast_rep=False
 
     def __init__(self, direction='',jump='false',rep='1',pre_delay='0',duration='0',\
-            key_down_skill= 'false',key_up_skill= 'false',combo='false',\
+            key_down_skill= 'false',key_up_skill= 'false',combo='false',wait_until_ready='false',\
             active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''\
             ):
         super().__init__(locals())
@@ -650,6 +650,7 @@ class BaseSkill(Command):
         self.combo = settings.validate_boolean(combo)
         self.key_down_skill = settings.validate_boolean(key_down_skill)
         self.key_up_skill = settings.validate_boolean(key_up_skill)
+        self.wait_until_ready = settings.validate_boolean(wait_until_ready)
         if active_if_skill_ready:
             self.active_if_skill_ready = active_if_skill_ready
         if active_if_skill_cd:
@@ -660,6 +661,12 @@ class BaseSkill(Command):
             self.active_if_not_in_skill_buff = active_if_not_in_skill_buff
 
     def main(self):
+        if self.wait_until_ready:
+            cd_pass = time.time() - int(self.get_my_last_cooldown())
+            if cd_pass < self.skill_cool_down:
+                wait_time = self.skill_cool_down - cd_pass
+                print('wait_time : ',wait_time)
+                time.sleep(wait_time)
         if not self.check_should_active() and not self.key_up_skill:
             return False
         if self.skill_cool_down == 0 or self.check_is_skill_ready() or self.key_up_skill:
