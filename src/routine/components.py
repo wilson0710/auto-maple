@@ -662,7 +662,7 @@ class BaseSkill(Command):
 
     def main(self):
         if self.wait_until_ready:
-            cd_pass = time.time() - int(self.get_my_last_cooldown())
+            cd_pass = time.time() - float(self.get_my_last_cooldown())
             if cd_pass < self.skill_cool_down:
                 wait_time = self.skill_cool_down - cd_pass
                 print('wait_time : ',wait_time)
