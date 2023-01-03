@@ -199,11 +199,11 @@ class Buff(Command):
             Buff_1().execute()
             press('shift', 1,up_time=0.1)
             press('left', 1,up_time=0.4)
-            press(Key.BUFF_6,1)
-            Buff_1().execute()
-            time.sleep(utils.rand_float(0.5, 0.6))
-            Buff_F1().execute()
+            press(Key.BUFF_6,1,up_time=0.2)
+            # Buff_1().execute()
+            # time.sleep(utils.rand_float(0.5, 0.6))
             Buff_F2().execute()
+            Buff_F1().execute()
             self.cd180_buff_time = now
         if self.cd200_buff_time == 0 or now - self.cd200_buff_time > 200:
             self.cd200_buff_time = now
@@ -368,7 +368,7 @@ class Buff_F1(BaseSkill):
     _display_name = '全集中守護'
     _distance = 0
     key=Key.BUFF_F1
-    delay=0.8
+    delay=0.7
     rep_interval=0.5
     skill_cool_down=180
     ground_skill=True
