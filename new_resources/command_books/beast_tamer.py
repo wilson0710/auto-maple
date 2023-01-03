@@ -53,16 +53,16 @@ def step(direction, target):
             # if abs(d_x) >= 60:
             #     FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
             #     time.sleep(utils.rand_float(0.7, 0.8))
-            if abs(d_x) >= 28:
+            if abs(d_x) >= 24:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
-                time.sleep(utils.rand_float(0.7, 0.8))
+                time.sleep(utils.rand_float(0.75, 0.85))
             else:
                 Skill_A(jump='true').execute()
-                time.sleep(utils.rand_float(0.3, 0.4))
-            time.sleep(utils.rand_float(0.04, 0.06))
+                time.sleep(utils.rand_float(0.4, 0.45))
             # if abs(d_x) <= 22:
             #     key_up(direction)
             utils.wait_for_is_standing(500)
+            time.sleep(utils.rand_float(0.04, 0.06))
         else:
             time.sleep(utils.rand_float(0.05, 0.08))
             utils.wait_for_is_standing(200)
@@ -80,7 +80,8 @@ def step(direction, target):
             else:
                 press(Key.ROPE, 1)
                 time.sleep(utils.rand_float(1.2, 1.5))
-            utils.wait_for_is_standing(300)
+            utils.wait_for_is_standing(1000)
+            time.sleep(utils.rand_float(0.1, 0.2))
         else:
             press(Key.JUMP, 1)
             time.sleep(utils.rand_float(0.1, 0.15))
