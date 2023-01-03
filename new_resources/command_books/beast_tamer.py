@@ -50,18 +50,19 @@ def step(direction, target):
 
     if direction == 'left' or direction == 'right':
         if abs(d_x) >= 16:
-            if abs(d_x) >= 60:
+            # if abs(d_x) >= 60:
+            #     FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
+            #     time.sleep(utils.rand_float(0.7, 0.8))
+            if abs(d_x) >= 28:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
-                time.sleep(utils.rand_float(0.5, 0.6))
-            elif abs(d_x) >= 28:
-                FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
-                time.sleep(utils.rand_float(0.5, 0.6))
+                time.sleep(utils.rand_float(0.7, 0.8))
             else:
                 Skill_A(jump='true').execute()
+                time.sleep(utils.rand_float(0.3, 0.4))
             time.sleep(utils.rand_float(0.04, 0.06))
             # if abs(d_x) <= 22:
             #     key_up(direction)
-            utils.wait_for_is_standing(300)
+            utils.wait_for_is_standing(500)
         else:
             time.sleep(utils.rand_float(0.05, 0.08))
             utils.wait_for_is_standing(200)
