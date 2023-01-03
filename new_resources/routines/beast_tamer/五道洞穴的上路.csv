@@ -13,6 +13,7 @@ $, target=rune_cd_min, value=15
     Fall, direction=, duration=0.3
     Wait, duration=0.1
     FlashJump, direction=right, jump=false, combo=False, triple_jump=False, fast_jump=true, reverse_triple=false
+    WaitStanding, duration=1
 *, x=36, y=16, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     CustomKey, name=f10, key=f10, direction=, jump=false, delay=0.3, rep=1, rep_interval=0.3, rep_interval_increase=0, duration=0, cool_down=7260, ground_skill=true, buff_time=7200, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_3, direction=, jump=false, rep=1, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
