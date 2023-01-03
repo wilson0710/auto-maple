@@ -194,15 +194,17 @@ class Buff(Command):
             self.cd150_buff_time = now
             Buff_ctrl().execute()
         if self.cd180_buff_time == 0 or now - self.cd180_buff_time > 180:
-            press('shift', 1,up_time=0.1)
+            press('shift', 1,up_time=0.2)
             press('down', 1,up_time=0.4)
             Buff_1().execute()
-            press('shift', 1,up_time=0.1)
+            time.sleep(utils.rand_float(0.1, 0.2))
+            press('shift', 1,up_time=0.2)
             press('left', 1,up_time=0.4)
-            press(Key.BUFF_6,1,up_time=0.2)
+            press(Key.BUFF_6,1,up_time=0.4)
             # Buff_1().execute()
             # time.sleep(utils.rand_float(0.5, 0.6))
             Buff_F2().execute()
+            time.sleep(utils.rand_float(0.1, 0.2))
             Buff_F1().execute()
             self.cd180_buff_time = now
         if self.cd200_buff_time == 0 or now - self.cd200_buff_time > 200:
@@ -433,7 +435,7 @@ class Skill_3(BaseSkill):
     _display_name = '煙霧放屁'
     _distance = 0
     key=Key.SKILL_3
-    delay=0.7
+    delay=0.8
     rep_interval=0.5
     skill_cool_down=5
     ground_skill=True

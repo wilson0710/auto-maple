@@ -664,7 +664,7 @@ class BaseSkill(Command):
         if self.wait_until_ready:
             cd_pass = time.time() - float(self.get_my_last_cooldown())
             if cd_pass < self.skill_cool_down:
-                wait_time = self.skill_cool_down - cd_pass
+                wait_time = self.skill_cool_down - cd_pass + 0.1
                 print('wait_time : ',wait_time)
                 time.sleep(wait_time)
         if not self.check_should_active() and not self.key_up_skill:
