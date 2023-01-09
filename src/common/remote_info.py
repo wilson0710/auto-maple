@@ -4,7 +4,7 @@ import time
 import json
 from src.common import config
 
-REMOTE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzpGcS0Een8ukM9QMWgWw-3m9ISPc5cWQQXQVmpz7Ao3fYNAiQbZYFzHzpRhPLXWKI4bw/exec'
+REMOTE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbze6TXS7VHI0NY_8ZPvho5QWuOJnLgQdf62XWNs0HrZrhtqY92t5GTHJmq45e6Ti1Te/exec'
 
 def run_async(callback):
     def inner(func):

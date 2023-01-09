@@ -65,11 +65,11 @@ def step(direction, target):
                 Teleport(direction=direction,combo='true').execute()
             elif abs(d_x) > 10:
                 Skill_1x3(jump='true',combo='true').execute()
-                # WaitStanding(duration='0.8').execute()
+                WaitStanding(duration='0.8').execute()
             else:
-                time.sleep(utils.rand_float(0.08, 0.1))
+                time.sleep(utils.rand_float(0.03, 0.05))
         else:
-            time.sleep(utils.rand_float(0.1, 0.12))
+            time.sleep(utils.rand_float(0.07, 0.09))
         # utils.wait_for_is_standing(200)
         # d_x = target[0] - config.player_pos[0]
         # if abs(d_x) >= settings.move_tolerance and config.player_states['in_bottom_platform'] == False and len(settings.platforms) > 0:
@@ -82,9 +82,9 @@ def step(direction, target):
     
     if direction == 'up':
         if abs(d_x) <= settings.move_tolerance and not config.player_states['is_keydown_skill']:
-            time.sleep(utils.rand_float(0.2, 0.25))
             key_up('left')
             key_up('right')
+            time.sleep(utils.rand_float(0.2, 0.25))
             if abs(d_y) > 3 :
                 if abs(d_y) >= 40:
                     UpJump().execute()
@@ -296,7 +296,11 @@ class Skill_D(BaseSkill):
     skill_cool_down=90
     ground_skill=False
     buff_time=0
-    combo_delay = 0.5
+    combo_delay = 0.7
+
+    def main(self):
+        self.duration = 2
+        return super().main()
 
 class Skill_Q(BaseSkill):
     _display_name ='鬼夜叉老大'
@@ -323,9 +327,9 @@ class Skill_E(BaseSkill):
     key=Key.SKILL_E
     delay=0.3
     rep_interval=0.2
-    skill_cool_down=81
+    skill_cool_down=73
     ground_skill=True
-    buff_time=40
+    buff_time=50
     combo_delay = 0.2
 
 class Skill_1(BaseSkill):
@@ -418,9 +422,9 @@ class Buff_7(BaseSkill):
     key=Key.BUFF_7
     delay=0.5
     rep_interval=0.1
-    skill_cool_down=120
+    skill_cool_down=115
     ground_skill=True
-    buff_time=38
+    buff_time=45
     combo_delay = 0.2
 
 class skill_4(BaseSkill):
@@ -438,9 +442,9 @@ class Skill_R(BaseSkill):
     key=Key.SKILL_R
     delay=0.4
     rep_interval=0.1
-    skill_cool_down=200
+    skill_cool_down=188
     ground_skill=True
-    buff_time=72
+    buff_time=74
     combo_delay = 0.25
     
 class Sp_F12(BaseSkill):

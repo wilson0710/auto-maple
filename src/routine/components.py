@@ -636,7 +636,7 @@ class BaseSkill(Command):
     fast_rep=False
 
     def __init__(self, direction='',jump='false',rep='1',pre_delay='0',duration='0',\
-            key_down_skill= 'false',key_up_skill= 'false',combo='false',\
+            key_down_skill= 'false',key_up_skill= 'false',combo='false',wait_until_ready='false',\
             active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''\
             ):
         super().__init__(locals())
@@ -645,10 +645,12 @@ class BaseSkill(Command):
         self.rep = settings.validate_nonnegative_int(rep)
         self.duration = float(duration)
         self.pre_delay = float(pre_delay)
-        config.is_skill_ready_collector[self._custom_id] = True
+        if not self._custom_id in config.is_skill_ready_collector:
+            config.is_skill_ready_collector[self._custom_id] = True
         self.combo = settings.validate_boolean(combo)
         self.key_down_skill = settings.validate_boolean(key_down_skill)
         self.key_up_skill = settings.validate_boolean(key_up_skill)
+        self.wait_until_ready = settings.validate_boolean(wait_until_ready)
         if active_if_skill_ready:
             self.active_if_skill_ready = active_if_skill_ready
         if active_if_skill_cd:
@@ -659,6 +661,12 @@ class BaseSkill(Command):
             self.active_if_not_in_skill_buff = active_if_not_in_skill_buff
 
     def main(self):
+        if self.wait_until_ready:
+            cd_pass = time.time() - float(self.get_my_last_cooldown())
+            if cd_pass < self.skill_cool_down:
+                wait_time = self.skill_cool_down - cd_pass + 0.1
+                print('wait_time : ',wait_time)
+                time.sleep(wait_time)
         if not self.check_should_active() and not self.key_up_skill:
             return False
         if self.skill_cool_down == 0 or self.check_is_skill_ready() or self.key_up_skill:
@@ -695,12 +703,12 @@ class BaseSkill(Command):
                 time.sleep(utils.rand_float(self.combo_delay*0.95, self.combo_delay*1.1))
             else:
                 time.sleep(utils.rand_float(self.delay*0.95, self.delay*1.1))
+            # if self.key_up_skill:
+            config.player_states['is_keydown_skill'] = False
             return True
         else:
             if self.key_down_skill:
                 config.player_states['is_keydown_skill'] = True
-            if self.key_up_skill:
-                config.player_states['is_keydown_skill'] = False
             return False
             
 class Frenzy(BaseSkill):
