@@ -924,6 +924,7 @@ class EndScript(Command):
                 pass
             else:
                 return
+                
         time.sleep(1)
         if self.should_back_home:
             if self.home_scroll_key:
