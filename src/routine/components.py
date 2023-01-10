@@ -920,7 +920,7 @@ class EndScript(Command):
         if self.end_time != '':
             hour_min = self.end_time.split(':')
             cur_time = time.localtime()   
-            if int(cur_time.tm_hour) == int(hour_min[0]) and int(cur_time.tm_min) == int(hour_min[1]):
+            if int(cur_time.tm_hour) == int(hour_min[0]) and (int(cur_time.tm_min) - int(hour_min[1])) >= 0 and (int(cur_time.tm_min) - int(hour_min[1])) <= 3:
                 pass
             else:
                 return
