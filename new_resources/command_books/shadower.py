@@ -31,6 +31,7 @@ class Key:
     SKILL_F2 = 'f2' # 
     SKILL_2 = '2' # 
     SKILL_3 = '3' # 滅鬼斬靈陣
+    SKILL_4 = 'down+4' # 噴泉
 
     # special Skills
     SP_F12 = 'f12' # 輪迴
@@ -278,7 +279,7 @@ class Rope(BaseSkill):
     key=Key.ROPE
     delay=1.4
     rep_interval=0.5
-    skill_cool_down=3
+    skill_cool_down=0
     ground_skill=False
     buff_time=0
     combo_delay = 0.2
@@ -384,6 +385,16 @@ class Skill_3(BaseSkill):
     skill_cool_down=90
     ground_skill=False
     buff_time=5
+    combo_delay = 0.3
+
+class Skill_4(BaseSkill):
+    _display_name ='噴泉'
+    key=Key.SKILL_4
+    delay=0.7
+    rep_interval=0.25
+    skill_cool_down=57
+    ground_skill=True
+    buff_time=60
     combo_delay = 0.3
 
 class Skill_X(BaseSkill):

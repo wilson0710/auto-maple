@@ -103,7 +103,8 @@ class Notifier:
                     if settings.rent_frenzy == False and not settings.auto_change_channel:
                         self._alert('siren')
                     elif settings.auto_change_channel:
-                        config.should_change_channel = True
+                        pass
+                        # config.should_change_channel = True
 
                 if settings.rent_frenzy == False:
                     # Check for other players entering the map
