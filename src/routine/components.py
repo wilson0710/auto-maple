@@ -676,10 +676,10 @@ class BaseSkill(Command):
                 time.sleep(utils.rand_float(self.pre_delay*0.95, self.pre_delay*1.05))
             if self.jump and not self.ground_skill:
                 self.player_jump(self.direction)
-                time.sleep(utils.rand_float(0.02, 0.05))
+                time.sleep(utils.rand_float(0.06, 0.09))
             else:
                 if not self.key_up_skill:
-                    key_down(self.direction,down_time=0.04)
+                    key_down(self.direction,down_time=0.06)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
                 if not self.key_up_skill:
@@ -702,7 +702,7 @@ class BaseSkill(Command):
             if self.combo:
                 time.sleep(utils.rand_float(self.combo_delay*0.95, self.combo_delay*1.1))
             else:
-                time.sleep(utils.rand_float(self.delay*0.95, self.delay*1.1))
+                time.sleep(utils.rand_float(self.delay*0.97, self.delay*1.12))
             # if self.key_up_skill:
             config.player_states['is_keydown_skill'] = False
             return True

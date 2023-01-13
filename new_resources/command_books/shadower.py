@@ -1,6 +1,6 @@
 from src.common import config, settings, utils
 import time
-from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy,Player_jump
+from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy, Player_jump, WaitStanding
 from src.common.vkeys import press, key_down, key_up
 import cv2
 
@@ -46,6 +46,14 @@ def step(direction, target):
     d_x = target[0] - config.player_pos[0]
 
     if direction == 'left' or direction == 'right':
+        utils.wait_for_is_standing(1000)
+        if config.player_states['is_stuck'] and abs(d_x) >= 6:
+            print("is stuck")
+            time.sleep(utils.rand_float(0.1, 0.2))
+            press(Key.JUMP)
+            WaitStanding(duration='1').execute()
+        d_y = target[1] - config.player_pos[1]
+        d_x = target[0] - config.player_pos[0]
         if abs(d_x) >= 16:
             if abs(d_x) >= 60:
                 FlashJump(direction='',triple_jump='true',fast_jump='false').execute()
@@ -54,17 +62,20 @@ def step(direction, target):
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
                 SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
             else:
-                Skill_C().execute()
-                Skill_S().execute()
+                if d_y == 0:
+                    Skill_C().execute()
+                    Skill_S().execute()
+                else:
+                    Skill_AS(direction='',jump='true').execute()
             time.sleep(utils.rand_float(0.04, 0.06))
             # if abs(d_x) <= 22:
             #     key_up(direction)
             if config.player_states['movement_state'] == config.MOVEMENT_STATE_FALLING:
                 SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
-            utils.wait_for_is_standing(200)
+            utils.wait_for_is_standing(500)
         else:
             time.sleep(utils.rand_float(0.05, 0.08))
-            utils.wait_for_is_standing(200)
+            utils.wait_for_is_standing(500)
     
     if direction == 'up':
         utils.wait_for_is_standing(500)
@@ -106,19 +117,21 @@ def step(direction, target):
                     Fall(direction='left',duration=down_duration).execute()
                 
             else:
-                Fall(direction='',duration=down_duration).execute()
-                if d_x > 0:
-                    key_down('left')
-                    press(Key.JUMP)
-                    key_up('left')
-                else:
-                    key_down('right')
-                    press(Key.JUMP)
-                    key_up('right')
+                Fall(direction='',duration=(down_duration+0.2)).execute()
+                if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING:
+                    print("leave lader")
+                    if d_x > 0:
+                        key_down('left')
+                        press(Key.JUMP)
+                        key_up('left')
+                    else:
+                        key_down('right')
+                        press(Key.JUMP)
+                        key_up('right')
             SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
                 
-        time.sleep(utils.rand_float(0.1, 0.15))
-        utils.wait_for_is_standing(500)
+        utils.wait_for_is_standing(2000)
+        time.sleep(utils.rand_float(0.1, 0.12))
 
 class Adjust(Command):
     """Fine-tunes player position using small movements."""
@@ -350,11 +363,11 @@ class Skill_W(BaseSkill):
     _distance = 50
     key=Key.SKILL_W
     delay=0.63
-    rep_interval=0.5
+    rep_interval=0.55
     skill_cool_down=29
     ground_skill=False
     buff_time=0
-    combo_delay = 0.43
+    combo_delay = 0.53
 
 class Skill_E(BaseSkill):
     _display_name = '黑影切斷'
@@ -365,7 +378,7 @@ class Skill_E(BaseSkill):
     skill_cool_down=14
     ground_skill=False
     buff_time=0
-    combo_delay = 0.2
+    combo_delay = 0.3
 
 class Skill_2(BaseSkill):
     _display_name ='蜘蛛之鏡'
