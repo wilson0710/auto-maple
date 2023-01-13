@@ -47,13 +47,14 @@ def step(direction, target):
 
     if direction == 'left' or direction == 'right':
         utils.wait_for_is_standing(1000)
-        if config.player_states['is_stuck'] and abs(d_x) >= 6:
+        d_y = target[1] - config.player_pos[1]
+        d_x = target[0] - config.player_pos[0]
+        if config.player_states['is_stuck'] and abs(d_x) < 16:
             print("is stuck")
             time.sleep(utils.rand_float(0.1, 0.2))
             press(Key.JUMP)
+            Skill_AS(direction='').execute()
             WaitStanding(duration='1').execute()
-        d_y = target[1] - config.player_pos[1]
-        d_x = target[0] - config.player_pos[0]
         if abs(d_x) >= 16:
             if abs(d_x) >= 60:
                 FlashJump(direction='',triple_jump='true',fast_jump='false').execute()
@@ -117,7 +118,7 @@ def step(direction, target):
                     Fall(direction='left',duration=down_duration).execute()
                 
             else:
-                Fall(direction='',duration=(down_duration+0.2)).execute()
+                Fall(direction='',duration=(down_duration+0.1)).execute()
                 if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING:
                     print("leave lader")
                     if d_x > 0:
