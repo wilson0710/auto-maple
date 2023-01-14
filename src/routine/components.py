@@ -429,6 +429,7 @@ class Move(Command):
                 last_player_pos = config.player_pos
                 if toggle:
                     d_x = point[0] - config.player_pos[0]
+                    d_y = point[1] - config.player_pos[1]
                     if abs(d_x) > settings.move_tolerance :
                         if d_x < 0:
                             key = 'left'
@@ -458,6 +459,7 @@ class Move(Command):
                         time.sleep(0.06)
                         self._new_direction('')
                 else:
+                    d_x = point[0] - config.player_pos[0]
                     d_y = point[1] - config.player_pos[1]
                     # if abs(d_y) > settings.move_tolerance / 2:
                     if abs(d_y) >= 3:
