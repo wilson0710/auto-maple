@@ -1,6 +1,6 @@
 from src.common import config, settings, utils
 import time
-from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy, Player_jump, WaitStanding
+from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy, Player_jump, WaitStanding, WealthPotion
 from src.common.vkeys import press, key_down, key_up
 import cv2
 

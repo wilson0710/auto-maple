@@ -1,6 +1,6 @@
 from src.common import config, settings, utils
 import time
-from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy, Player_jump, WaitStanding
+from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy, Player_jump, WaitStanding, WealthPotion
 from src.common.vkeys import press, key_down, key_up
 import cv2
 
@@ -340,7 +340,7 @@ class Skill_A(BaseSkill):
     key=Key.SKILL_A
     delay=1
     rep_interval=0.5
-    skill_cool_down=172
+    skill_cool_down=180
     ground_skill=False
     buff_time=40
     combo_delay = 1

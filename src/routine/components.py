@@ -734,6 +734,16 @@ class Frenzy(BaseSkill):
             self.key = settings.frenzy_key
         return super().main()
 
+class WealthPotion (BaseSkill):
+    _display_name ='財物密藥'
+    key="f10"
+    delay=0.2
+    rep_interval=0.2
+    skill_cool_down=7260
+    ground_skill=False
+    buff_time=7200
+    combo_delay = 0.2
+
 class SkillCombination(Command):
     """auto select skill in this combination"""
     _display_name = '技能組合'
