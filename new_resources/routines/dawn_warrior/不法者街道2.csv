@@ -7,6 +7,7 @@ $, target=rune_cd_min, value=15
 @, label=standard
 *, x=-1, y=-1, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     EndScript, should_back_home=true, home_scroll_key=f9, end_time=1:10
+    WealthPotion, direction=, jump=false, rep=1, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 *, x=85, y=37, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=skill_4, active_if_not_in_skill_buff=
     UpJump, direction=, jump=false, rep=1, pre_delay=0.1, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_1, direction=, jump=false, rep=1, pre_delay=0.3, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
