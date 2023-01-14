@@ -407,6 +407,7 @@ class Move(Command):
     def main(self):
         counter = self.max_steps
         path = config.layout.shortest_path(config.player_pos, self.target)
+        stuck_count = 0
         for i, point in enumerate(path):
             toggle = True
             self.prev_direction = ''
@@ -440,16 +441,21 @@ class Move(Command):
                         counter -= 1
                         time.sleep(0.02)
                         if last_player_pos[0] == config.player_pos[0] and last_player_pos[1] == config.player_pos[1]:
-                            config.player_states['is_stuck'] = True
+                            if stuck_count >= 2:
+                                config.player_states['is_stuck'] = True
+                            else:
+                                stuck_count = stuck_count + 1
                         else:
+                            stuck_count = 0
                             config.player_states['is_stuck'] = False
                     else:
+                        # pass
                         if d_x < 0:
                             key = 'left'
                         else:
                             key = 'right'
                         self._new_direction(key)
-                        time.sleep(0.1)
+                        time.sleep(0.06)
                         self._new_direction('')
                 else:
                     d_y = point[1] - config.player_pos[1]
@@ -676,10 +682,10 @@ class BaseSkill(Command):
                 time.sleep(utils.rand_float(self.pre_delay*0.95, self.pre_delay*1.05))
             if self.jump and not self.ground_skill:
                 self.player_jump(self.direction)
-                time.sleep(utils.rand_float(0.02, 0.05))
+                time.sleep(utils.rand_float(0.06, 0.09))
             else:
                 if not self.key_up_skill:
-                    key_down(self.direction,down_time=0.04)
+                    key_down(self.direction,down_time=0.06)
             # time.sleep(utils.rand_float(0.03, 0.07))
             for i in range(self.rep):
                 if not self.key_up_skill:
@@ -702,7 +708,7 @@ class BaseSkill(Command):
             if self.combo:
                 time.sleep(utils.rand_float(self.combo_delay*0.95, self.combo_delay*1.1))
             else:
-                time.sleep(utils.rand_float(self.delay*0.95, self.delay*1.1))
+                time.sleep(utils.rand_float(self.delay*0.97, self.delay*1.12))
             # if self.key_up_skill:
             config.player_states['is_keydown_skill'] = False
             return True

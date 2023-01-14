@@ -59,7 +59,7 @@ def step(direction, target):
         config.player_states['is_stuck'] = False
     if direction == 'left' or direction == 'right':
         if abs(d_x) >= 17:
-            Teleport(direction=direction,combo='true').execute()
+            Teleport(direction='',combo='true').execute()
             Skill_A(combo='true').execute()
         elif abs(d_x) > 10:
             time.sleep(utils.rand_float(0.25, 0.35))
