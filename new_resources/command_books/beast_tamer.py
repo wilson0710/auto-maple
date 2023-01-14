@@ -33,7 +33,9 @@ class Key:
     SKILL_D = 'd' # 小動物大進擊
     SKILL_R = 'r' # 蜘蛛之鏡
     SKILL_F = 'f' # 小波波
+    SKILL_2 = '2' # 打翻飯桌
     SKILL_3 = '3' # 煙霧放屁
+    SKILL_4 = 'down+4' # 噴泉
 
 
 #########################
@@ -55,17 +57,21 @@ def step(direction, target):
             #     time.sleep(utils.rand_float(0.7, 0.8))
             if abs(d_x) >= 24:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
-                time.sleep(utils.rand_float(0.75, 0.85))
+                time.sleep(utils.rand_float(0.6, 0.7))
             else:
                 Skill_A(jump='true').execute()
-                time.sleep(utils.rand_float(0.4, 0.45))
+                time.sleep(utils.rand_float(0.45, 0.55))
             # if abs(d_x) <= 22:
             #     key_up(direction)
             utils.wait_for_is_standing(500)
-            time.sleep(utils.rand_float(0.04, 0.06))
+            time.sleep(utils.rand_float(0.1, 0.12))
         else:
             time.sleep(utils.rand_float(0.05, 0.08))
-            utils.wait_for_is_standing(200)
+            utils.wait_for_is_standing(500)
+        d_x = target[0] - config.player_pos[0]
+        if abs(d_x) <= 6:
+            key_up(direction)
+
     
     if direction == 'up':
         utils.wait_for_is_standing(500)
@@ -84,6 +90,8 @@ def step(direction, target):
             time.sleep(utils.rand_float(0.1, 0.2))
         else:
             press(Key.JUMP, 1)
+            time.sleep(utils.rand_float(0.06, 0.12))
+            utils.wait_for_is_standing(1000)
             time.sleep(utils.rand_float(0.1, 0.15))
 
     if direction == 'down':
@@ -97,25 +105,26 @@ def step(direction, target):
         
         if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
             print("down stair")
-            if abs(d_x) >= 5:
+            if abs(d_x) >= 6:
                 if d_x > 0:
                     Fall(direction='right',duration=down_duration).execute()
                 else:
                     Fall(direction='left',duration=down_duration).execute()
                 
             else:
-                Fall(direction='',duration=down_duration).execute()
-                if d_x > 0:
-                    key_down('left')
-                    press(Key.JUMP)
-                    key_up('left')
-                else:
-                    key_down('right')
-                    press(Key.JUMP)
-                    key_up('right')
-            SkillCombination(direction='',jump='false',target_skills='skill_a').execute()
+                Fall(direction='',duration=(down_duration+0.2)).execute()
+                if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING:
+                    if d_x > 0:
+                        key_down('left')
+                        press(Key.JUMP)
+                        key_up('left')
+                    else:
+                        key_down('right')
+                        press(Key.JUMP)
+                        key_up('right')
+            # SkillCombination(direction='',jump='false',target_skills='skill_a').execute()
+        utils.wait_for_is_standing(1800)
         time.sleep(utils.rand_float(0.1, 0.15))
-        utils.wait_for_is_standing(500)
      
 class Adjust(Command):
     """Fine-tunes player position using small movements."""
@@ -288,6 +297,18 @@ class UpJump(BaseSkill):
         self.jump = True
         super().main()
 
+class Rope(BaseSkill):
+    """Performs a up jump in the given direction."""
+    _display_name = '連接繩索'
+    _distance = 27
+    key=Key.ROPE
+    delay=1.4
+    rep_interval=0.5
+    skill_cool_down=0
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.2
+
 # 隊伍攻擊
 class Skill_AA(Command):
     """Attacks using '隊伍攻擊' in a given direction."""
@@ -416,9 +437,9 @@ class Skill_F(BaseSkill):
     _display_name = '小波波'
     _distance = 0
     key=Key.SKILL_F
-    delay=0.6
+    delay=1
     rep_interval=0.5
-    skill_cool_down=0
+    skill_cool_down=30
     ground_skill=True
     buff_time=60
     combo_delay = 0.25
@@ -433,16 +454,37 @@ class Skill_R(BaseSkill):
     buff_time=0
     combo_delay = 0.4
 
+class Skill_2(BaseSkill):
+    _display_name = '打翻飯桌'
+    _distance = 0
+    key=Key.SKILL_2
+    delay=2
+    rep_interval=1.9
+    skill_cool_down=15
+    ground_skill=False
+    buff_time=0
+    combo_delay = 2
+
 class Skill_3(BaseSkill):
     _display_name = '煙霧放屁'
     _distance = 0
     key=Key.SKILL_3
-    delay=0.8
+    delay=1
     rep_interval=0.5
     skill_cool_down=5
     ground_skill=True
     buff_time=15
     combo_delay = 0.25
+
+class Skill_4(BaseSkill):
+    _display_name ='噴泉'
+    key=Key.SKILL_4
+    delay=0.8
+    rep_interval=0.25
+    skill_cool_down=60
+    ground_skill=True
+    buff_time=60
+    combo_delay = 0.3
 
 class Skill_A(BaseSkill):
     _display_name = '普攻'
