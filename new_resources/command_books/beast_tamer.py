@@ -479,7 +479,7 @@ class Skill_3(BaseSkill):
 class Skill_4(BaseSkill):
     _display_name ='噴泉'
     key=Key.SKILL_4
-    delay=0.8
+    delay=1
     rep_interval=0.25
     skill_cool_down=60
     ground_skill=True
