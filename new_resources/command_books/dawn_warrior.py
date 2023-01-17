@@ -1,38 +1,36 @@
 from src.common import config, settings, utils
 import time
-from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy, Player_jump, WaitStanding
+from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy, Player_jump, WaitStanding, WealthPotion
 from src.common.vkeys import press, key_down, key_up
 import cv2
 
-IMAGE_DIR = config.RESOURCES_DIR + '/command_books/shadower/'
+IMAGE_DIR = config.RESOURCES_DIR + '/command_books/dawn_warrior/'
 
 # List of key mappings
 class Key:
     # Movement
     JUMP = 'alt'
     FLASH_JUMP = 'alt'
-    ROPE = '`'
+    ROPE = 'c'
     UP_JUMP = 'up+alt'
+    DASH = '`' # 皇家衝擊
 
     # Buffs
     
     # Buffs Toggle
 
     # Attack Skills
-    SKILL_A = 'a' # 冷血連擊
-    SKILL_1 = '1' # 暗影霧殺
-    SKILL_D = 'd' # 絕殺領域
-    SKILL_S = 's'# 楓幣炸彈
-    SKILL_W = 'w' # 穢土轉生
-    SKILL_E = 'e' # 黑影切斷
-    SKILL_X = 'x' # 滅殺刃影
-    SKILL_C = 'c' # 瞬影殺
-    SKILL_F = 'f' # 
-    SKILL_F2 = 'f2' # 
-    SKILL_2 = '2' # 
-    SKILL_3 = '3' # 滅鬼斬靈陣
-    SKILL_4 = 'down+4' # 噴泉
-
+    SKILL_1 = '1' # 烈日狂斬/月光分裂
+    SKILL_2 = '2' # 雙重狂斬
+    SKILL_3 = '3' # 宇宙
+    SKILL_4 = '4' # 靈魂蝕日
+    SKILL_A = 'a' # 極樂之境
+    SKILL_Q = 'q' # 宇宙融合
+    SKILL_W = 'w' # 宇宙爆裂
+    SKILL_E = 'e' # 宇宙轟炸
+    SKILL_SHIFT = 'shift' # 熾烈突擊
+    SKILL_R = 'down+r' # 噴泉
+    
     # special Skills
     SP_F12 = 'f12' # 輪迴
 
@@ -53,49 +51,47 @@ def step(direction, target):
             print("is stuck")
             time.sleep(utils.rand_float(0.1, 0.2))
             press(Key.JUMP)
-            Skill_AS(direction='').execute()
+            Skill_1(direction='').execute()
             WaitStanding(duration='1').execute()
         if abs(d_x) >= 16:
-            if abs(d_x) >= 60:
-                FlashJump(direction='',triple_jump='true',fast_jump='false').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+            if abs(d_x) >= 50:
+                FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_2|skill_1').execute()
             elif abs(d_x) >= 28:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_1').execute()
             else:
                 if d_y == 0:
-                    Skill_C().execute()
-                    Skill_S().execute()
+                    Dash().execute()
                 else:
-                    Skill_AS(direction='',jump='true').execute()
+                    Skill_1(direction='',jump='true').execute()
             time.sleep(utils.rand_float(0.04, 0.06))
             # if abs(d_x) <= 22:
             #     key_up(direction)
             if config.player_states['movement_state'] == config.MOVEMENT_STATE_FALLING:
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_1').execute()
             utils.wait_for_is_standing(500)
         else:
             time.sleep(utils.rand_float(0.05, 0.08))
             utils.wait_for_is_standing(500)
     
     if direction == 'up':
-        utils.wait_for_is_standing(500)
+        utils.wait_for_is_standing(1500)
         if abs(d_x) > settings.move_tolerance:
             return
         if abs(d_y) > 6 :
             if abs(d_y) > 36:
                 press(Key.JUMP, 1)
-                time.sleep(utils.rand_float(0.1, 0.15))
+                time.sleep(utils.rand_float(0.12, 0.18))
                 press(Key.ROPE, 1)
                 time.sleep(utils.rand_float(1.2, 1.5))
-            elif abs(d_y) <= 17:
-                UpJump().execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+            elif abs(d_y) <= 26:
+                UpJump(pre_delay="0.1").execute()
             else:
                 press(Key.ROPE, 1)
                 time.sleep(utils.rand_float(1.2, 1.5))
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
-            utils.wait_for_is_standing(300)
+            SkillCombination(direction='',jump='false',target_skills='skill_1').execute()
+            utils.wait_for_is_standing(1300)
         else:
             press(Key.JUMP, 1)
             time.sleep(utils.rand_float(0.1, 0.15))
@@ -129,7 +125,7 @@ def step(direction, target):
                         key_down('right')
                         press(Key.JUMP)
                         key_up('right')
-            SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+            SkillCombination(direction='',jump='false',target_skills='skill_1').execute()
                 
         utils.wait_for_is_standing(2000)
         time.sleep(utils.rand_float(0.1, 0.12))
@@ -216,10 +212,6 @@ class Buff(Command):
             self.cd240_buff_time = now
         if self.cd900_buff_time == 0 or now - self.cd900_buff_time > 900:
             self.cd900_buff_time = now
-        # if self.decent_buff_time == 0 or now - self.decent_buff_time > settings.buff_cooldown:
-        #     for key in buffs:
-        #       press(key, 3, up_time=0.3)
-        #       self.decent_buff_time = now	
 
 class FlashJump(Command):
     """Performs a flash jump in the given direction."""
@@ -298,138 +290,127 @@ class Rope(BaseSkill):
     buff_time=0
     combo_delay = 0.2
 
-class Skill_A(BaseSkill):
-    _display_name = '冷血連擊'
-    _distance = 27
-    key=Key.SKILL_A
-    delay=0.45
-    rep_interval=0.5
-    skill_cool_down=0
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.25
-
 class Skill_1(BaseSkill):
-    _display_name = '暗影霧殺'
-    _distance = 27
+    _display_name = '烈日狂斬/月光分裂'
+    _distance = 20
     key=Key.SKILL_1
-    delay=0.9
-    rep_interval=0.5
-    skill_cool_down=60
-    ground_skill=False
-    buff_time=12
-    combo_delay = 0.9
-
-class Skill_D(BaseSkill):
-    _display_name = '絕殺領域'
-    _distance = 27
-    key=Key.SKILL_D
     delay=0.45
     rep_interval=0.5
-    skill_cool_down=57
-    ground_skill=True
-    buff_time=57
-    combo_delay = 0.5
-
-class Skill_S(BaseSkill):
-    _display_name = '楓幣炸彈'
-    _distance = 50
-    key=Key.SKILL_S
-    delay=0.05
-    rep_interval=0.5
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.05
-
-class Skill_AS(BaseSkill):
-    _display_name = '冷血連擊+楓炸'
-    _distance = 27
-    key=Skill_A.key
-    delay=0.06
-    rep_interval=0.5
-    skill_cool_down=0
-    ground_skill=False
-    buff_time=0
-    combo_delay = Skill_A.combo_delay
-    fast_rep=True
-
-    def main(self):
-        super().main()
-        Skill_S().execute()
-        time.sleep(utils.rand_float(0.19*0.95, 0.19*1.1))
-
-class Skill_W(BaseSkill):
-    _display_name = '穢土轉生'
-    _distance = 50
-    key=Key.SKILL_W
-    delay=0.63
-    rep_interval=0.55
-    skill_cool_down=29
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.53
-
-class Skill_E(BaseSkill):
-    _display_name = '黑影切斷'
-    _distance = 50
-    key=Key.SKILL_E
-    delay=0.4
-    rep_interval=0.5
-    skill_cool_down=14
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.3
+    combo_delay = 0.45
 
 class Skill_2(BaseSkill):
-    _display_name ='蜘蛛之鏡'
+    _display_name = '雙重狂斬(位移22)'
+    _distance = 22
     key=Key.SKILL_2
-    delay=0.6
-    rep_interval=0.25
-    skill_cool_down=240
+    delay=0.5
+    rep_interval=0.5
+    skill_cool_down=5
     ground_skill=False
     buff_time=0
-    combo_delay = 0.4
+    combo_delay = 0.5
 
 class Skill_3(BaseSkill):
-    _display_name ='滅鬼斬靈陣'
+    _display_name = '宇宙'
+    _distance = 0
     key=Key.SKILL_3
-    delay=0.4
-    rep_interval=0.25
-    skill_cool_down=90
+    delay=0.65
+    rep_interval=0.5
+    skill_cool_down=86
     ground_skill=False
-    buff_time=5
-    combo_delay = 0.3
+    buff_time=15
+    combo_delay = 0.65
 
 class Skill_4(BaseSkill):
-    _display_name ='噴泉'
+    _display_name = '靈魂蝕日'
+    _distance = 0
     key=Key.SKILL_4
-    delay=0.9
-    rep_interval=0.25
-    skill_cool_down=57
-    ground_skill=True
-    buff_time=60
-    combo_delay = 0.3
+    delay=0.5
+    rep_interval=0.5
+    skill_cool_down=172
+    ground_skill=False
+    buff_time=40
+    combo_delay = 0.5
 
-class Skill_X(BaseSkill):
-    _display_name ='滅殺刃影'
-    key=Key.SKILL_X
-    delay=0.3
-    rep_interval=0.25
+class Skill_A(BaseSkill):
+    _display_name = '極樂之境'
+    _distance = 0
+    key=Key.SKILL_A
+    delay=1
+    rep_interval=0.5
+    skill_cool_down=180
+    ground_skill=False
+    buff_time=40
+    combo_delay = 1
+
+class Skill_SHIFT(BaseSkill):
+    _display_name = '熾烈突擊(位移31)'
+    _distance = 31
+    key=Key.SKILL_SHIFT
+    delay=0.5
+    rep_interval=0.5
+    skill_cool_down=43
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.5
+
+class Dash(BaseSkill):
+    _display_name = '皇家衝擊(位移18)'
+    _distance = 18
+    key=Key.DASH
+    delay=0.55
+    rep_interval=0.5
     skill_cool_down=0
+    ground_skill=True
+    buff_time=0
+    combo_delay = 0.55
+
+class Skill_Q(BaseSkill):
+    _display_name = '宇宙融合'
+    _distance = 0
+    key=Key.SKILL_Q
+    delay=1
+    rep_interval=0.5
+    skill_cool_down=180
+    ground_skill=False
+    buff_time=60
+    combo_delay = 1
+
+class Skill_W(BaseSkill):
+    _display_name = '宇宙爆裂'
+    _distance = 0
+    key=Key.SKILL_W
+    delay=0.1
+    rep_interval=0.5
+    skill_cool_down=15
     ground_skill=False
     buff_time=0
     combo_delay = 0.1
+    skill_image = IMAGE_DIR + 'skill_w.png'
 
-class Skill_C(BaseSkill):
-    _display_name ='瞬影殺'
-    key=Key.SKILL_C
-    delay=0.5
-    rep_interval=0.25
-    skill_cool_down=0
+class Skill_E(BaseSkill):
+    _display_name = '宇宙轟炸'
+    _distance = 0
+    key=Key.SKILL_E
+    delay=0.6
+    rep_interval=0.5
+    skill_cool_down=30
     ground_skill=True
-    buff_time=0
-    combo_delay = 0.3
+    buff_time=60
+    combo_delay = 0.6
+
+class Skill_R(BaseSkill):
+    _display_name = '噴泉'
+    _distance = 0
+    key=Key.SKILL_R
+    delay=0.9
+    rep_interval=0.5
+    skill_cool_down=57
+    ground_skill=True
+    buff_time=60
+    combo_delay = 0.9
 
 class AutoHunting(Command):
     _display_name ='自動走位狩獵'
@@ -453,12 +434,12 @@ class AutoHunting(Command):
         settings.platforms = 'b' + str(int(bottom_y))
         while True:
             if settings.auto_change_channel and config.should_solve_rune:
-                Skill_AS().execute()
+                Skill_1().execute()
                 config.bot._solve_rune()
                 continue
             if settings.auto_change_channel and config.should_change_channel:
                 ChangeChannel(max_rand=40).execute()
-                Skill_AS().execute()
+                Skill_1().execute()
                 continue
             Frenzy().execute()
             frame = config.capture.frame
@@ -480,10 +461,9 @@ class AutoHunting(Command):
                     bottom_y = config.player_pos[1]
                     settings.platforms = 'b' + str(int(bottom_y))
                 FlashJump(direction='left').execute()
-                Skill_X(direction='left+up').execute()
-                Skill_S().execute()
-                FlashJump(direction='left').execute()
-                SkillCombination(direction='left',target_skills='skill_w|skill_e|skill_as').execute()
+                SkillCombination(direction='left',target_skills='skill_r|skill_w|skill_1').execute()
+                UpJump(direction='left').execute()
+                SkillCombination(direction='left',target_skills='skill_e|skill_w|skill_shift|skill_2|skill_1').execute()
             else:
                 # left side
                 move(20,bottom_y).execute()
@@ -491,22 +471,20 @@ class AutoHunting(Command):
                     bottom_y = config.player_pos[1]
                     settings.platforms = 'b' + str(int(bottom_y))
                 FlashJump(direction='right').execute()
-                Skill_X(direction='right+up').execute()
-                Skill_S().execute()
-                FlashJump(direction='right').execute()
-                SkillCombination(direction='right',target_skills='skill_w|skill_e|skill_as').execute()
+                SkillCombination(direction='right',target_skills='skill_r|skill_w|skill_1').execute()
+                UpJump(direction='right').execute()
+                SkillCombination(direction='right',target_skills='skill_e|skill_w|skill_shift|skill_2|skill_1').execute()
             
             if settings.auto_change_channel and config.should_solve_rune:
                 config.bot._solve_rune()
                 continue
             if settings.auto_change_channel and config.should_change_channel:
                 ChangeChannel(max_rand=40).execute()
-                Skill_AS().execute()
+                Skill_1().execute()
                 continue
             move(width//2,bottom_y).execute()
             UpJump(jump='true').execute()
-            SkillCombination(direction='left',target_skills='skill_w|skill_e|skill_as').execute()
-            SkillCombination(direction='right',target_skills='skill_1|skill_d|skill_as').execute()
+            SkillCombination(direction='left',target_skills='skill_4|skill_a|skill_3|skill_q|skill_w|skill_1').execute()
             toggle = not toggle
             
 

@@ -429,6 +429,7 @@ class Move(Command):
                 last_player_pos = config.player_pos
                 if toggle:
                     d_x = point[0] - config.player_pos[0]
+                    d_y = point[1] - config.player_pos[1]
                     if abs(d_x) > settings.move_tolerance :
                         if d_x < 0:
                             key = 'left'
@@ -458,6 +459,7 @@ class Move(Command):
                         time.sleep(0.06)
                         self._new_direction('')
                 else:
+                    d_x = point[0] - config.player_pos[0]
                     d_y = point[1] - config.player_pos[1]
                     # if abs(d_y) > settings.move_tolerance / 2:
                     if abs(d_y) >= 3:
@@ -731,6 +733,16 @@ class Frenzy(BaseSkill):
         if settings.frenzy_key:
             self.key = settings.frenzy_key
         return super().main()
+
+class WealthPotion (BaseSkill):
+    _display_name ='財物密藥'
+    key="f10"
+    delay=0.2
+    rep_interval=0.2
+    skill_cool_down=7260
+    ground_skill=False
+    buff_time=7200
+    combo_delay = 0.2
 
 class SkillCombination(Command):
     """auto select skill in this combination"""

@@ -1,17 +1,17 @@
 from src.common import config, settings, utils
 import time
-from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy, Player_jump, WaitStanding
+from src.routine.components import Command, CustomKey, SkillCombination, Fall, BaseSkill, GoToMap, ChangeChannel, Frenzy, Player_jump, WaitStanding, WealthPotion
 from src.common.vkeys import press, key_down, key_up
 import cv2
 
-IMAGE_DIR = config.RESOURCES_DIR + '/command_books/shadower/'
+IMAGE_DIR = config.RESOURCES_DIR + '/command_books/dawn_warrior/'
 
 # List of key mappings
 class Key:
     # Movement
     JUMP = 'alt'
     FLASH_JUMP = 'alt'
-    ROPE = '`'
+    ROPE = 'c'
     UP_JUMP = 'up+alt'
 
     # Buffs
@@ -20,17 +20,6 @@ class Key:
 
     # Attack Skills
     SKILL_A = 'a' # 冷血連擊
-    SKILL_1 = '1' # 暗影霧殺
-    SKILL_D = 'd' # 絕殺領域
-    SKILL_S = 's'# 楓幣炸彈
-    SKILL_W = 'w' # 穢土轉生
-    SKILL_E = 'e' # 黑影切斷
-    SKILL_X = 'x' # 滅殺刃影
-    SKILL_C = 'c' # 瞬影殺
-    SKILL_F = 'f' # 
-    SKILL_F2 = 'f2' # 
-    SKILL_2 = '2' # 
-    SKILL_3 = '3' # 滅鬼斬靈陣
     SKILL_4 = 'down+4' # 噴泉
 
     # special Skills
@@ -173,12 +162,12 @@ class Adjust(Command):
                 if abs(d_y) > settings.adjust_tolerance:
                     if d_y < 0:
                         utils.wait_for_is_standing(1000)
-                        UpJump().main()
+                        UpJump('up').main()
                     else:
                         utils.wait_for_is_standing(1000)
                         key_down('down')
                         time.sleep(utils.rand_float(0.05, 0.07))
-                        press(Key.JUMP, 1, down_time=0.1)
+                        press(Key.JUMP, 2, down_time=0.1)
                         key_up('down')
                         time.sleep(utils.rand_float(0.17, 0.25))
                     counter -= 1
@@ -216,10 +205,6 @@ class Buff(Command):
             self.cd240_buff_time = now
         if self.cd900_buff_time == 0 or now - self.cd900_buff_time > 900:
             self.cd900_buff_time = now
-        # if self.decent_buff_time == 0 or now - self.decent_buff_time > settings.buff_cooldown:
-        #     for key in buffs:
-        #       press(key, 3, up_time=0.3)
-        #       self.decent_buff_time = now	
 
 class FlashJump(Command):
     """Performs a flash jump in the given direction."""
@@ -308,128 +293,6 @@ class Skill_A(BaseSkill):
     ground_skill=False
     buff_time=0
     combo_delay = 0.25
-
-class Skill_1(BaseSkill):
-    _display_name = '暗影霧殺'
-    _distance = 27
-    key=Key.SKILL_1
-    delay=0.9
-    rep_interval=0.5
-    skill_cool_down=60
-    ground_skill=False
-    buff_time=12
-    combo_delay = 0.9
-
-class Skill_D(BaseSkill):
-    _display_name = '絕殺領域'
-    _distance = 27
-    key=Key.SKILL_D
-    delay=0.45
-    rep_interval=0.5
-    skill_cool_down=57
-    ground_skill=True
-    buff_time=57
-    combo_delay = 0.5
-
-class Skill_S(BaseSkill):
-    _display_name = '楓幣炸彈'
-    _distance = 50
-    key=Key.SKILL_S
-    delay=0.05
-    rep_interval=0.5
-    skill_cool_down=0
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.05
-
-class Skill_AS(BaseSkill):
-    _display_name = '冷血連擊+楓炸'
-    _distance = 27
-    key=Skill_A.key
-    delay=0.06
-    rep_interval=0.5
-    skill_cool_down=0
-    ground_skill=False
-    buff_time=0
-    combo_delay = Skill_A.combo_delay
-    fast_rep=True
-
-    def main(self):
-        super().main()
-        Skill_S().execute()
-        time.sleep(utils.rand_float(0.19*0.95, 0.19*1.1))
-
-class Skill_W(BaseSkill):
-    _display_name = '穢土轉生'
-    _distance = 50
-    key=Key.SKILL_W
-    delay=0.63
-    rep_interval=0.55
-    skill_cool_down=29
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.53
-
-class Skill_E(BaseSkill):
-    _display_name = '黑影切斷'
-    _distance = 50
-    key=Key.SKILL_E
-    delay=0.4
-    rep_interval=0.5
-    skill_cool_down=14
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.3
-
-class Skill_2(BaseSkill):
-    _display_name ='蜘蛛之鏡'
-    key=Key.SKILL_2
-    delay=0.6
-    rep_interval=0.25
-    skill_cool_down=240
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.4
-
-class Skill_3(BaseSkill):
-    _display_name ='滅鬼斬靈陣'
-    key=Key.SKILL_3
-    delay=0.4
-    rep_interval=0.25
-    skill_cool_down=90
-    ground_skill=False
-    buff_time=5
-    combo_delay = 0.3
-
-class Skill_4(BaseSkill):
-    _display_name ='噴泉'
-    key=Key.SKILL_4
-    delay=0.9
-    rep_interval=0.25
-    skill_cool_down=57
-    ground_skill=True
-    buff_time=60
-    combo_delay = 0.3
-
-class Skill_X(BaseSkill):
-    _display_name ='滅殺刃影'
-    key=Key.SKILL_X
-    delay=0.3
-    rep_interval=0.25
-    skill_cool_down=0
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.1
-
-class Skill_C(BaseSkill):
-    _display_name ='瞬影殺'
-    key=Key.SKILL_C
-    delay=0.5
-    rep_interval=0.25
-    skill_cool_down=0
-    ground_skill=True
-    buff_time=0
-    combo_delay = 0.3
 
 class AutoHunting(Command):
     _display_name ='自動走位狩獵'
