@@ -684,7 +684,7 @@ class BaseSkill(Command):
                 time.sleep(utils.rand_float(self.pre_delay*0.95, self.pre_delay*1.05))
             if self.jump and not self.ground_skill:
                 self.player_jump(self.direction)
-                time.sleep(utils.rand_float(0.06, 0.09))
+                time.sleep(utils.rand_float(0.02, 0.04))
             else:
                 if not self.key_up_skill:
                     key_down(self.direction,down_time=0.06)

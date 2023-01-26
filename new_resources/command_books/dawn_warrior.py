@@ -299,18 +299,18 @@ class Skill_1(BaseSkill):
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.45
+    combo_delay = 0.2
 
 class Skill_2(BaseSkill):
     _display_name = '雙重狂斬(位移22)'
     _distance = 22
     key=Key.SKILL_2
-    delay=0.5
+    delay=0.4
     rep_interval=0.5
     skill_cool_down=5
     ground_skill=False
     buff_time=0
-    combo_delay = 0.5
+    combo_delay = 0.4
 
 class Skill_3(BaseSkill):
     _display_name = '宇宙'
@@ -353,8 +353,23 @@ class Skill_SHIFT(BaseSkill):
     rep_interval=0.5
     skill_cool_down=43
     ground_skill=False
+    buff_time=5
+    combo_delay = 0.2
+
+class Skill_SHIFT2(BaseSkill):
+    _display_name = '熾烈突擊(位移31)'
+    _distance = 31
+    key=Key.SKILL_SHIFT
+    delay=0.5
+    rep_interval=0.5
+    skill_cool_down=5
+    ground_skill=False
     buff_time=0
-    combo_delay = 0.5
+    combo_delay = 0.2
+
+    def main(self):
+        self.active_if_in_skill_buff = 'skill_shift'
+        return super().main()
 
 class Dash(BaseSkill):
     _display_name = '皇家衝擊(位移18)'
@@ -365,7 +380,7 @@ class Dash(BaseSkill):
     skill_cool_down=0
     ground_skill=True
     buff_time=0
-    combo_delay = 0.55
+    combo_delay = 0.2
 
 class Skill_Q(BaseSkill):
     _display_name = '宇宙融合'
