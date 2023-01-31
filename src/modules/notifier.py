@@ -179,7 +179,7 @@ class Notifier:
 
                 
                 # Check for skill cd
-                if time.time() - self.lastest_skill_cd_check_time >= 1.8:
+                if time.time() - self.lastest_skill_cd_check_time >= 1.5:
                     command_book = config.bot.command_book
                     image_matched = False
                     match_list = []

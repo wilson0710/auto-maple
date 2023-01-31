@@ -107,7 +107,8 @@ def step(direction, target):
                 if fly_time_y <= 0.05:
                     fly_time_y = 0.05
                 print("fly_time",fly_time)
-                Fly(jump='true',key_down_skill='true').execute()
+                Skill_QQ().execute()
+                Fly(jump='false',key_down_skill='true').execute()
                 if abs(d_y) >= 7:
                     if d_y < 0 :
                         d = 'up'
@@ -135,17 +136,22 @@ def step(direction, target):
         if abs(d_x) > settings.move_tolerance:
             return
         if abs(d_y) > 6 :
-            if abs(d_y) >= 36:
-                press(Key.JUMP, 1,up_time=0.3)
-                Fly(direction='up',duration='0.9').execute()
-                Skill_E(rep='2').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_a').execute()
+            if abs(d_y) >= 30:
+                fly_time_y = (abs(d_y)-27)*0.035
+                if fly_time_y >= 0.93:
+                    fly_time = 0.93
+                if fly_time_y <= 0.05:
+                    fly_time_y = 0.05
+                Skill_QQ().execute()
+                Fly(direction='up',duration=str(fly_time_y)).execute()
+                Skill_E(direction='up',rep='2').execute()
+                SkillCombination(direction='',jump='false',target_skills='stomp').execute()
             # elif abs(d_y) <= 17:
             #     # UpJump().execute()
             #     SkillCombination(direction='',jump='false',target_skills='skill_a').execute()
             else:
-                press(Key.JUMP, 1,up_time=0.2)
-                fly_time_y = (abs(d_y)-4)*0.034
+                Skill_QQ().execute()
+                fly_time_y = (abs(d_y)-4)*0.035
                 if fly_time_y >= 0.93:
                     fly_time = 0.93
                 if fly_time_y <= 0.05:
@@ -173,7 +179,8 @@ def step(direction, target):
                     x_direction = 'right'
                 else:
                     x_direction = 'left'
-                press(x_direction+'+'+Key.JUMP, 1,up_time=0.16)
+                press(x_direction+'+'+Key.JUMP, 1,up_time=0.07)
+                # Skill_Q(combo='true').execute()
                 fly_time = (abs(d_y)-6)*0.02
                 Fly(direction='down',duration=str(fly_time)).execute()
                 Stomp().execute()
@@ -222,7 +229,7 @@ class Adjust(Command):
                 if abs(d_y) > settings.adjust_tolerance:
                     if d_y < 0:
                         utils.wait_for_is_standing(1000)
-                        press(Key.JUMP, 1,up_time=0.2)
+                        Skill_QQ().execute()
                         fly_time = abs(d_y)-6
                         if fly_time <= 0:
                             fly_time = 0.05
@@ -406,7 +413,7 @@ class Skill_E(BaseSkill):
     _display_name = '滅火炎'
     _distance = 0
     key=Key.SKILL_E
-    delay=0.8
+    delay=0.6
     rep_interval=0.15
     skill_cool_down=8.7
     ground_skill=False
@@ -419,7 +426,7 @@ class Skill_C(BaseSkill):
     _display_name = '地震碎'
     _distance = 0
     key=Key.SKILL_C
-    delay=0.6
+    delay=0.7
     rep_interval=0.2
     skill_cool_down=6
     ground_skill=True
@@ -430,7 +437,7 @@ class Skill_S(BaseSkill):
     _display_name = '土波流'
     _distance = 0
     key=Key.SKILL_S
-    delay=0.8
+    delay=0.7
     rep_interval=0.2
     skill_cool_down=0
     ground_skill=True
@@ -523,12 +530,12 @@ class Buff_F2(BaseSkill):
     _display_name = '極大分身亂舞'
     _distance = 0
     key=Key.BUFF_F2
-    delay=0.5
+    delay=0.65
     rep_interval=0.5
     skill_cool_down=200
     ground_skill=False
     buff_time=30
-    combo_delay = 0.5
+    combo_delay = 0.65
 
 class Buff_F3(BaseSkill):
     _display_name = '降臨怪力亂神'
@@ -585,7 +592,7 @@ class Skill_2(BaseSkill):
     skill_cool_down=250
     ground_skill=False
     buff_time=0
-    combo_delay = 0.4
+    combo_delay = 0.6
 
 # class AutoHunting(Command):
 #     _display_name ='自動走位狩獵'

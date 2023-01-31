@@ -384,7 +384,6 @@ class Command(Component):
         now = time.time()
         if now - last_cool_down > skill_cool_down:
             config.is_skill_ready_collector[cls.__name__] = True
-            print(cls.__name__,"(get) : ",skill_cool_down,'s')
             return True
         else:
             if (now + bias) - last_cool_down > skill_cool_down: 
