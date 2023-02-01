@@ -19,7 +19,7 @@ $, target=cd_value, value=4%
     Buff_1, direction=, jump=false, rep=1, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 *, x=-1, y=-1, frequency=1, skip=False, adjust=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     EndScript, should_back_home=true, home_scroll_key=f9, end_time=1:10
-    WealthPotion, direction=, jump=false, rep=1, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    WealthPotion, direction=, jump=false, rep=1, pre_delay=0.2, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 *, x=104, y=40, frequency=2, skip=true, adjust=False, active_if_skill_ready=, active_if_skill_cd=skill_4-4, active_if_in_skill_buff=skill_3, active_if_not_in_skill_buff=
     Skill_QQ, direction=left, jump=false, rep=1, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Fly, direction=right+up, jump=false, rep=1, pre_delay=0, duration=0.38, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
@@ -68,7 +68,7 @@ $, target=cd_value, value=4%
 
 @, label=spring2
 *, x=18, y=32, frequency=1, skip=False, adjust=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    Skill_4, direction=right, jump=false, rep=1, pre_delay=0.1, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Skill_4, direction=right, jump=false, rep=1, pre_delay=0.1, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=true, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Frenzy, direction=, jump=false, rep=1, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_S, direction=right, jump=false, rep=2, pre_delay=0.8, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=skill_3, active_if_not_in_skill_buff=
     Walk, direction=left, duration=0.2

@@ -245,7 +245,7 @@ class Notifier:
                                 rune_check_count = 0
                         
                             # check in rune buff
-                            rune_buff = utils.multi_match(frame[:35, :],
+                            rune_buff = utils.multi_match(frame[:65, :],
                                             RUNE_BUFF_TEMPLATE,
                                             threshold=0.93)
                             rune_buff_bottom = utils.multi_match(frame[:35, :],
