@@ -67,6 +67,7 @@ class Notifier:
         self.rune_alert_delay = 270         # 4.5 minutes
         self.notifier_delay = 0.1
         self.skill_template_cd_set = {}
+        self.lastest_skill_cd_check_time = 0
 
     def start(self):
         """Starts this Notifier's thread."""
@@ -178,23 +179,28 @@ class Notifier:
 
                 
                 # Check for skill cd
-                command_book = config.bot.command_book
-                image_matched = False
-                for key in command_book:
-                    if hasattr(command_book[key],"skill_cool_down"):
-                        command_book[key].get_is_skill_ready()
-                    if hasattr(command_book[key],"skill_image") and image_matched == False and not command_book[key].get_is_skill_ready():
-                        if not key in self.skill_template_cd_set:
-                            skill_template = cv2.imread(command_book[key].skill_image, 0)
-                            self.skill_template_cd_set[key] = skill_template
-                        else:
-                            skill_template = self.skill_template_cd_set[key]
-                        is_ready_region = frame[height-500:height-90, width-182:width-126]
-                        skill_match = utils.multi_match(is_ready_region, skill_template, threshold=0.9)
-                        if len(skill_match) > 0:
-                            print(command_book[key]._display_name , " skill_match")
-                            # image_matched = True
-                            command_book[key].set_is_skill_ready(True)
+                if time.time() - self.lastest_skill_cd_check_time >= 1.5:
+                    command_book = config.bot.command_book
+                    image_matched = False
+                    match_list = []
+                    for key in command_book:
+                        if hasattr(command_book[key],"skill_cool_down"):
+                            command_book[key].get_is_skill_ready()
+                        if hasattr(command_book[key],"skill_image") and image_matched == False and not command_book[key].get_is_skill_ready():
+                            if not key in self.skill_template_cd_set:
+                                skill_template = cv2.imread(command_book[key].skill_image, 0)
+                                self.skill_template_cd_set[key] = skill_template
+                            else:
+                                skill_template = self.skill_template_cd_set[key]
+                            is_ready_region = frame[height-500:height-90, width-182:width-126]
+                            skill_match = utils.multi_match(is_ready_region, skill_template, threshold=0.9)
+                            if len(skill_match) > 0:
+                                print(command_book[key]._display_name , " skill_match")
+                                match_list.append(key)
+                                # image_matched = True
+                    for key in match_list:
+                        command_book[key].set_is_skill_ready(True)
+                    self.lastest_skill_cd_check_time = time.time()
 
                 # Check for rune
                 now = time.time()
@@ -239,7 +245,7 @@ class Notifier:
                                 rune_check_count = 0
                         
                             # check in rune buff
-                            rune_buff = utils.multi_match(frame[:35, :],
+                            rune_buff = utils.multi_match(frame[:65, :],
                                             RUNE_BUFF_TEMPLATE,
                                             threshold=0.93)
                             rune_buff_bottom = utils.multi_match(frame[:35, :],

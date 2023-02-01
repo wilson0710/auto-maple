@@ -352,7 +352,25 @@ class Command(Component):
         return True
 
     @classmethod
-    def get_is_skill_ready(cls):
+    def get_is_skill_ready(cls,bias=0):
+        skill_cool_down =  cls.skill_cool_down
+        if skill_cool_down > 5 and settings.cd_value != '':
+            cd_percent_and_sec = settings.cd_value.split('%')
+            skill_cool_down = skill_cool_down * (1-0.01*float(cd_percent_and_sec[0]))
+            if len(cd_percent_and_sec) > 1 and cd_percent_and_sec[1] != '':
+                cd_minus_sec = abs(int(cd_percent_and_sec[1]))
+                for i in range(7):
+                    if cd_minus_sec == 0:
+                        break
+                    if skill_cool_down <= 10:
+                        skill_cool_down = skill_cool_down * (1 - (cd_minus_sec * 0.05))
+                        break
+                    else:
+                        skill_cool_down = skill_cool_down - 1
+                        cd_minus_sec = cd_minus_sec - 1
+            if skill_cool_down < 5:
+                skill_cool_down = 5
+            
         if not cls.__name__ in config.is_skill_ready_collector:
             config.is_skill_ready_collector[cls.__name__] = False
 
@@ -364,15 +382,16 @@ class Command(Component):
 
         last_cool_down = cls.get_my_last_cooldown(cls,cls.__name__)
         now = time.time()
-        if now - last_cool_down > cls.skill_cool_down:
+        if now - last_cool_down > skill_cool_down:
             config.is_skill_ready_collector[cls.__name__] = True
-            # print(cls.__name__,cls._display_name," is ready to use CD:",cls.skill_cool_down)
             return True
         else:
+            if (now + bias) - last_cool_down > skill_cool_down: 
+                return True
             config.is_skill_ready_collector[cls.__name__] = False
             return False
 
-    def check_is_skill_ready(self):
+    def check_is_skill_ready(self,bias=0):
         if config.is_skill_ready_collector[self._custom_id] == True:
             return True
 
@@ -383,6 +402,8 @@ class Command(Component):
             # print(self._custom_id,self._display_name," is ready to use")
             return True
         else:
+            if (now + bias) - last_cool_down > self.skill_cool_down: 
+                return True
             config.is_skill_ready_collector[self._custom_id] = False
             return False
 
@@ -642,6 +663,7 @@ class BaseSkill(Command):
     combo_delay = 0.1
     rep_interval_increase = 0
     fast_rep=False
+    float_in_air=False
 
     def __init__(self, direction='',jump='false',rep='1',pre_delay='0',duration='0',\
             key_down_skill= 'false',key_up_skill= 'false',combo='false',wait_until_ready='false',\
@@ -659,6 +681,24 @@ class BaseSkill(Command):
         self.key_down_skill = settings.validate_boolean(key_down_skill)
         self.key_up_skill = settings.validate_boolean(key_up_skill)
         self.wait_until_ready = settings.validate_boolean(wait_until_ready)
+        if self.skill_cool_down > 5 and settings.cd_value != '':
+            cd_percent_and_sec = settings.cd_value.split('%')
+            self.skill_cool_down = self.skill_cool_down * (1-0.01*float(cd_percent_and_sec[0]))
+            if len(cd_percent_and_sec) > 1 and cd_percent_and_sec[1] != '':
+                cd_minus_sec = abs(int(cd_percent_and_sec[1]))
+                for i in range(7):
+                    if cd_minus_sec == 0:
+                        break
+                    if self.skill_cool_down <= 10:
+                        self.skill_cool_down = self.skill_cool_down * (1 - (cd_minus_sec * 0.05))
+                        break
+                    else:
+                        self.skill_cool_down = self.skill_cool_down - 1
+                        cd_minus_sec = cd_minus_sec - 1
+            if self.skill_cool_down < 5:
+                self.skill_cool_down = 5
+            print(self._custom_id," : ",self.skill_cool_down,'s')
+                        
         if active_if_skill_ready:
             self.active_if_skill_ready = active_if_skill_ready
         if active_if_skill_cd:
@@ -679,12 +719,12 @@ class BaseSkill(Command):
             return False
         if self.skill_cool_down == 0 or self.check_is_skill_ready() or self.key_up_skill:
             if self.ground_skill:
-                utils.wait_for_is_standing(1000)
+                utils.wait_for_is_standing(2000)
             if self.pre_delay > 0:
                 time.sleep(utils.rand_float(self.pre_delay*0.95, self.pre_delay*1.05))
             if self.jump and not self.ground_skill:
                 self.player_jump(self.direction)
-                time.sleep(utils.rand_float(0.06, 0.09))
+                time.sleep(utils.rand_float(0.02, 0.04))
             else:
                 if not self.key_up_skill:
                     key_down(self.direction,down_time=0.06)
@@ -696,7 +736,7 @@ class BaseSkill(Command):
                     else:
                         key_down(self.key,down_time=0.08)
                 if self.duration != 0:
-                    time.sleep(utils.rand_float(self.duration*0.9, self.duration*1.1))
+                    time.sleep(utils.rand_float(self.duration*0.97, self.duration*1.03))
                 if i == (self.rep-1):
                     if not self.key_down_skill:
                         key_up(self.direction,up_time=0.01)
@@ -713,6 +753,10 @@ class BaseSkill(Command):
                 time.sleep(utils.rand_float(self.delay*0.97, self.delay*1.12))
             # if self.key_up_skill:
             config.player_states['is_keydown_skill'] = False
+            if self.float_in_air:
+                config.player_states['is_standing'] = False
+                config.player_states['movement_state'] = config.MOVEMENT_STATE_FALLING
+                config.capture.check_is_standing_count = -7
             return True
         else:
             if self.key_down_skill:
@@ -722,12 +766,12 @@ class BaseSkill(Command):
 class Frenzy(BaseSkill):
     _display_name ='輪迴'
     key="f12"
-    delay=0.5
+    delay=0.8
     rep_interval=0.2
     skill_cool_down=60
     ground_skill=True
     buff_time=600
-    combo_delay = 0.1
+    combo_delay = 0.2
 
     def main(self):
         if settings.frenzy_key:
@@ -741,8 +785,12 @@ class WealthPotion (BaseSkill):
     rep_interval=0.2
     skill_cool_down=7260
     ground_skill=False
-    buff_time=7200
+    buff_time=7260
     combo_delay = 0.2
+
+    def main(self):
+        self.active_if_not_in_skill_buff = 'wealthpotion'
+        return super().main()
 
 class SkillCombination(Command):
     """auto select skill in this combination"""
@@ -782,7 +830,6 @@ class SkillCombination(Command):
                 if not s.get_is_skill_ready() or not s.get_should_active():
                     continue
                 else:
-                    print('selected skill : ', skill)
                     if self.wait > 0:
                         time.sleep(utils.rand_float(self.wait,self.wait*1.1))
                     s(direction=self.direction,jump=self.jump,combo=self.combo).execute()

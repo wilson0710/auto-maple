@@ -174,7 +174,7 @@ class Bot(Configurable):
                         for _ in range(2):
                             time.sleep(0.5)
                             frame = config.capture.frame
-                            rune_buff = utils.multi_match(frame[:35, :],
+                            rune_buff = utils.multi_match(frame[:65, :],
                                                         RUNE_BUFF_TEMPLATE,
                                                         threshold=0.93)
                             if len(rune_buff) > 0:

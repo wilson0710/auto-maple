@@ -129,7 +129,7 @@ def check_is_jumping():
     """
     return not config.player_states['is_standing']
 
-def get_if_skill_ready(skill:str):
+def get_if_skill_ready(skill:str,bias=0):
     """
     check if skill is ready
     :return: True or False
@@ -139,16 +139,21 @@ def get_if_skill_ready(skill:str):
     skills = skill.split("|")
     for key in command_book:
         for s in skills:
-            if key.lower() == s:
-                target_skill_name = command_book[skill].__name__
-                if config.is_skill_ready_collector[target_skill_name]:
+            skill_and_bias = s.split('-')
+            if len(skill_and_bias) == 1:
+                bias = 0
+            else:
+                bias = float(skill_and_bias[1])
+            if key.lower() == skill_and_bias[0]:
+                target_skill_name = command_book[key].__name__
+                if command_book[key].get_is_skill_ready(bias):
                     break
                 else:
                     target_skill_name = None
         if target_skill_name:
             break
 
-    if target_skill_name and config.is_skill_ready_collector[target_skill_name]:
+    if target_skill_name:
         return True
     else:
         return False
@@ -163,22 +168,28 @@ def get_is_in_skill_buff(skill):
     skills = skill.split("|")
     for key in command_book:
         for s in skills:
-            if key.lower() == s:
+            skill_and_bias = s.split('-')
+            if len(skill_and_bias) == 1:
+                bias = 0
+            else:
+                bias = float(skill_and_bias[1])
+            if key.lower() == skill_and_bias[0]:
                 target_skill_name = command_book[key].__name__
                 if not config.skill_cd_timer[target_skill_name]:
                     config.skill_cd_timer[target_skill_name] = 0
-                if time.time() - float(config.skill_cd_timer[target_skill_name]) < int(command_book[target_skill_name.lower()].buff_time):
+                if (time.time() + bias) - float(config.skill_cd_timer[target_skill_name]) < int(command_book[target_skill_name.lower()].buff_time):
+                    # print("in skill buff : ",target_skill_name, ", bias : ",bias)
                     break
                 else:
                     target_skill_name = None
         if target_skill_name:
             break
 
-    if target_skill_name and time.time() - float(config.skill_cd_timer[target_skill_name]) < int(command_book[target_skill_name.lower()].buff_time):
-        print("in skill buff : ",skills)
+    if target_skill_name:
+        # print("in skill buff : ",skills)
         return True
     else:
-        print("not in skill buff : ",skills)
+        # print("not in skill buff : ",skills)
         return False
 
 def separate_args(arguments):
