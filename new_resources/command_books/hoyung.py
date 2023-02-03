@@ -326,17 +326,18 @@ class Fly(BaseSkill):
     _display_name = '觔斗雲'
     _distance = 30 # max 1.5s
     key=Key.FLY
-    delay=0.05
+    delay=0.02
     rep_interval=0.5
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.05
+    combo_delay = 0.02
     float_in_air = True
 
     def main(self):
         if self.duration >= 0.93:
             self.duration = 0.93
+        self.direction_after_skill = True
         return super().main()
 
 # class Rope(BaseSkill):
