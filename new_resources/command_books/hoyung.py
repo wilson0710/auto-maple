@@ -137,7 +137,7 @@ def step(direction, target):
             return
         if abs(d_y) > 6 :
             if abs(d_y) >= 30:
-                fly_time_y = (abs(d_y)-27)*0.035
+                fly_time_y = (abs(d_y)-27)*0.034
                 if fly_time_y >= 0.93:
                     fly_time = 0.93
                 if fly_time_y <= 0.05:
@@ -151,7 +151,7 @@ def step(direction, target):
             #     SkillCombination(direction='',jump='false',target_skills='skill_a').execute()
             else:
                 Skill_QQ().execute()
-                fly_time_y = (abs(d_y)-4)*0.035
+                fly_time_y = (abs(d_y)-4)*0.034
                 if fly_time_y >= 0.93:
                     fly_time = 0.93
                 if fly_time_y <= 0.05:
@@ -179,7 +179,7 @@ def step(direction, target):
                     x_direction = 'right'
                 else:
                     x_direction = 'left'
-                press(x_direction+'+'+Key.JUMP, 1,up_time=0.07)
+                press(x_direction+'+'+Key.JUMP, 1,up_time=0.12)
                 # Skill_Q(combo='true').execute()
                 fly_time = (abs(d_y)-6)*0.02
                 Fly(direction='down',duration=str(fly_time)).execute()
@@ -338,7 +338,8 @@ class Fly(BaseSkill):
     def main(self):
         if self.duration >= 0.93:
             self.duration = 0.93
-        self.direction_after_skill = True
+        if self.direction.find('up') > -1 and self.direction.find('down') > -1:
+            self.direction_after_skill = True
         return super().main()
 
 # class Rope(BaseSkill):
