@@ -666,7 +666,7 @@ class BaseSkill(Command):
     float_in_air=False
 
     def __init__(self, direction='',jump='false',rep='1',pre_delay='0',duration='0',\
-            key_down_skill= 'false',key_up_skill= 'false',combo='false',wait_until_ready='false',\
+            key_down_skill= 'false',key_up_skill= 'false',combo='false',wait_until_ready='false',direction_after_skill='false',\
             active_if_skill_ready='',active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=''\
             ):
         super().__init__(locals())
@@ -681,6 +681,7 @@ class BaseSkill(Command):
         self.key_down_skill = settings.validate_boolean(key_down_skill)
         self.key_up_skill = settings.validate_boolean(key_up_skill)
         self.wait_until_ready = settings.validate_boolean(wait_until_ready)
+        self.direction_after_skill = settings.validate_boolean(direction_after_skill)
         if self.skill_cool_down > 5 and settings.cd_value != '':
             cd_percent_and_sec = settings.cd_value.split('%')
             self.skill_cool_down = self.skill_cool_down * (1-0.01*float(cd_percent_and_sec[0]))
@@ -722,19 +723,29 @@ class BaseSkill(Command):
                 utils.wait_for_is_standing(2000)
             if self.pre_delay > 0:
                 time.sleep(utils.rand_float(self.pre_delay*0.95, self.pre_delay*1.05))
-            if self.jump and not self.ground_skill:
-                self.player_jump(self.direction)
-                time.sleep(utils.rand_float(0.02, 0.04))
+
+            if not self.direction_after_skill:
+                if self.jump and not self.ground_skill:
+                    self.player_jump(self.direction)
+                    time.sleep(utils.rand_float(0.02, 0.04))
+                else:
+                    if not self.key_up_skill:
+                        key_down(self.direction,down_time=0.05)
+                        time.sleep(utils.rand_float(0.02, 0.03))
             else:
-                if not self.key_up_skill:
-                    key_down(self.direction,down_time=0.06)
-            # time.sleep(utils.rand_float(0.03, 0.07))
+                if self.jump and not self.ground_skill:
+                    self.player_jump()
+                    time.sleep(utils.rand_float(0.02, 0.04))
+
             for i in range(self.rep):
                 if not self.key_up_skill:
                     if self.fast_rep:
                         key_down(self.key,down_time=0.045)
                     else:
                         key_down(self.key,down_time=0.08)
+                if self.direction_after_skill:
+                    time.sleep(utils.rand_float(0.04, 0.06))
+                    key_down(self.direction,down_time=0.05)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.97, self.duration*1.03))
                 if i == (self.rep-1):
@@ -743,8 +754,8 @@ class BaseSkill(Command):
                 if not self.key_down_skill:
                     key_up(self.key,up_time=0.04)
                 if i != (self.rep-1):
-                    ret_interval = self.rep_interval+self.rep_interval_increase*i
-                    time.sleep(utils.rand_float(ret_interval*0.95, ret_interval*1.05))
+                    rep_interval = self.rep_interval+self.rep_interval_increase*i
+                    time.sleep(utils.rand_float(rep_interval*0.95, rep_interval*1.05))
             # if self.skill_cool_down != 0:
             self.set_my_last_cooldown(time.time())
             if self.combo:
