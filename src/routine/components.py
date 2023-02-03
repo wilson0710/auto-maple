@@ -663,6 +663,7 @@ class BaseSkill(Command):
     combo_delay = 0.1
     rep_interval_increase = 0
     fast_rep=False
+    fast_direction=True
     float_in_air=False
 
     def __init__(self, direction='',jump='false',rep='1',pre_delay='0',duration='0',\
@@ -744,9 +745,12 @@ class BaseSkill(Command):
                     else:
                         key_down(self.key,down_time=0.08)
                 if self.direction_after_skill:
-                    time.sleep(utils.rand_float(0.04, 0.06))
+                    if self.fast_direction:
+                        time.sleep(utils.rand_float(0.02, 0.03))
+                    else:
+                        time.sleep(utils.rand_float(0.2, 0.25))
                     key_down(self.direction,down_time=0.05)
-                    time.sleep(utils.rand_float(0.04, 0.05))
+                    time.sleep(utils.rand_float(0.03, 0.04))
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.97, self.duration*1.03))
                 if i == (self.rep-1):
