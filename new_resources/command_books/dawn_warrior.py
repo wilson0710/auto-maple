@@ -30,7 +30,8 @@ class Key:
     SKILL_E = 'e' # 宇宙轟炸
     SKILL_SHIFT = 'shift' # 熾烈突擊
     SKILL_R = 'down+r' # 噴泉
-    
+    SKILL_T = 't' # 西格諾斯槍兵陣
+
     # special Skills
     SP_F12 = 'f12' # 輪迴
 
@@ -299,7 +300,7 @@ class Skill_1(BaseSkill):
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.2
+    combo_delay = 0.05
 
 class Skill_2(BaseSkill):
     _display_name = '雙重狂斬(位移22)'
@@ -329,7 +330,7 @@ class Skill_4(BaseSkill):
     key=Key.SKILL_4
     delay=0.5
     rep_interval=0.5
-    skill_cool_down=172
+    skill_cool_down=171.2
     ground_skill=False
     buff_time=40
     combo_delay = 0.5
@@ -354,7 +355,7 @@ class Skill_SHIFT(BaseSkill):
     skill_cool_down=43
     ground_skill=False
     buff_time=5
-    combo_delay = 0.2
+    combo_delay = 0.05
 
 class Skill_SHIFT2(BaseSkill):
     _display_name = '熾烈突擊(位移31)'
@@ -388,7 +389,7 @@ class Skill_Q(BaseSkill):
     key=Key.SKILL_Q
     delay=1
     rep_interval=0.5
-    skill_cool_down=180
+    skill_cool_down=171.2
     ground_skill=False
     buff_time=60
     combo_delay = 1
@@ -414,7 +415,7 @@ class Skill_E(BaseSkill):
     skill_cool_down=30
     ground_skill=True
     buff_time=60
-    combo_delay = 0.6
+    combo_delay = 0.1
 
 class Skill_R(BaseSkill):
     _display_name = '噴泉'
@@ -426,6 +427,32 @@ class Skill_R(BaseSkill):
     ground_skill=True
     buff_time=60
     combo_delay = 0.9
+
+class Skill_T(BaseSkill):
+    _display_name = '西格諾斯槍兵陣'
+    _distance = 0
+    key=Key.SKILL_T
+    delay=0.8
+    rep_interval=0.5
+    skill_cool_down=28.5
+    ground_skill=True
+    buff_time=20
+    combo_delay = 0.2
+
+class Skill_TT(BaseSkill):
+    _display_name = '槍兵陣轉頭'
+    _distance = 0
+    key=Key.SKILL_T
+    delay=0.1
+    rep_interval=0.5
+    skill_cool_down=0
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.1
+
+    def main(self):
+        self.active_if_in_skill_buff = 'skill_t'
+        return super().main()
 
 class AutoHunting(Command):
     _display_name ='自動走位狩獵'
