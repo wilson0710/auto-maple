@@ -554,10 +554,14 @@ class Gate(BaseSkill):
     key=Key.SET_GATE
     delay=0.55
     rep_interval=0.5
-    skill_cool_down=30
+    skill_cool_down=5
     ground_skill=True
     buff_time=100
     combo_delay = 0.55
+
+    def main(self):
+        self.active_if_skill_ready = 'returntogate'
+        return super().main()
 
 class ReturnToGate(BaseSkill):
     _display_name = '回歸歪曲縮地符'
@@ -572,6 +576,7 @@ class ReturnToGate(BaseSkill):
 
     def main(self):
         self.active_if_in_skill_buff = 'gate'
+        self.active_if_skill_ready = 'gate'
         return super().main()
 
 class Skill_4(BaseSkill):
