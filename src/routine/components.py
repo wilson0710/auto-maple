@@ -744,9 +744,9 @@ class BaseSkill(Command):
                     else:
                         key_down(self.key,down_time=0.08)
                 if self.direction_after_skill:
-                    time.sleep(utils.rand_float(0.04, 0.06))
+                    time.sleep(utils.rand_float(0.03, 0.04))
                     key_down(self.direction,down_time=0.05)
-                    time.sleep(utils.rand_float(0.04, 0.05))
+                    time.sleep(utils.rand_float(0.03, 0.04))
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.97, self.duration*1.03))
                 if i == (self.rep-1):
