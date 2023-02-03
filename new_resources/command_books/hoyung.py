@@ -333,6 +333,7 @@ class Fly(BaseSkill):
     buff_time=0
     combo_delay = 0.02
     float_in_air = True
+    fast_rep=True
 
     def main(self):
         if self.duration >= 0.93:
