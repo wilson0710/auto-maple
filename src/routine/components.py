@@ -665,6 +665,8 @@ class BaseSkill(Command):
     fast_rep=False
     fast_direction=True
     float_in_air=False
+    recharge_interval=0
+    max_maintained=0
 
     def __init__(self, direction='',jump='false',rep='1',pre_delay='0',duration='0',\
             key_down_skill= 'false',key_up_skill= 'false',combo='false',wait_until_ready='false',direction_after_skill='false',\
@@ -678,6 +680,7 @@ class BaseSkill(Command):
         self.pre_delay = float(pre_delay)
         if not self._custom_id in config.is_skill_ready_collector:
             config.is_skill_ready_collector[self._custom_id] = True
+            config.skill_cd_timer[self._custom_id] = 0
         self.combo = settings.validate_boolean(combo)
         self.key_down_skill = settings.validate_boolean(key_down_skill)
         self.key_up_skill = settings.validate_boolean(key_up_skill)
