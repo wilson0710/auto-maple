@@ -169,15 +169,16 @@ class Bot(Configurable):
                         print('Solution found, entering result')
                         for arrow in solution:
                             press(arrow, 1, down_time=0.1)
-                        time.sleep(3)
+                        time.sleep(1)
                         find_rune_buff = False
                         for _ in range(2):
-                            time.sleep(0.5)
+                            time.sleep(0.2)
                             frame = config.capture.frame
-                            rune_buff = utils.multi_match(frame[:65, :],
+                            rune_buff = utils.multi_match(frame[:95, :],
                                                         RUNE_BUFF_TEMPLATE,
                                                         threshold=0.93)
-                            if len(rune_buff) > 0:
+                            print('rune_buff matched : ',len(rune_buff))
+                            if len(rune_buff) > 1:
                                 rune_buff_pos = min(rune_buff, key=lambda p: p[0])
                                 print('rune_buff_pos : ', rune_buff_pos)
                                 target = (

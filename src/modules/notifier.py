@@ -248,7 +248,7 @@ class Notifier:
                             rune_buff = utils.multi_match(frame[:65, :],
                                             RUNE_BUFF_TEMPLATE,
                                             threshold=0.93)
-                            rune_buff_bottom = utils.multi_match(frame[:35, :],
+                            rune_buff_bottom = utils.multi_match(frame[:95, :],
                                             RUNE_BUFF_TEMPLATE_BOTTOM,
                                             threshold=0.93)
                             if len(rune_buff) > 0 or len(rune_buff_bottom) > 0:
