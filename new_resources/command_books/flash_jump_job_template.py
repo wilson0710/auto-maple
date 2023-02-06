@@ -162,7 +162,7 @@ class Adjust(Command):
                 if abs(d_y) > settings.adjust_tolerance:
                     if d_y < 0:
                         utils.wait_for_is_standing(1000)
-                        UpJump('up').main()
+                        UpJump('up').execute()
                     else:
                         utils.wait_for_is_standing(1000)
                         key_down('down')
