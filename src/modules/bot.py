@@ -178,7 +178,7 @@ class Bot(Configurable):
                                                         RUNE_BUFF_TEMPLATE,
                                                         threshold=0.93)
                             print('rune_buff matched : ',len(rune_buff))
-                            if len(rune_buff) > 1:
+                            if len(rune_buff) >= 3:
                                 rune_buff_pos = min(rune_buff, key=lambda p: p[0])
                                 print('rune_buff_pos : ', rune_buff_pos)
                                 target = (

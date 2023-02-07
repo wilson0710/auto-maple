@@ -417,9 +417,9 @@ class Move(Command):
         self.prev_direction = ''
 
     def _new_direction(self, new):
-        key_down(new,down_time=0.05)
+        key_down(new,down_time=0.04)
         if self.prev_direction and self.prev_direction != new:
-            key_up(self.prev_direction)
+            key_up(self.prev_direction,up_time=0.04)
         self.prev_direction = new
 
     def _new_move_method(self,target):
@@ -477,13 +477,13 @@ class Move(Command):
                         else:
                             key = 'right'
                         self._new_direction(key)
-                        time.sleep(0.06)
+                        time.sleep(0.1*abs(d_x)/settings.move_tolerance)
                         self._new_direction('')
                 else:
                     d_x = point[0] - config.player_pos[0]
                     d_y = point[1] - config.player_pos[1]
                     # if abs(d_y) > settings.move_tolerance / 2:
-                    if abs(d_y) >= 3:
+                    if abs(d_y) >= 2:
                         if d_y < 0:
                             key = 'up' # if direction=up dont press up to avoid transporter
                             if abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
@@ -499,10 +499,14 @@ class Move(Command):
                             config.layout.add(*config.player_pos)
                         counter -= 1
                         time.sleep(0.02)
-                    # if last_player_pos[0] == config.player_pos[0] and last_player_pos[1] == config.player_pos[1]:
-                    #     config.player_states['is_stuck'] = True
-                    # else:
-                    #     config.player_states['is_stuck'] = False
+                        if last_player_pos[0] == config.player_pos[0] and last_player_pos[1] == config.player_pos[1]:
+                            if stuck_count >= 2:
+                                config.player_states['is_stuck'] = True
+                            else:
+                                stuck_count = stuck_count + 1
+                        else:
+                            stuck_count = 0
+                            config.player_states['is_stuck'] = False
                 # local_error = utils.distance(config.player_pos, point)
                 # global_error = utils.distance(config.player_pos, self.target)
                 toggle = not toggle

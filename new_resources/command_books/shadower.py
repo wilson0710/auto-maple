@@ -103,11 +103,11 @@ def step(direction, target):
     if direction == 'down':
         if abs(d_x) > settings.move_tolerance:
             return
-        down_duration = 0.04
+        down_duration = 0.15
         if abs(d_y) > 20:
-            down_duration = 0.4
+            down_duration = 0.55
         elif abs(d_y) > 13:
-            down_duration = 0.22
+            down_duration = 0.35
         
         if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
             print("down stair")
