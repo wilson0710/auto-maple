@@ -107,7 +107,7 @@ def step(direction, target):
                 if fly_time_y <= 0.05:
                     fly_time_y = 0.05
                 print("fly_time",fly_time)
-                Skill_QQ().execute()
+                Skill_QQ(jump='true').execute()
                 Fly(jump='false',key_down_skill='true').execute()
                 if abs(d_y) >= 7:
                     if d_y < 0 :
