@@ -253,6 +253,7 @@ class Notifier:
                                             threshold=0.93)
                             if len(rune_buff) > 0 or len(rune_buff_bottom) > 0:
                                 config.bot.in_rune_buff = True
+                                rune_start_time = now
                                 print('in rune buff')
                             else:
                                 config.bot.in_rune_buff = False
