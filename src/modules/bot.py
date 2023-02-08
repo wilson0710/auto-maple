@@ -178,6 +178,12 @@ class Bot(Configurable):
                                                         RUNE_BUFF_TEMPLATE,
                                                         threshold=0.93)
                             print('rune_buff matched : ',len(rune_buff))
+                            if len(rune_buff) >= 2:
+                                config.latest_solved_rune = time.time()
+                                config.should_solve_rune = False
+                                self.rune_active = False
+                                self.in_rune_buff = True
+                                find_rune_buff = True
                             if len(rune_buff) >= 3:
                                 rune_buff_pos = min(rune_buff, key=lambda p: p[0])
                                 print('rune_buff_pos : ', rune_buff_pos)
