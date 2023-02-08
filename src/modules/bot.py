@@ -179,6 +179,8 @@ class Bot(Configurable):
                                                         threshold=0.93)
                             print('rune_buff matched : ',len(rune_buff))
                             if len(rune_buff) >= 2:
+                                config.latest_solved_rune = time.time()
+                                config.should_solve_rune = False
                                 self.rune_active = False
                                 self.in_rune_buff = True
                                 find_rune_buff = True
