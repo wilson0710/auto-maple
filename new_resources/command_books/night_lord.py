@@ -38,6 +38,7 @@ class Key:
 
     # special Skills
     SP_F12 = 'f12' # 輪迴
+    DARK_EMBRACE = 'shift'
 
 def step(direction, target):
     """
@@ -94,20 +95,15 @@ def step(direction, target):
             return
         utils.wait_for_is_standing(1500)
         if abs(d_y) > 6 :
-            if abs(d_y) > 36:
-                press(Key.JUMP, 1)
-                time.sleep(utils.rand_float(0.1, 0.15))
-                press(Key.ROPE, 1)
-                time.sleep(utils.rand_float(1.2, 1.5))
+            if abs(d_y) < 15:
+                UpJump(pre_delay='0.1').execute()
             elif abs(d_y) <= 18:
-                UpJump(jump='true').execute()
-            elif abs(d_y) < 15:
-                UpJump().execute()
+                UpJump(pre_delay='0.1',jump='true').execute()
             else:
-                press(Key.ROPE, 1)
-                time.sleep(utils.rand_float(1.2, 1.5))
+                Rope(jump='true').execute()
             SkillCombination(direction='',jump='false',target_skills='skill_a').execute()
-            utils.wait_for_is_standing(3300)
+            time.sleep(utils.rand_float(0.2, 0.3))
+            WaitStanding(duration='3300').execute()
         else:
             press(Key.JUMP, 1)
             time.sleep(utils.rand_float(0.1, 0.15))
@@ -385,7 +381,7 @@ class Skill_E(BaseSkill):
     _display_name = '四星鏢雨'
     _distance = 50
     key=Key.SKILL_E
-    delay=0.85
+    delay=0.9
     rep_interval=0.5
     skill_cool_down=14
     ground_skill=False
@@ -410,17 +406,17 @@ class Buff_F1(BaseSkill):
     skill_cool_down=171
     ground_skill=True
     buff_time=80
-    combo_delay = 0.6
+    combo_delay = 0.8
 
 class Buff_F2(BaseSkill):
     _display_name ='楓之谷世界女神的祝福'
     key=Key.BUFF_F2
-    delay=0.7
+    delay=0.85
     rep_interval=0.25
     skill_cool_down=180
     ground_skill=True
     buff_time=60
-    combo_delay = 0.6
+    combo_delay = 0.85
 
 class Buff_F3(BaseSkill):
     _display_name ='飛閃起爆符'
@@ -450,12 +446,12 @@ class Buff_F5(BaseSkill):
     skill_cool_down=77
     ground_skill=True
     buff_time=30
-    combo_delay = 0.6
+    combo_delay = 0.7
 
 class Buff_3(BaseSkill):
     _display_name ='武公寶珠'
     key=Key.BUFF_3
-    delay=1.3
+    delay=1.4
     rep_interval=0.25
     skill_cool_down=143
     ground_skill=True
@@ -473,6 +469,16 @@ class Skill_4(BaseSkill):
     ground_skill=True
     buff_time=60
     combo_delay = 0.3
+
+class DarkEmbrace(BaseSkill):
+    _display_name ='幽暗'
+    key=Key.DARK_EMBRACE
+    delay=1
+    rep_interval=0.12
+    skill_cool_down=3
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.1
 
 class AutoHunting(Command):
     _display_name ='自動走位狩獵'
@@ -503,7 +509,7 @@ class AutoHunting(Command):
                 ChangeChannel(max_rand=40).execute()
                 Skill_A().execute()
                 continue
-            Frenzy().execute()
+            
             frame = config.capture.frame
             point = utils.single_match_with_threshold(frame,daily_complete_template,0.9)
             if len(point) > 0:
@@ -516,6 +522,8 @@ class AutoHunting(Command):
             if not config.enabled:
                 break
             
+            Frenzy().execute()
+            SkillCombination(target_skills='buff_f3|buff_3|buff_f2').execute()
             if toggle:
                 # right side
                 move((width-20),bottom_y).execute()
@@ -538,7 +546,7 @@ class AutoHunting(Command):
                 print("current bottom : ", settings.platforms)
                 FlashJump(direction='right').execute()
                 Rope(rep='2',combo='True').execute()
-                SkillCombination(direction='right',target_skills='skill_w|skill_s|skill_e|skill_a').execute()
+                SkillCombination(direction='right',target_skills='skill_2|skill_4|skill_w|skill_s|skill_e|skill_a').execute()
             
             if settings.auto_change_channel and config.should_solve_rune:
                 config.bot._solve_rune()
