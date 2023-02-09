@@ -26,6 +26,7 @@ class Key:
     BUFF_F1 = 'f1' # 天地人幻影
     BUFF_F2 = 'f2' # 極大分身亂舞
     BUFF_F3 = 'f3' # 降臨怪力亂神
+    BUFF_F5 = 'f5' # 必死決心
 
     # Buffs Toggle
 
@@ -54,16 +55,25 @@ def step(direction, target):
     d_y = target[1] - config.player_pos[1]
     d_x = target[0] - config.player_pos[0]
 
+    if config.player_states['is_stuck'] and abs(d_x) < 16:
+        print("is stuck")
+        time.sleep(utils.rand_float(0.05, 0.08))
+        x_arrow = ''
+        if direction != 'left' and direction != 'right':
+            if abs(d_x) >= 0:
+                x_arrow = 'right'
+            else:
+                x_arrow = 'left'
+            press(x_arrow+'+'+Key.JUMP)
+        else:
+            press(Key.JUMP)
+        Skill_A(direction='',pre_delay='0.1').execute()
+        WaitStanding(duration='3').execute()
+
     if direction == 'left' or direction == 'right':
         utils.wait_for_is_standing(1000)
         d_y = target[1] - config.player_pos[1]
         d_x = target[0] - config.player_pos[0]
-        if config.player_states['is_stuck'] and abs(d_x) < 16:
-            print("is stuck")
-            time.sleep(utils.rand_float(0.1, 0.2))
-            press(Key.JUMP)
-            Skill_A(direction='').execute()
-            WaitStanding(duration='1').execute()
         if abs(d_x) >= 10:
             if abs(d_x) >= 60:
                 FlashJump(direction='',triple_jump='true',fast_jump='false').execute()
@@ -90,7 +100,7 @@ def step(direction, target):
                         d = 'down'
                     print('second direction : ', d )
                     press(d,down_time=fly_time_y,up_time=0.02)
-                    time.sleep(fly_time-fly_time_y)
+                    time.sleep(fly_time-fly_time_y+0.02)
                 else:
                     time.sleep(utils.rand_float(fly_time*0.94, fly_time+0.03))
                 Fly(key_up_skill='true').execute()
@@ -181,7 +191,7 @@ def step(direction, target):
                     x_direction = 'left'
                 press(x_direction+'+'+Key.JUMP, 1,up_time=0.12)
                 # Skill_Q(combo='true').execute()
-                fly_time = (abs(d_y)-6)*0.02
+                fly_time = (abs(d_y)-4)*0.025
                 Fly(direction='down',duration=str(fly_time)).execute()
                 Stomp().execute()
             else:
@@ -369,12 +379,12 @@ class Skill_A(BaseSkill):
     _display_name = '如意扇'
     _distance = 0
     key=Key.SKILL_A
-    delay=0.45
+    delay=0.48
     rep_interval=0.5
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.45
+    combo_delay = 0.48
 
 class Skill_Q(BaseSkill):
     _display_name = '芭蕉風'
@@ -429,12 +439,12 @@ class Skill_C(BaseSkill):
     _display_name = '地震碎'
     _distance = 0
     key=Key.SKILL_C
-    delay=0.7
+    delay=0.62
     rep_interval=0.2
     skill_cool_down=6
     ground_skill=True
     buff_time=0
-    combo_delay = 0.6
+    combo_delay = 0.48
 
 class Skill_S(BaseSkill):
     _display_name = '土波流'
@@ -601,6 +611,16 @@ class Skill_2(BaseSkill):
     ground_skill=False
     buff_time=0
     combo_delay = 0.6
+
+class Buff_F5(BaseSkill):
+    _display_name ='必死決心'
+    key=Key.BUFF_F5
+    delay=0.7
+    rep_interval=0.25
+    skill_cool_down=85
+    ground_skill=True
+    buff_time=30
+    combo_delay = 0.7
 
 # class AutoHunting(Command):
 #     _display_name ='自動走位狩獵'
