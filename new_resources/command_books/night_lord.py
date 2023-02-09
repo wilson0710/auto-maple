@@ -49,14 +49,16 @@ def step(direction, target):
     d_x = target[0] - config.player_pos[0]
     if config.player_states['is_stuck'] and abs(d_x) < 16:
         print("is stuck")
+        time.sleep(utils.rand_float(0.05, 0.08))
         x_arrow = ''
         if direction != 'left' and direction != 'right':
             if abs(d_x) >= 0:
                 x_arrow = 'right'
             else:
                 x_arrow = 'left'
-        time.sleep(utils.rand_float(0.05, 0.08))
-        press(x_arrow+Key.JUMP)
+            press(x_arrow+'+'+Key.JUMP)
+        else:
+            press(Key.JUMP)
         Skill_A(direction='',pre_delay='0.1').execute()
         WaitStanding(duration='3').execute()
 

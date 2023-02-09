@@ -44,17 +44,25 @@ def step(direction, target):
 
     d_y = target[1] - config.player_pos[1]
     d_x = target[0] - config.player_pos[0]
+    if config.player_states['is_stuck'] and abs(d_x) < 16:
+        print("is stuck")
+        time.sleep(utils.rand_float(0.05, 0.08))
+        x_arrow = ''
+        if direction != 'left' and direction != 'right':
+            if abs(d_x) >= 0:
+                x_arrow = 'right'
+            else:
+                x_arrow = 'left'
+            press(x_arrow+'+'+Key.JUMP)
+        else:
+            press(Key.JUMP)
+        Skill_AS(direction='',pre_delay='0.1').execute()
+        WaitStanding(duration='3').execute()
 
     if direction == 'left' or direction == 'right':
         utils.wait_for_is_standing(1000)
         d_y = target[1] - config.player_pos[1]
         d_x = target[0] - config.player_pos[0]
-        if config.player_states['is_stuck'] and abs(d_x) < 16:
-            print("is stuck")
-            time.sleep(utils.rand_float(0.1, 0.2))
-            press(Key.JUMP)
-            Skill_AS(direction='').execute()
-            WaitStanding(duration='1').execute()
         if abs(d_x) >= 16:
             if abs(d_x) >= 60:
                 FlashJump(direction='',triple_jump='true',fast_jump='false').execute()
