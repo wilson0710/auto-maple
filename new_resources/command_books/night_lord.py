@@ -93,18 +93,12 @@ def step(direction, target):
             return
         utils.wait_for_is_standing(1500)
         if abs(d_y) > 6 :
-            if abs(d_y) > 36:
-                press(Key.JUMP, 1)
-                time.sleep(utils.rand_float(0.1, 0.15))
-                press(Key.ROPE, 1)
-                time.sleep(utils.rand_float(1.2, 1.5))
-            elif abs(d_y) < 15:
+            if abs(d_y) < 15:
                 UpJump(pre_delay='0.1').execute()
             elif abs(d_y) <= 18:
                 UpJump(pre_delay='0.1',jump='true').execute()
             else:
-                press(Key.ROPE, 1)
-                time.sleep(utils.rand_float(1.2, 1.5))
+                Rope(jump='true').execute()
             SkillCombination(direction='',jump='false',target_skills='skill_a').execute()
             time.sleep(utils.rand_float(0.2, 0.3))
             WaitStanding(duration='3300').execute()
