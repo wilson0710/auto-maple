@@ -326,7 +326,7 @@ class Skill_A(BaseSkill):
     _display_name = '挑釁契約'
     _distance = 27
     key=Key.SKILL_A
-    delay=0.5
+    delay=0.52
     rep_interval=0.5
     skill_cool_down=0
     ground_skill=False
@@ -359,7 +359,7 @@ class Skill_S(BaseSkill):
     _display_name = '風魔手裏劍'
     _distance = 50
     key=Key.SKILL_S
-    delay=0.55
+    delay=0.58
     rep_interval=0.5
     skill_cool_down=24
     ground_skill=False
@@ -381,7 +381,7 @@ class Skill_E(BaseSkill):
     _display_name = '四星鏢雨'
     _distance = 50
     key=Key.SKILL_E
-    delay=0.9
+    delay=0.94
     rep_interval=0.5
     skill_cool_down=14
     ground_skill=False
@@ -401,7 +401,7 @@ class Skill_2(BaseSkill):
 class Buff_F1(BaseSkill):
     _display_name ='出血毒素'
     key=Key.BUFF_F1
-    delay=0.8
+    delay=0.85
     rep_interval=0.25
     skill_cool_down=171
     ground_skill=True
@@ -451,7 +451,7 @@ class Buff_F5(BaseSkill):
 class Buff_3(BaseSkill):
     _display_name ='武公寶珠'
     key=Key.BUFF_3
-    delay=1.4
+    delay=1.45
     rep_interval=0.25
     skill_cool_down=143
     ground_skill=True

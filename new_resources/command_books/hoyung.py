@@ -55,7 +55,7 @@ def step(direction, target):
     d_y = target[1] - config.player_pos[1]
     d_x = target[0] - config.player_pos[0]
 
-    if config.player_states['is_stuck'] and abs(d_x) < 16:
+    if config.player_states['is_stuck']:
         print("is stuck")
         time.sleep(utils.rand_float(0.05, 0.08))
         x_arrow = ''

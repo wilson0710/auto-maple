@@ -103,6 +103,7 @@ class Bot(Configurable):
 
                 # Execute next Point in the routine
                 element = config.routine[config.routine.index]
+                element.execute()
                 if self.rune_active and \
                     (isinstance(element, Point) \
                         and (element.location == self.rune_closest_pos or utils.distance(config.bot.rune_pos, element.location) <= 40) \
@@ -122,10 +123,9 @@ class Bot(Configurable):
                     elif self.solve_rune_fail_count >= 2:
                         # self.solve_rune_fail_count = 0
                         pass
-                element.execute()
                 config.routine.next_step()
             else:
-                time.sleep(0.01)
+                time.sleep(0.03)
 
     @utils.run_if_enabled
     def _solve_rune(self, model=None):
