@@ -575,21 +575,29 @@ class Fall(Command):
         self.duration = float(duration)
 
     def main(self):
-        utils.wait_for_is_standing(800)
-        time.sleep(utils.rand_float(0.03, 0.05))
+        WaitStanding(duration='2').execute()
+        time.sleep(utils.rand_float(0.05, 0.07))
         for i in range(1):
             cur_y = config.player_pos[1]
             print(i,"&",cur_y)
-            key_down('down',down_time=0.06)
-            press(config.jump_button, 1, down_time=0.08,up_time=0.02)
-            key_up('down',up_time=0.04)
-            time.sleep(utils.rand_float(self.duration*1+0.15, self.duration*1.08+0.15))
+            key_down('down',down_time=0.04)
+            press(config.jump_button, 1, down_time=0.05,up_time=0.03)
+            key_up('down',up_time=0.1)
+            cur_y2 = config.player_pos[1]
+            for j in range(50):
+                if config.player_pos[1]-cur_y2 >= 1:
+                    print("y2 fall success!")
+                    break
+                time.sleep(0.01)
+            time.sleep(utils.rand_float(self.duration*1, self.duration*1.05))
+            if self.direction != '':
+                key_down(self.direction)
+                press(config.jump_button, 2, down_time=0.05,up_time=0.05)
+                key_up(self.direction,up_time=0.02)
+            # time.sleep(utils.rand_float(0.15, 0.17))
             if config.player_pos[1]-cur_y >= 1:
                 print("fall success! dis y : ",config.player_pos[1]-cur_y)
-                if self.direction != '':
-                    key_down(self.direction)
-                    press(config.jump_button, 2, down_time=0.05,up_time=0.05)
-                    key_up(self.direction,up_time=0.02)
+                
                 break
         
 class Buff(Command):
