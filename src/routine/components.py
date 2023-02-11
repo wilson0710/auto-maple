@@ -634,7 +634,7 @@ class Fall(Command):
             if not fall_successful:
                 if cur_y != cur_y2:
                     print("in ladder")
-                    press("left"+config.jump_button, 1, down_time=0.08,up_time=0.05)
+                    press("left+"+config.jump_button, 1, down_time=0.08,up_time=0.05)
                 else:
                     time.sleep(utils.rand_float(0.1, 0.15))
                     continue
