@@ -83,13 +83,13 @@ class Component:
                 return False
         return True
 
-
 class Point(Component):
     """Represents a location in a user-defined routine."""
 
     id = '*'
 
     def __init__(self, x, y, frequency=1, skip='False', adjust='False'\
+        , active_if_in_x_range='', active_if_in_y_range='', active_if_not_in_x_range='', active_if_not_in_y_range=''\
         , active_if_skill_ready = '', active_if_skill_cd='',active_if_in_skill_buff='',active_if_not_in_skill_buff=""):
         super().__init__(locals())
         self.x = float(x)
@@ -98,6 +98,14 @@ class Point(Component):
         self.frequency = settings.validate_nonnegative_int(frequency)
         self.counter = int(settings.validate_boolean(skip))
         self.adjust = settings.validate_boolean(adjust)
+        if active_if_in_x_range != '':
+            self.active_if_in_x_range = float(active_if_in_x_range)
+        if active_if_in_y_range != '':
+            self.active_if_in_y_range = float(active_if_in_y_range)
+        if active_if_not_in_x_range != '':
+            self.active_if_not_in_x_range = float(active_if_not_in_x_range)
+        if active_if_not_in_y_range != '':
+            self.active_if_not_in_y_range = float(active_if_not_in_y_range)
         self.active_if_skill_ready = active_if_skill_ready
         self.active_if_skill_cd = active_if_skill_cd
         if not hasattr(self, 'commands'):       # Updating Point should not clear commands
@@ -107,6 +115,8 @@ class Point(Component):
 
     def main(self):
         if not self.check_should_active():
+            return
+        if not self.check_is_player_in_xy_range():
             return
         if settings.auto_change_channel and \
             (config.should_change_channel or \
@@ -126,7 +136,7 @@ class Point(Component):
                     config.should_solve_rune or config.enabled == False):
                     break
                 command.execute()
-        time.sleep(utils.rand_float(0.02, 0.05))
+        time.sleep(utils.rand_float(0.02, 0.04))
         self._increment_counter()
 
     @utils.run_if_enabled
@@ -134,6 +144,37 @@ class Point(Component):
         """Increments this Point's counter, wrapping back to 0 at the upper bound."""
 
         self.counter = (self.counter + 1) % self.frequency
+
+    def check_is_player_in_xy_range(self):
+        if hasattr(self, 'active_if_in_x_range'):
+            if abs(self.x - config.player_pos[0]) <= self.active_if_in_x_range:
+                pass
+            else:
+                return False
+        if hasattr(self, 'active_if_in_y_range'):
+            if abs(self.y - config.player_pos[1]) <= self.active_if_in_y_range:
+                pass
+            else:
+                return False
+
+        if hasattr(self, 'active_if_not_in_x_range') or hasattr(self, 'active_if_not_in_y_range'):
+            if hasattr(self, 'active_if_not_in_x_range'):
+                if abs(self.x - config.player_pos[0]) >= self.active_if_not_in_x_range:
+                    print("active_if_not_in_x_range >=",self.active_if_not_in_x_range)
+                    self.location = (-1,-1)
+                    return True
+                else:
+                    pass
+            if hasattr(self, 'active_if_not_in_y_range'):
+                if abs(self.y - config.player_pos[1]) >= self.active_if_not_in_y_range:
+                    print("active_if_not_in_y_range >=",self.active_if_not_in_y_range)
+                    self.location = (-1,-1)
+                    return True
+                else:
+                    pass
+            return False
+        
+        return True
 
     def info(self):
         curr = super().info()
