@@ -334,7 +334,7 @@ class FlashJump(Command):
 
 class Fly(BaseSkill):
     _display_name = '觔斗雲'
-    _distance = 30 # max 1.5s
+    _distance = 30 # max 1s
     key=Key.FLY
     delay=0.02
     rep_interval=0.5
@@ -346,8 +346,8 @@ class Fly(BaseSkill):
     fast_rep=True
 
     def main(self):
-        if self.duration >= 0.93:
-            self.duration = 0.93
+        if self.duration >= 0.95:
+            self.duration = 0.95
         if self.direction.find('up') > -1 and self.direction.find('down') > -1:
             self.direction_after_skill = True
         return super().main()
