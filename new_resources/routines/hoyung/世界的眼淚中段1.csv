@@ -60,7 +60,7 @@ $, target=adjust_tolerance, value=1
 >, label=spring2, frequency=1, skip=False, frequency_to_loop=False, active_if_skill_ready=skill_4-4, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
 *, x=97, y=87, frequency=1, skip=False, adjust=False, active_if_in_x_range=, active_if_in_y_range=, active_if_not_in_x_range=, active_if_not_in_y_range=, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=skill_3, active_if_not_in_skill_buff=
     Skill_QQ, direction=left, jump=false, rep=1, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, direction_after_skill=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    Fly, direction=down, jump=false, rep=1, pre_delay=0, duration=0.25, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, direction_after_skill=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Fly, direction=down, jump=false, rep=1, pre_delay=0, duration=0.22, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, direction_after_skill=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Stomp, direction=, jump=false, rep=1, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, direction_after_skill=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_S, direction=left, jump=false, rep=2, pre_delay=0.5, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, direction_after_skill=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Walk, direction=left, duration=0.8
@@ -69,8 +69,7 @@ $, target=adjust_tolerance, value=1
 @, label=spring
 *, x=68, y=53, frequency=1, skip=False, adjust=False, active_if_in_x_range=, active_if_in_y_range=, active_if_not_in_x_range=, active_if_not_in_y_range=, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     Skill_C, direction=left, jump=false, rep=2, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, direction_after_skill=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
-    Fall, direction=, duration=0.1
-    Fly, direction=down, jump=false, rep=1, pre_delay=0, duration=0.65, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, direction_after_skill=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Fly, direction=down, jump=true, rep=1, pre_delay=0, duration=0.99, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, direction_after_skill=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     SkillCombination, direction=right, jump=false, target_skills=skill_w|skill_a, combo=false, wait=0, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
     WaitStanding, duration=1
 
