@@ -623,7 +623,7 @@ class Fall(Command):
             cur_y = config.player_pos[1]
             key_down('down',down_time=0.04)
             press(config.jump_button, 1, down_time=0.05,up_time=0.03)
-            key_up('down',up_time=0.1)
+            key_up('down',up_time=0.08)
             cur_y2 = config.player_pos[1]
             for j in range(50):
                 if config.player_pos[1]-cur_y2 >= 1:
