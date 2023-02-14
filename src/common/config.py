@@ -37,6 +37,7 @@ MOVEMENT_STATE_FALLING = 2
 
 # skill cd timer
 skill_cd_timer = {}
+skill_maintained_count = {}
 
 # is_skill_ready
 is_skill_ready_collector = {}

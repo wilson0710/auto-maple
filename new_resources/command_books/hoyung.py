@@ -574,7 +574,11 @@ class Gate(BaseSkill):
 
     def main(self):
         self.active_if_skill_ready = 'returntogate'
-        return super().main()
+        if super().main():
+            ReturnToGate.set_my_last_cooldown(time.time())
+            return True
+        else:
+            return False
 
 class ReturnToGate(BaseSkill):
     _display_name = '回歸歪曲縮地符'
