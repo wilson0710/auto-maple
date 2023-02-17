@@ -527,14 +527,14 @@ class Move(Command):
                     if abs(d_y) >= 2:
                         if d_y < 0:
                             key = 'up' # if direction=up dont press up to avoid transporter
-                            if abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
-                                self._new_direction('')
+                            # if abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
+                            self._new_direction('')
                         else:
                             key = 'down'
-                            if not config.player_states['in_bottom_platform']:
-                                self._new_direction(key)
-                            elif abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
-                                self._new_direction('')
+                            # if not config.player_states['in_bottom_platform']:
+                            #     self._new_direction(key)
+                            # if abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
+                            self._new_direction('')
                         step(key, point)
                         if settings.record_layout:
                             config.layout.add(*config.player_pos)
@@ -780,16 +780,39 @@ class BaseSkill(Command):
         if active_if_not_in_skill_buff:
             self.active_if_not_in_skill_buff = active_if_not_in_skill_buff
 
+    def check_maintained(self):
+        if self.max_maintained > 0:
+            if not self._custom_id in config.skill_cd_timer:
+                config.skill_cd_timer[self._custom_id] = 0
+                config.is_skill_ready_collector[self._custom_id] = True
+            passed_time = time.time() - config.skill_cd_timer[self._custom_id] 
+            temp_maintained = config.skill_maintained_count[self._custom_id] + float(passed_time / self.recharge_interval)
+            return temp_maintained
+        else:
+            return 1
+
+    def consume_maintained(self):
+        passed_time = time.time() - config.skill_cd_timer[self._custom_id] 
+        config.skill_maintained_count[self._custom_id] = config.skill_maintained_count[self._custom_id] + float(passed_time / self.recharge_interval)
+        if config.skill_maintained_count[self._custom_id] > self.max_maintained:
+            config.skill_maintained_count[self._custom_id] = self.max_maintained
+        config.skill_maintained_count[self._custom_id] = config.skill_maintained_count[self._custom_id] - 1
+
     def main(self):
         if not self.check_should_active() and not self.key_up_skill:
             return False
         if self.wait_until_ready:
-            cd_pass = time.time() - float(self.get_my_last_cooldown())
-            if cd_pass < self.skill_cool_down:
-                wait_time = self.skill_cool_down - cd_pass + 0.2
-                print('wait_time : ',wait_time)
-                time.sleep(wait_time)
-        if self.skill_cool_down == 0 or self.check_is_skill_ready() or self.key_up_skill:
+            if self.max_maintained > 0:
+                temp_maintained = self.check_maintained()
+                if temp_maintained < 1:
+                    time.sleep(0.2+self.recharge_interval*(1-temp_maintained))
+            else:
+                cd_passed = time.time() - float(self.get_my_last_cooldown())
+                if cd_passed < self.skill_cool_down:
+                    wait_time = self.skill_cool_down - cd_passed + 0.2
+                    print('wait_time : ',wait_time)
+                    time.sleep(wait_time)
+        if self.key_up_skill or (self.check_maintained() >= 1 and (self.skill_cool_down == 0 or self.check_is_skill_ready())):
             if self.ground_skill:
                 utils.wait_for_is_standing(2000)
             if self.pre_delay > 0:
@@ -832,6 +855,7 @@ class BaseSkill(Command):
                     rep_interval = self.rep_interval+self.rep_interval_increase*i
                     time.sleep(utils.rand_float(rep_interval*0.95, rep_interval*1.05))
             # if self.skill_cool_down != 0:
+            self.consume_maintained()
             self.set_my_last_cooldown(time.time())
             if self.combo:
                 time.sleep(utils.rand_float(self.combo_delay*0.95, self.combo_delay*1.1))
