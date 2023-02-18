@@ -1191,13 +1191,14 @@ class StoryAssistant(Command):
         points = utils.multi_match(config.capture.frame, self.ACCEPT_TEMPLATE, threshold=0.9)
         if len(points) > 0:
             print("find ACCEPT_TEMPLATE")
-            press('enter',down_time=1)
+            press('enter')
             find_conversation = True
 
         # find CONVERSATION_TEMPLATE
         points = utils.multi_match(config.capture.frame, self.CONVERSATION_TEMPLATE, threshold=0.9)
         if len(points) > 0:
             print("find CONVERSATION_TEMPLATE")
+            time.sleep(0.1)
             press('space')
             find_conversation = True
 
