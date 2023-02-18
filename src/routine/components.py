@@ -1161,3 +1161,69 @@ class FollowPartner(Command):
             ChangeChannel(target_channel=str(partner_channel)).execute()
         if my_map != partner_map:
             GoToMap(partner_map).execute()
+
+class StoryAssistant(Command):
+    """ story assistant """
+    _display_name = '主線助手'
+
+    def __init__(self):
+        super().__init__(locals())
+        self.BULB_TEMPLATE = cv2.imread('assets/bulb.png', 0)
+        self.COMPLETE_TEMPLATE = cv2.imread('assets/story_complete.png', 0)
+        self.NEXT_TEMPLATE = cv2.imread('assets/story_next.png', 0)
+        self.ACCEPT_TEMPLATE = cv2.imread('assets/story_accept.png', 0)
+        self.CONVERSATION_TEMPLATE = cv2.imread('assets/stop_conversation.jpg', 0)
+        self.HPMP_TEMPLATE = cv2.imread('assets/hpmp.png', 0)
+
+    def main(self):
+        settings.story_mode = True
+        config.map_changing = True
+        find_conversation = False
+
+        # find NEXT_TEMPLATE
+        points = utils.multi_match(config.capture.frame, self.NEXT_TEMPLATE, threshold=0.9)
+        if len(points) > 0:
+            print("find NEXT_TEMPLATE")
+            press('space')
+            find_conversation = True
+        
+        # find ACCEPT_TEMPLATE
+        points = utils.multi_match(config.capture.frame, self.ACCEPT_TEMPLATE, threshold=0.9)
+        if len(points) > 0:
+            print("find ACCEPT_TEMPLATE")
+            press('enter')
+            find_conversation = True
+
+        # find CONVERSATION_TEMPLATE
+        points = utils.multi_match(config.capture.frame, self.CONVERSATION_TEMPLATE, threshold=0.9)
+        if len(points) > 0:
+            print("find CONVERSATION_TEMPLATE")
+            press('space')
+            find_conversation = True
+
+        # find HPMP_TEMPLATE
+        points = utils.multi_match(config.capture.frame, self.HPMP_TEMPLATE, threshold=0.9)
+        if len(points) == 0:
+            print("no HPMP_TEMPLATE")
+            press('space')
+
+        if not find_conversation:
+            # find COMPLETE_TEMPLATE
+            points = utils.multi_match(config.capture.frame, self.COMPLETE_TEMPLATE, threshold=0.9)
+            if len(points) > 0:
+                p = (points[0][0],points[0][1])
+                print("find COMPLETE_TEMPLATE")
+                utils.game_window_click(p,delay=0.1)
+                time.sleep(0.3)
+                utils.game_window_click((700,100), button='right',delay=0.1)
+
+            # # find bulb
+            # points = utils.multi_match(config.capture.frame, self.BULB_TEMPLATE, threshold=0.9)
+            # if len(points) > 0:
+            #     p = (points[0][0],points[0][1])
+            #     print("find bulb")
+            #     utils.game_window_click(p)
+            #     time.sleep(0.3)
+            #     utils.game_window_click((700,100), button='right')
+
+        time.sleep(utils.rand_float(0.08, 0.2))

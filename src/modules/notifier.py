@@ -149,18 +149,19 @@ class Notifier:
                                 self._alert('siren')
 
                     # check for unexpected conversation
-                    conversation_frame = frame[height//2-250:height//2+250, width //2-250:width//2+250]
-                    conversation = utils.multi_match(conversation_frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
-                    if len(conversation) > 0:
-                        print("stop conversation")
-                        conversation_pos = min(conversation, key=lambda p: p[0])
-                        target = (
-                            round(conversation_pos[0] +(width //2-250)),
-                            round(conversation_pos[1] +(height//2-250))
-                        )
-                        utils.game_window_click(target)
-                        time.sleep(1)
-                        utils.game_window_click((700,100), button='right')
+                    if not settings.story_mode:
+                        conversation_frame = frame[height//2-250:height//2+250, width //2-250:width//2+250]
+                        conversation = utils.multi_match(conversation_frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
+                        if len(conversation) > 0:
+                            print("stop conversation")
+                            conversation_pos = min(conversation, key=lambda p: p[0])
+                            target = (
+                                round(conversation_pos[0] +(width //2-250)),
+                                round(conversation_pos[1] +(height//2-250))
+                            )
+                            utils.game_window_click(target)
+                            time.sleep(1)
+                            utils.game_window_click((700,100), button='right')
 
                     # check for unexpected dead
                     revive_frame = frame[height//2-100:height//2+200, width //2-150:width//2+150]
@@ -176,6 +177,8 @@ class Notifier:
                         utils.game_window_click(target)
                         time.sleep(1)
                         utils.game_window_click((700,100), button='right')
+                        if not settings.auto_revive:
+                            self._alert('siren')
 
                 
                 # Check for skill cd
