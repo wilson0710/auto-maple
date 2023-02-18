@@ -221,7 +221,7 @@ class Bot(Configurable):
         new_step = components.step
         new_cb = {}
         for c in (components.Wait, components.Walk, components.Fall, components.SkillCombination, components.GoToMap, components.CustomKey, components.ChangeChannel,components.Player_jump,components.WaitStanding, \
-            components.EndScript, components.DailyCombination, components.FollowPartner ):
+            components.EndScript, components.DailyCombination, components.FollowPartner, components.StoryAssistant ):
             new_cb[c.__name__.lower()] = c
 
         # Import the desired command book file

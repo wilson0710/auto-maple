@@ -89,7 +89,7 @@ class Notifier:
                 minimap = config.capture.minimap['minimap']
 
                 # Check for unexpected black screen
-                if not config.map_changing:
+                if not config.map_changing and not settings.story_mode:
                     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                     if np.count_nonzero(gray < 15) / height / width > self.room_change_threshold:
                         if settings.rent_frenzy == False:
@@ -107,7 +107,7 @@ class Notifier:
                         pass
                         # config.should_change_channel = True
 
-                if settings.rent_frenzy == False:
+                if settings.rent_frenzy == False and not settings.story_mode:
                     # Check for other players entering the map
                     filtered = utils.filter_color(minimap, OTHER_RANGES)
                     others = len(utils.multi_match(filtered, OTHER_TEMPLATE, threshold=0.5))
@@ -132,7 +132,7 @@ class Notifier:
                 # not urgen detection 
                 if detection_i % 5==0:
                     # check for rune curse
-                    if settings.rent_frenzy == False:
+                    if settings.rent_frenzy == False and settings.story_mode == False:
                         curse_frame = frame[0:height // 2, 0:width//2]
                         rune_curse_detector = utils.multi_match(curse_frame, RUNE_CURSE_TEMPLATE, threshold=0.9)
                         if len(rune_curse_detector) > 0:
@@ -149,18 +149,19 @@ class Notifier:
                                 self._alert('siren')
 
                     # check for unexpected conversation
-                    conversation_frame = frame[height//2-250:height//2+250, width //2-250:width//2+250]
-                    conversation = utils.multi_match(conversation_frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
-                    if len(conversation) > 0:
-                        print("stop conversation")
-                        conversation_pos = min(conversation, key=lambda p: p[0])
-                        target = (
-                            round(conversation_pos[0] +(width //2-250)),
-                            round(conversation_pos[1] +(height//2-250))
-                        )
-                        utils.game_window_click(target)
-                        time.sleep(1)
-                        utils.game_window_click((700,100), button='right')
+                    if not settings.story_mode:
+                        conversation_frame = frame[height//2-250:height//2+250, width //2-250:width//2+250]
+                        conversation = utils.multi_match(conversation_frame, STOP_CONVERSTION_TEMPLATE, threshold=0.9)
+                        if len(conversation) > 0:
+                            print("stop conversation")
+                            conversation_pos = min(conversation, key=lambda p: p[0])
+                            target = (
+                                round(conversation_pos[0] +(width //2-250)),
+                                round(conversation_pos[1] +(height//2-250))
+                            )
+                            utils.game_window_click(target)
+                            time.sleep(1)
+                            utils.game_window_click((700,100), button='right')
 
                     # check for unexpected dead
                     revive_frame = frame[height//2-100:height//2+200, width //2-150:width//2+150]
@@ -176,6 +177,8 @@ class Notifier:
                         utils.game_window_click(target)
                         time.sleep(1)
                         utils.game_window_click((700,100), button='right')
+                        if not settings.auto_revive:
+                            self._alert('siren')
 
                 
                 # Check for skill cd
@@ -204,7 +207,7 @@ class Notifier:
 
                 # Check for rune
                 now = time.time()
-                if settings.rent_frenzy == False:
+                if settings.rent_frenzy == False and settings.story_mode == False:
                     if not config.bot.rune_active:
                         filtered = utils.filter_color(minimap, RUNE_RANGES)
                         matches = utils.multi_match(filtered, RUNE_TEMPLATE, threshold=0.9)

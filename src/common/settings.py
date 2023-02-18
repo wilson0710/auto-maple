@@ -87,6 +87,8 @@ SETTING_VALIDATORS = {
     'home_scroll_key' :str,
     'rune_cd_min' : validate_nonnegative_int,
     'cd_value': str,
+    'story_mode' : validate_boolean,
+    'auto_revive' : validate_boolean,
 }
 
 
@@ -107,6 +109,8 @@ def reset():
     home_scroll_key = ''
     rune_cd_min = 15
     cd_value = ''
+    story_mode = False
+    auto_revive = False
     # rent_frenzy = False
     # driver_key = False
     
@@ -136,6 +140,10 @@ driver_key = False
 id = ""
 
 auto_change_channel = False
+
+story_mode = False
+
+auto_revive = False
 
 rune_cd_min = 15
 
