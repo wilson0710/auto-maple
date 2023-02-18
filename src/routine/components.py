@@ -98,14 +98,19 @@ class Point(Component):
         self.frequency = settings.validate_nonnegative_int(frequency)
         self.counter = int(settings.validate_boolean(skip))
         self.adjust = settings.validate_boolean(adjust)
+        self.is_conditional_point = False
         if active_if_in_x_range != '':
             self.active_if_in_x_range = float(active_if_in_x_range)
+            self.is_conditional_point = True
         if active_if_in_y_range != '':
             self.active_if_in_y_range = float(active_if_in_y_range)
+            self.is_conditional_point = True
         if active_if_not_in_x_range != '':
             self.active_if_not_in_x_range = float(active_if_not_in_x_range)
+            self.is_conditional_point = True
         if active_if_not_in_y_range != '':
             self.active_if_not_in_y_range = float(active_if_not_in_y_range)
+            self.is_conditional_point = True
         self.active_if_skill_ready = active_if_skill_ready
         self.active_if_skill_cd = active_if_skill_cd
         if not hasattr(self, 'commands'):       # Updating Point should not clear commands
@@ -124,7 +129,7 @@ class Point(Component):
             return
         """Executes the set of actions associated with this Point."""
         if self.counter == 0:
-            if self.location != (-1,-1):
+            if self.location != (-1,-1) and not self.is_conditional_point:
                 move = config.bot.command_book['move']
                 move(*self.location).execute()
                 if self.adjust:
@@ -161,14 +166,14 @@ class Point(Component):
             if hasattr(self, 'active_if_not_in_x_range'):
                 if abs(self.x - config.player_pos[0]) >= self.active_if_not_in_x_range:
                     print("active_if_not_in_x_range >=",self.active_if_not_in_x_range)
-                    self.location = (-1,-1)
+                    # self.location = (-1,-1)
                     return True
                 else:
                     pass
             if hasattr(self, 'active_if_not_in_y_range'):
                 if abs(self.y - config.player_pos[1]) >= self.active_if_not_in_y_range:
                     print("active_if_not_in_y_range >=",self.active_if_not_in_y_range)
-                    self.location = (-1,-1)
+                    # self.location = (-1,-1)
                     return True
                 else:
                     pass
@@ -184,7 +189,6 @@ class Point(Component):
 
     def __str__(self):
         return f'  * {self.location}'
-
 
 class Label(Component):
     id = '@'
@@ -214,7 +218,6 @@ class Label(Component):
 
     def __str__(self):
         return f'{self.label}:'
-
 
 class Jump(Component):
     """Jumps to the given Label."""
@@ -273,7 +276,6 @@ class Jump(Component):
     def __str__(self):
         return f'  > {self.label}'
 
-
 class Setting(Component):
     """Changes the value of the given setting variable."""
 
@@ -291,7 +293,6 @@ class Setting(Component):
 
     def __str__(self):
         return f'  $ {self.key} = {self.value}'
-
 
 SYMBOLS = {
     '*': Point,
@@ -451,11 +452,15 @@ class Command(Component):
 class Move(Command):
     """Moves to a given position using the shortest path based on the current Layout."""
 
-    def __init__(self, x, y, max_steps=15):
+    def __init__(self, x, y, move_tolerance='', max_steps=15):
         super().__init__(locals())
         self.target = (float(x), float(y))
         self.max_steps = settings.validate_nonnegative_int(max_steps)
         self.prev_direction = ''
+        if move_tolerance != '':
+            self.move_tolerance = float(move_tolerance)
+        else:
+            self.move_tolerance = settings.move_tolerance
 
     def _new_direction(self, new):
         key_down(new,down_time=0.04)
@@ -482,8 +487,8 @@ class Move(Command):
             if config.player_pos[0] == 0 and config.player_pos[1] == 0:
                 step("left", (-30,30))
             while config.enabled and counter > 0 and \
-                    (abs(d_x) > settings.move_tolerance or \
-                    abs(d_y) > settings.move_tolerance / 2):
+                    (abs(d_x) > self.move_tolerance or \
+                    abs(d_y) > self.move_tolerance / 2):
                 # stop if other move trigger
                 if (settings.auto_change_channel and (config.should_change_channel)) or config.enabled == False:
                     self._new_direction('')
@@ -492,7 +497,7 @@ class Move(Command):
                 if toggle:
                     d_x = point[0] - config.player_pos[0]
                     d_y = point[1] - config.player_pos[1]
-                    if abs(d_x) > settings.move_tolerance :
+                    if abs(d_x) > self.move_tolerance :
                         if d_x < 0:
                             key = 'left'
                         else:
@@ -518,22 +523,22 @@ class Move(Command):
                         else:
                             key = 'right'
                         self._new_direction(key)
-                        time.sleep(0.1*abs(d_x)/settings.move_tolerance)
+                        time.sleep(0.1*abs(d_x)/self.move_tolerance)
                         self._new_direction('')
                 else:
                     d_x = point[0] - config.player_pos[0]
                     d_y = point[1] - config.player_pos[1]
-                    # if abs(d_y) > settings.move_tolerance / 2:
+                    # if abs(d_y) > self.move_tolerance / 2:
                     if abs(d_y) >= 2:
                         if d_y < 0:
                             key = 'up' # if direction=up dont press up to avoid transporter
-                            # if abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
+                            # if abs(d_x) <= self.move_tolerance: # key up horizontal arrow if inside move_tolerance 
                             self._new_direction('')
                         else:
                             key = 'down'
                             # if not config.player_states['in_bottom_platform']:
                             #     self._new_direction(key)
-                            # if abs(d_x) <= settings.move_tolerance: # key up horizontal arrow if inside move_tolerance 
+                            # if abs(d_x) <= self.move_tolerance: # key up horizontal arrow if inside move_tolerance 
                             self._new_direction('')
                         step(key, point)
                         if settings.record_layout:
@@ -617,13 +622,13 @@ class Fall(Command):
 
     def main(self):
         WaitStanding(duration='2').execute()
-        time.sleep(utils.rand_float(0.05, 0.07))
+        time.sleep(utils.rand_float(0.02, 0.05))
         fall_successful = False
         for i in range(3):
             cur_y = config.player_pos[1]
             key_down('down',down_time=0.04)
-            press(config.jump_button, 1, down_time=0.05,up_time=0.03)
-            key_up('down',up_time=0.1)
+            press(config.jump_button, 1, down_time=0.05,up_time=0.05)
+            key_up('down',up_time=0.08)
             cur_y2 = config.player_pos[1]
             for j in range(50):
                 if config.player_pos[1]-cur_y2 >= 1:
@@ -785,6 +790,8 @@ class BaseSkill(Command):
             if not self._custom_id in config.skill_cd_timer:
                 config.skill_cd_timer[self._custom_id] = 0
                 config.is_skill_ready_collector[self._custom_id] = True
+            if not self._custom_id in config.skill_maintained_count:
+                config.skill_maintained_count[self._custom_id] = 0
             passed_time = time.time() - config.skill_cd_timer[self._custom_id] 
             temp_maintained = config.skill_maintained_count[self._custom_id] + float(passed_time / self.recharge_interval)
             return temp_maintained
@@ -792,11 +799,13 @@ class BaseSkill(Command):
             return 1
 
     def consume_maintained(self):
-        passed_time = time.time() - config.skill_cd_timer[self._custom_id] 
-        config.skill_maintained_count[self._custom_id] = config.skill_maintained_count[self._custom_id] + float(passed_time / self.recharge_interval)
-        if config.skill_maintained_count[self._custom_id] > self.max_maintained:
-            config.skill_maintained_count[self._custom_id] = self.max_maintained
-        config.skill_maintained_count[self._custom_id] = config.skill_maintained_count[self._custom_id] - 1
+        if self.max_maintained > 0:
+            passed_time = time.time() - config.skill_cd_timer[self._custom_id] 
+            config.skill_maintained_count[self._custom_id] = config.skill_maintained_count[self._custom_id] + float(passed_time / self.recharge_interval)
+            if config.skill_maintained_count[self._custom_id] > self.max_maintained:
+                config.skill_maintained_count[self._custom_id] = self.max_maintained
+            config.skill_maintained_count[self._custom_id] = config.skill_maintained_count[self._custom_id] - 1
+            print(self._custom_id,' skill_maintained_count : ', config.skill_maintained_count[self._custom_id])
 
     def main(self):
         if not self.check_should_active() and not self.key_up_skill:
@@ -806,12 +815,11 @@ class BaseSkill(Command):
                 temp_maintained = self.check_maintained()
                 if temp_maintained < 1:
                     time.sleep(0.2+self.recharge_interval*(1-temp_maintained))
-            else:
-                cd_passed = time.time() - float(self.get_my_last_cooldown())
-                if cd_passed < self.skill_cool_down:
-                    wait_time = self.skill_cool_down - cd_passed + 0.2
-                    print('wait_time : ',wait_time)
-                    time.sleep(wait_time)
+            cd_passed = time.time() - float(self.get_my_last_cooldown())
+            if cd_passed < self.skill_cool_down:
+                wait_time = self.skill_cool_down - cd_passed + 0.2
+                print('wait_time : ',wait_time)
+                time.sleep(wait_time)
         if self.key_up_skill or (self.check_maintained() >= 1 and (self.skill_cool_down == 0 or self.check_is_skill_ready())):
             if self.ground_skill:
                 utils.wait_for_is_standing(2000)
@@ -836,21 +844,21 @@ class BaseSkill(Command):
                     if self.fast_rep:
                         key_down(self.key,down_time=0.045)
                     else:
-                        key_down(self.key,down_time=0.08)
+                        key_down(self.key,down_time=0.07)
                 if self.direction_after_skill:
                     if self.fast_direction:
-                        time.sleep(utils.rand_float(0.02, 0.03))
-                    else:
-                        time.sleep(utils.rand_float(0.2, 0.25))
-                    key_down(self.direction,down_time=0.05)
-                    time.sleep(utils.rand_float(0.03, 0.04))
+                        key_down(self.direction,down_time=0.06)
                 if self.duration != 0:
                     time.sleep(utils.rand_float(self.duration*0.97, self.duration*1.03))
                 if i == (self.rep-1):
-                    if not self.key_down_skill:
-                        key_up(self.direction,up_time=0.01)
+                    if not self.key_down_skill and self.fast_direction:
+                        key_up(self.direction,up_time=0.05)
                 if not self.key_down_skill:
-                    key_up(self.key,up_time=0.04)
+                    key_up(self.key,up_time=0.02)
+                if self.direction_after_skill:
+                    if not self.fast_direction:
+                        time.sleep(utils.rand_float(0.25, 0.3))
+                    press(self.direction,down_time=0.05)
                 if i != (self.rep-1):
                     rep_interval = self.rep_interval+self.rep_interval_increase*i
                     time.sleep(utils.rand_float(rep_interval*0.95, rep_interval*1.05))
@@ -858,9 +866,9 @@ class BaseSkill(Command):
             self.consume_maintained()
             self.set_my_last_cooldown(time.time())
             if self.combo:
-                time.sleep(utils.rand_float(self.combo_delay*0.95, self.combo_delay*1.1))
+                time.sleep(utils.rand_float(self.combo_delay*0.97, self.combo_delay*1.1))
             else:
-                time.sleep(utils.rand_float(self.delay*0.97, self.delay*1.12))
+                time.sleep(utils.rand_float(self.delay*0.97, self.delay*1.1))
             # if self.key_up_skill:
             config.player_states['is_keydown_skill'] = False
             if self.float_in_air:

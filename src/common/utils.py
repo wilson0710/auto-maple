@@ -169,6 +169,9 @@ def get_is_in_skill_buff(skill):
     for key in command_book:
         for s in skills:
             skill_and_bias = s.split('-')
+            if str(s).find('+') >= 0:
+                skill_and_bias = s.split('+')
+                skill_and_bias[1] = float(skill_and_bias[1]) * -1
             if len(skill_and_bias) == 1:
                 bias = 0
             else:
@@ -228,7 +231,6 @@ def single_match(frame, template):
     w, h = template.shape[::-1]
     bottom_right = (top_left[0] + w, top_left[1] + h)
     return top_left, bottom_right
-
 
 def multi_match(frame, template, threshold=0.95,save_result = False):
     """
