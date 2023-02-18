@@ -1191,7 +1191,7 @@ class StoryAssistant(Command):
         points = utils.multi_match(config.capture.frame, self.ACCEPT_TEMPLATE, threshold=0.9)
         if len(points) > 0:
             print("find ACCEPT_TEMPLATE")
-            press('enter')
+            press('enter',down_time=1)
             find_conversation = True
 
         # find CONVERSATION_TEMPLATE
@@ -1226,4 +1226,4 @@ class StoryAssistant(Command):
             #     time.sleep(0.3)
             #     utils.game_window_click((700,100), button='right')
 
-        time.sleep(utils.rand_float(0.08, 0.2))
+        time.sleep(utils.rand_float(0.2, 0.4))

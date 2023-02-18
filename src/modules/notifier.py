@@ -89,7 +89,7 @@ class Notifier:
                 minimap = config.capture.minimap['minimap']
 
                 # Check for unexpected black screen
-                if not config.map_changing:
+                if not config.map_changing and not settings.story_mode:
                     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                     if np.count_nonzero(gray < 15) / height / width > self.room_change_threshold:
                         if settings.rent_frenzy == False:
@@ -107,7 +107,7 @@ class Notifier:
                         pass
                         # config.should_change_channel = True
 
-                if settings.rent_frenzy == False:
+                if settings.rent_frenzy == False and not settings.story_mode:
                     # Check for other players entering the map
                     filtered = utils.filter_color(minimap, OTHER_RANGES)
                     others = len(utils.multi_match(filtered, OTHER_TEMPLATE, threshold=0.5))
@@ -132,7 +132,7 @@ class Notifier:
                 # not urgen detection 
                 if detection_i % 5==0:
                     # check for rune curse
-                    if settings.rent_frenzy == False:
+                    if settings.rent_frenzy == False and settings.story_mode == False:
                         curse_frame = frame[0:height // 2, 0:width//2]
                         rune_curse_detector = utils.multi_match(curse_frame, RUNE_CURSE_TEMPLATE, threshold=0.9)
                         if len(rune_curse_detector) > 0:
@@ -207,7 +207,7 @@ class Notifier:
 
                 # Check for rune
                 now = time.time()
-                if settings.rent_frenzy == False:
+                if settings.rent_frenzy == False and settings.story_mode == False:
                     if not config.bot.rune_active:
                         filtered = utils.filter_color(minimap, RUNE_RANGES)
                         matches = utils.multi_match(filtered, RUNE_TEMPLATE, threshold=0.9)
