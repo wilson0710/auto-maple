@@ -11,33 +11,33 @@ class Key:
     # Movement
     JUMP = 'space'
     FLASH_JUMP = 'space'
-    ROPE = 'l'
+    ROPE = 'ctrl'
     UP_JUMP = 'up+space'
+    DOWN_JUMP = 'down+space'
 
     # Buffs
-    HOLY_SYMBOL         = '0'    # 
+    BUFF_1              = '1'    # 
+    ROLL_OF_THE_DICE    = 'home'    # 
+    HOLY_SYMBOL         = '5'    # 
+    ADVANCED_BLESSING   = '6'    #
+    COMBAT_ORDERS       = '7'    # 
     SHARP_EYE           = '8'    # 
     SPEED_INFUSION      = '9'    # Speed Infusion
-    MAPLE_WARRIOR       = '='    # Maple Warrior
-    WEAVE_INFUSION      = '-'    # 
-    
+    MAPLE_WARRIOR       = '0'    # Maple Warrior
+
+
     # Buffs Toggle
 
     # Attack Skills
-    SKILL_Q = 'q'   #Cleave
-    SKILL_W = 'w'   #Resonance
-    SKILL_E = 'e'   #Impale
-    SKILL_R = 'r'   #Grave
-    SKILL_T = 't'   #Ruin
-    SKILL_A = 'a'   #Noble Summons
-    SKILL_S = 's'   #Bloom
-    SKILL_D = 'd'   #Hunting Decree
-    SKILL_F = 'f'   #Plummet
-    SKILL_5 = '5'   #Storm
-    SKILL_6 = '6'   #Infinity Blade
+    SKILL_G = 'g'           #LOTD
+    SKILL_D = 'd'           #Serpent Vortex
+    SKILL_X = 'x'           #Hook Bomber
+    SKILL_F = 'down+f'      #Erda Shower
+    SKILL_A = 'a'           #True Arachnid Reflection
+    SKILL_S = 's'           #Corkscrew Blow
 
     # special Skills
-    # SP_F12 = 'f12' # 輪迴
+    # SP_F12 = 'f12'      # 輪迴
 
 def step(direction, target):
     """
@@ -56,26 +56,25 @@ def step(direction, target):
             print("is stuck")
             time.sleep(utils.rand_float(0.1, 0.2))
             press(Key.JUMP)
-            Skill_Q(direction='').execute()
+            Skill_X(direction='').execute()
             WaitStanding(duration='1').execute()
         if abs(d_x) >= 16:
             if abs(d_x) >= 60:
-                FlashJump(direction='',triple_jump='true',fast_jump='false').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_x').execute()
             elif abs(d_x) >= 28:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_x').execute()
             else:
                 if d_y == 0:
-                    Skill_C().execute()
                     Skill_S().execute()
                 else:
-                    Skill_AS(direction='',jump='true').execute()
+                    Skill_X(direction='',jump='true').execute()
             time.sleep(utils.rand_float(0.04, 0.06))
             # if abs(d_x) <= 22:
             #     key_up(direction)
             if config.player_states['movement_state'] == config.MOVEMENT_STATE_FALLING:
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_x').execute()
             utils.wait_for_is_standing(500)
         else:
             time.sleep(utils.rand_float(0.05, 0.08))
@@ -93,24 +92,24 @@ def step(direction, target):
                 time.sleep(utils.rand_float(1.2, 1.5))
             elif abs(d_y) <= 17:
                 UpJump().execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_x').execute()
             else:
                 press(Key.ROPE, 1)
                 time.sleep(utils.rand_float(1.2, 1.5))
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_x').execute()
             utils.wait_for_is_standing(300)
         else:
-            press(Key.JUMP, 1)
+            press(Key.JUMP, 1) 
             time.sleep(utils.rand_float(0.1, 0.15))
 
     if direction == 'down':
         if abs(d_x) > settings.move_tolerance:
             return
-        down_duration = 0.04
+        down_duration = 0.15                #changed
         if abs(d_y) > 20:
-            down_duration = 0.4
+            down_duration = 0.55            #changed
         elif abs(d_y) > 13:
-            down_duration = 0.22
+            down_duration = 0.35            #changed
         
         if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
             print("down stair")
@@ -132,7 +131,7 @@ def step(direction, target):
                         key_down('right')
                         press(Key.JUMP)
                         key_up('right')
-            SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+            SkillCombination(direction='',jump='false',target_skills='skill_x').execute()
                 
         utils.wait_for_is_standing(2000)
         time.sleep(utils.rand_float(0.1, 0.12))
@@ -176,12 +175,12 @@ class Adjust(Command):
                 if abs(d_y) > settings.adjust_tolerance:
                     if d_y < 0:
                         utils.wait_for_is_standing(1000)
-                        UpJump('up').execute()
+                        UpJump().main()                                         #changed
                     else:
                         utils.wait_for_is_standing(1000)
                         key_down('down')
                         time.sleep(utils.rand_float(0.05, 0.07))
-                        press(Key.JUMP, 2, down_time=0.1)
+                        press(Key.JUMP, 1, down_time=0.1)                       #changed
                         key_up('down')
                         time.sleep(utils.rand_float(0.17, 0.25))
                     counter -= 1
@@ -204,6 +203,7 @@ class Buff(Command):
 
     def main(self):
         # buffs = [Key.SPEED_INFUSION, Key.HOLY_SYMBOL, Key.SHARP_EYE, Key.COMBAT_ORDERS, Key.ADVANCED_BLESSING]
+        buffs = [Key.SPEED_INFUSION, Key.HOLY_SYMBOL, Key.COMBAT_ORDERS, Key.ADVANCED_BLESSING, Key.MAPLE_WARRIOR, Key.ROLL_OF_THE_DICE, Key.SHARP_EYE]
         now = time.time()
         utils.wait_for_is_standing(1000)
         if self.cd120_buff_time == 0 or now - self.cd120_buff_time > 121:
@@ -219,10 +219,14 @@ class Buff(Command):
             self.cd240_buff_time = now
         if self.cd900_buff_time == 0 or now - self.cd900_buff_time > 900:
             self.cd900_buff_time = now
+        if self.decent_buff_time == 0 or now - self.decent_buff_time > settings.buff_cooldown:
+	        for key in buffs:
+		        press(key, 3, up_time=0.3)
+	        self.decent_buff_time = now		
 
 class FlashJump(Command):
     """Performs a flash jump in the given direction."""
-    _display_name = '二段跳'
+    _display_name = 'Flash Jump'
 
     def __init__(self, direction="",jump='false',combo='False',triple_jump="False",fast_jump="false",reverse_triple='false'):
         super().__init__(locals())
@@ -267,7 +271,7 @@ class FlashJump(Command):
 
 class UpJump(BaseSkill):
     """Performs a up jump in the given direction."""
-    _display_name = '上跳'
+    _display_name = 'Up Jump'
     _distance = 27
     key=Key.UP_JUMP
     delay=0.1
@@ -276,18 +280,13 @@ class UpJump(BaseSkill):
     ground_skill=False
     buff_time=0
     combo_delay = 0.1
-
-    # def __init__(self,jump='false', direction='',combo='true'):
-    #     super().__init__(locals())
-    #     self.direction = settings.validate_arrows(direction)
-
     def main(self):
         self.jump = True
         super().main()
         
 class Rope(BaseSkill):
     """Performs a up jump in the given direction."""
-    _display_name = '連接繩索'
+    _display_name = 'Rope Lift'
     _distance = 27
     key=Key.ROPE
     delay=1.4
@@ -297,104 +296,77 @@ class Rope(BaseSkill):
     buff_time=0
     combo_delay = 0.2
 
-class Skill_A(BaseSkill):
-    _display_name = '冷血連擊'
-    _distance = 27
-    key=Key.SKILL_A
-    delay=0.45
-    rep_interval=0.5
+# class Skill_A(BaseSkill):
+#     _display_name = '冷血連擊'
+#     _distance = 27
+#     key=Key.SKILL_A
+#     delay=0.45
+#     rep_interval=0.5
+#     skill_cool_down=0
+#     ground_skill=False
+#     buff_time=0
+#     combo_delay = 0.25
+
+class Skill_G(BaseSkill):
+    _display_name ='Lord of the Deep'
+    key=Key.SKILL_G
+    delay=0.3
+    rep_interval=0.25
     skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.25
-
-class Skill_Q(BaseSkill):
-    _display_name = 'Cleave'
-    _distance = 27
-    key=Key.SKILL_Q
-    delay=0.45
-    rep_interval=0.5
-    skill_cool_down=0
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.25
-
-class Skill_W(BaseSkill):
-    _display_name = 'Impale'
-    _distance = 27
-    key=Key.SKILL_W
-    delay=0.45
-    rep_interval=0.5
-    skill_cool_down=7
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.25    
-
-class Skill_E(BaseSkill):
-    _display_name = 'Resonance'
-    _distance = 27
-    key=Key.SKILL_E
-    delay=0.45
-    rep_interval=0.5
-    skill_cool_down=0
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.25       
-
-class Skill_R(BaseSkill):
-    _display_name = 'Grave'
-    _distance = 27
-    key=Key.SKILL_R
-    delay=0.45
-    rep_interval=0.5
-    skill_cool_down=10
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.25
-
-class Skill_A(BaseSkill):
-    _display_name = 'Noble Summons'
-    _distance = 27
-    key=Key.SKILL_A
-    delay=0.45
-    rep_interval=0.5
-    skill_cool_down=12
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.25   
-
-class Skill_S(BaseSkill):
-    _display_name = 'Bloom'
-    _distance = 27
-    key=Key.SKILL_S
-    delay=0.45
-    rep_interval=0.5
-    skill_cool_down=20
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.25          
+    combo_delay = 0.1
 
 class Skill_D(BaseSkill):
-    _display_name = 'Hunting Decree'
-    _distance = 27
+    _display_name ='Serpent Vortex'
     key=Key.SKILL_D
-    delay=0.45
-    rep_interval=0.5
-    skill_cool_down=0.5
+    delay=0.3
+    rep_interval=0.25
+    skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.25   
+    combo_delay = 0.1
 
 class Skill_F(BaseSkill):
-    _display_name = 'Plummet'
-    _distance = 27
+    _display_name ='Erda Shower'
     key=Key.SKILL_F
+    delay=0.9
+    rep_interval=0.25
+    skill_cool_down=57
+    ground_skill=True
+    buff_time=60
+    combo_delay = 0.3
+
+class Skill_X(BaseSkill):
+    _display_name = 'Hook Bomber'
+    _distance = 27
+    key=Key.SKILL_X
     delay=0.45
     rep_interval=0.5
-    skill_cool_down=0.5
+    skill_cool_down=0
     ground_skill=False
     buff_time=0
-    combo_delay = 0.25                
+    combo_delay = 0.25
+
+class Skill_A(BaseSkill):
+    _display_name ='True Arachnid Reflection'
+    key=Key.SKILL_A
+    delay=0.6
+    rep_interval=0.25
+    skill_cool_down=240
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.4
+
+class Skill_S(BaseSkill):
+    _display_name ='Corkscrew Blow'
+    key=Key.SKILL_S
+    delay=0.5
+    rep_interval=0.25
+    skill_cool_down=0
+    ground_skill=True
+    buff_time=0
+    combo_delay = 0.3
 
 class AutoHunting(Command):
     _display_name ='Auto Hunting'
@@ -410,7 +382,7 @@ class AutoHunting(Command):
         toggle = True
         move = config.bot.command_book['move']
         GoToMap(target_map=self.map).execute()
-        SkillCombination(direction='',target_skills='skill_as').execute()
+        SkillCombination(direction='',target_skills='skill_x').execute()
         minimap = config.capture.minimap['minimap']
         height, width, _n = minimap.shape
         bottom_y = height - 30
@@ -418,12 +390,12 @@ class AutoHunting(Command):
         settings.platforms = 'b' + str(int(bottom_y))
         while True:
             if settings.auto_change_channel and config.should_solve_rune:
-                Skill_AS().execute()
+                Skill_X().execute()
                 config.bot._solve_rune()
                 continue
             if settings.auto_change_channel and config.should_change_channel:
                 ChangeChannel(max_rand=40).execute()
-                Skill_AS().execute()
+                Skill_X().execute()
                 continue
             Frenzy().execute()
             frame = config.capture.frame
@@ -445,10 +417,10 @@ class AutoHunting(Command):
                     bottom_y = config.player_pos[1]
                     settings.platforms = 'b' + str(int(bottom_y))
                 FlashJump(direction='left').execute()
-                Skill_X(direction='left+up').execute()
+                Skill_D(direction='left+up').execute()
                 Skill_S().execute()
                 FlashJump(direction='left').execute()
-                SkillCombination(direction='left',target_skills='skill_w|skill_e|skill_as').execute()
+                SkillCombination(direction='left',target_skills='skill_x').execute()
             else:
                 # left side
                 move(20,bottom_y).execute()
@@ -456,22 +428,22 @@ class AutoHunting(Command):
                     bottom_y = config.player_pos[1]
                     settings.platforms = 'b' + str(int(bottom_y))
                 FlashJump(direction='right').execute()
-                Skill_X(direction='right+up').execute()
+                Skill_D(direction='right+up').execute()
                 Skill_S().execute()
                 FlashJump(direction='right').execute()
-                SkillCombination(direction='right',target_skills='skill_w|skill_e|skill_as').execute()
+                SkillCombination(direction='right',target_skills='skill_x').execute()
             
             if settings.auto_change_channel and config.should_solve_rune:
                 config.bot._solve_rune()
                 continue
             if settings.auto_change_channel and config.should_change_channel:
                 ChangeChannel(max_rand=40).execute()
-                Skill_AS().execute()
+                Skill_X().execute()
                 continue
             move(width//2,bottom_y).execute()
             UpJump(jump='true').execute()
-            SkillCombination(direction='left',target_skills='skill_w|skill_e|skill_as').execute()
-            SkillCombination(direction='right',target_skills='skill_1|skill_d|skill_as').execute()
+            SkillCombination(direction='left',target_skills='skill_x').execute()
+            SkillCombination(direction='right',target_skills='skill_x').execute()
             toggle = not toggle
             
 

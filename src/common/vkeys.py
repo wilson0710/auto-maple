@@ -207,16 +207,16 @@ def key_down(key,down_time=0.05):
                 print(f"Invalid keyboard input: '{key}'.")
             elif not k in unreleased_key:
                 unreleased_key.append(k)
-                if settings.driver_key == True:
-                    # try new input method 
-                    global d_key
-                    if d_key == None:
-                        d_key = driver_key.DriverKey()
-                    d_key.user_key_down(KEY_MAP[k])
-                else:
+                # if settings.driver_key == True:
+                #     # try new input method 
+                #     global d_key
+                #     if d_key == None:
+                #         d_key = driver_key.DriverKey()
+                #     d_key.user_key_down(KEY_MAP[k])
+                # else:
                     # default input method
-                    x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k]))
-                    user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+                x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k]))
+                user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
                 
                 if len(key_combination) > 1:
                     time.sleep(0.02 * (0.9 + 0.7 * random()))
@@ -251,16 +251,16 @@ def key_up(key,up_time=0.05):
                 print(f"Invalid keyboard input: '{key}'.")
             elif k in unreleased_key:
                 unreleased_key.remove(k)
-                if settings.driver_key == True:
-                    # try new input method 
-                    global d_key
-                    if d_key == None:
-                        d_key = driver_key.DriverKey()
-                    d_key.user_key_up(KEY_MAP[k])
-                else:
+                # if settings.driver_key == True:
+                #     # try new input method 
+                #     global d_key
+                #     if d_key == None:
+                #         d_key = driver_key.DriverKey()
+                #     d_key.user_key_up(KEY_MAP[k])
+                # else:
                     # default input method
-                    x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k], dwFlags=KEYEVENTF_KEYUP))
-                    user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+                x = Input(type=INPUT_KEYBOARD, ki=KeyboardInput(wVk=KEY_MAP[k], dwFlags=KEYEVENTF_KEYUP))
+                user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
                 if len(key_combination) > 1:
                     time.sleep(0.04 * (0.9 + 0.7 * random()))
     time.sleep(up_time * (0.9 + 0.6 * random()))

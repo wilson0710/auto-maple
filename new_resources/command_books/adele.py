@@ -35,6 +35,7 @@ class Key:
     SKILL_F = 'f'   #Plummet
     SKILL_5 = '5'   #Storm
     SKILL_6 = '6'   #Infinity Blade
+    SKILL_END = 'end' #Reign
 
     # special Skills
     # SP_F12 = 'f12' # 輪迴
@@ -61,21 +62,20 @@ def step(direction, target):
         if abs(d_x) >= 16:
             if abs(d_x) >= 60:
                 FlashJump(direction='',triple_jump='true',fast_jump='false').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_q').execute()
             elif abs(d_x) >= 28:
                 FlashJump(direction='',triple_jump='false',fast_jump='false').execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_q').execute()
             else:
                 if d_y == 0:
-                    Skill_C().execute()
-                    Skill_S().execute()
+                    SkillCombination(direction='',jump='false',target_skills='skill_w|skill_e').execute()
                 else:
-                    Skill_AS(direction='',jump='true').execute()
+                    Skill_Q(direction='',jump='true').execute()
             time.sleep(utils.rand_float(0.04, 0.06))
             # if abs(d_x) <= 22:
             #     key_up(direction)
             if config.player_states['movement_state'] == config.MOVEMENT_STATE_FALLING:
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_q').execute()
             utils.wait_for_is_standing(500)
         else:
             time.sleep(utils.rand_float(0.05, 0.08))
@@ -91,13 +91,13 @@ def step(direction, target):
                 time.sleep(utils.rand_float(0.1, 0.15))
                 press(Key.ROPE, 1)
                 time.sleep(utils.rand_float(1.2, 1.5))
-            elif abs(d_y) <= 17:
+            elif abs(d_y) <= 20:
                 UpJump().execute()
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_q').execute()
             else:
                 press(Key.ROPE, 1)
                 time.sleep(utils.rand_float(1.2, 1.5))
-                SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_q').execute()
             utils.wait_for_is_standing(300)
         else:
             press(Key.JUMP, 1)
@@ -132,7 +132,7 @@ def step(direction, target):
                         key_down('right')
                         press(Key.JUMP)
                         key_up('right')
-            SkillCombination(direction='',jump='false',target_skills='skill_as').execute()
+            SkillCombination(direction='',jump='false',target_skills='skill_q').execute()
                 
         utils.wait_for_is_standing(2000)
         time.sleep(utils.rand_float(0.1, 0.12))
@@ -204,6 +204,7 @@ class Buff(Command):
 
     def main(self):
         # buffs = [Key.SPEED_INFUSION, Key.HOLY_SYMBOL, Key.SHARP_EYE, Key.COMBAT_ORDERS, Key.ADVANCED_BLESSING]
+        buffs = [Key.SPEED_INFUSION, Key.HOLY_SYMBOL, Key.SHARP_EYE, Key.MAPLE_WARRIOR, Key.WEAVE_INFUSION]
         now = time.time()
         utils.wait_for_is_standing(1000)
         if self.cd120_buff_time == 0 or now - self.cd120_buff_time > 121:
@@ -219,6 +220,10 @@ class Buff(Command):
             self.cd240_buff_time = now
         if self.cd900_buff_time == 0 or now - self.cd900_buff_time > 900:
             self.cd900_buff_time = now
+        if self.decent_buff_time == 0 or now - self.decent_buff_time > settings.buff_cooldown:
+	        for key in buffs:
+		        press(key, 3, up_time=0.3)
+	        self.decent_buff_time = now	
 
 class FlashJump(Command):
     """Performs a flash jump in the given direction."""
@@ -297,17 +302,6 @@ class Rope(BaseSkill):
     buff_time=0
     combo_delay = 0.2
 
-class Skill_A(BaseSkill):
-    _display_name = '冷血連擊'
-    _distance = 27
-    key=Key.SKILL_A
-    delay=0.45
-    rep_interval=0.5
-    skill_cool_down=0
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.25
-
 class Skill_Q(BaseSkill):
     _display_name = 'Cleave'
     _distance = 27
@@ -328,7 +322,7 @@ class Skill_W(BaseSkill):
     skill_cool_down=7
     ground_skill=False
     buff_time=0
-    combo_delay = 0.25    
+    combo_delay = 0.1    
 
 class Skill_E(BaseSkill):
     _display_name = 'Resonance'
@@ -394,7 +388,18 @@ class Skill_F(BaseSkill):
     skill_cool_down=0.5
     ground_skill=False
     buff_time=0
-    combo_delay = 0.25                
+    combo_delay = 0.25   
+
+class Skill_End(BaseSkill):
+    _display_name = 'Reign'
+    _distance = 27
+    key=Key.SKILL_END
+    delay=0.45
+    rep_interval=0.5
+    skill_cool_down=0.5
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.25                  
 
 class AutoHunting(Command):
     _display_name ='Auto Hunting'
@@ -405,25 +410,27 @@ class AutoHunting(Command):
         self.map = map
 
     def main(self):
+        print("First Line")
         daily_complete_template = cv2.imread('assets/daily_complete.png', 0)
         start_time = time.time()
         toggle = True
         move = config.bot.command_book['move']
         GoToMap(target_map=self.map).execute()
-        SkillCombination(direction='',target_skills='skill_as').execute()
+        SkillCombination(direction='',target_skills='skill_q').execute()
         minimap = config.capture.minimap['minimap']
         height, width, _n = minimap.shape
         bottom_y = height - 30
         # bottom_y = config.player_pos[1]
         settings.platforms = 'b' + str(int(bottom_y))
         while True:
+            print("In While True")
             if settings.auto_change_channel and config.should_solve_rune:
-                Skill_AS().execute()
+                Skill_Q().execute()
                 config.bot._solve_rune()
                 continue
             if settings.auto_change_channel and config.should_change_channel:
                 ChangeChannel(max_rand=40).execute()
-                Skill_AS().execute()
+                Skill_Q().execute()
                 continue
             Frenzy().execute()
             frame = config.capture.frame
@@ -445,10 +452,10 @@ class AutoHunting(Command):
                     bottom_y = config.player_pos[1]
                     settings.platforms = 'b' + str(int(bottom_y))
                 FlashJump(direction='left').execute()
-                Skill_X(direction='left+up').execute()
-                Skill_S().execute()
+                Skill_Q(direction='left+up').execute()
+                #Skill_S().execute()
                 FlashJump(direction='left').execute()
-                SkillCombination(direction='left',target_skills='skill_w|skill_e|skill_as').execute()
+                SkillCombination(direction='left',target_skills='skill_q').execute()
             else:
                 # left side
                 move(20,bottom_y).execute()
@@ -456,22 +463,22 @@ class AutoHunting(Command):
                     bottom_y = config.player_pos[1]
                     settings.platforms = 'b' + str(int(bottom_y))
                 FlashJump(direction='right').execute()
-                Skill_X(direction='right+up').execute()
-                Skill_S().execute()
+                Skill_Q(direction='right+up').execute()
+                #Skill_S().execute()
                 FlashJump(direction='right').execute()
-                SkillCombination(direction='right',target_skills='skill_w|skill_e|skill_as').execute()
+                SkillCombination(direction='right',target_skills='skill_q').execute()
             
             if settings.auto_change_channel and config.should_solve_rune:
                 config.bot._solve_rune()
                 continue
             if settings.auto_change_channel and config.should_change_channel:
                 ChangeChannel(max_rand=40).execute()
-                Skill_AS().execute()
+                Skill_Q().execute()
                 continue
             move(width//2,bottom_y).execute()
             UpJump(jump='true').execute()
-            SkillCombination(direction='left',target_skills='skill_w|skill_e|skill_as').execute()
-            SkillCombination(direction='right',target_skills='skill_1|skill_d|skill_as').execute()
+            SkillCombination(direction='left',target_skills='skill_q').execute()
+            SkillCombination(direction='right',target_skills='skill_q').execute()
             toggle = not toggle
             
 

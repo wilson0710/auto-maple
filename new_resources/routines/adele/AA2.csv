@@ -1,0 +1,9 @@
+$, target=id, value=3star
+$, target=move_tolerance, value=8
+$, target=home_scroll_key, value=f9
+$, target=auto_change_channel, value=true
+$, target=frenzy_key, value=f12
+$, target=platforms, value=b38
+$, target=rune_cd_min, value=15
+
+@, label=standard
