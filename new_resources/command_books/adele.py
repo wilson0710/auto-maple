@@ -21,6 +21,10 @@ class Key:
     MAPLE_WARRIOR       = '='    # Maple Warrior
     WEAVE_INFUSION      = '-'    # 
     
+    MONSTER_PARK_RED    = 'f5' 
+    MONSTER_PARK_GREEN  = 'f4' 
+    MONSTER_PARK_GOLD   = 'f3'
+
     # Buffs Toggle
 
     # Attack Skills
@@ -200,11 +204,13 @@ class Buff(Command):
         self.cd200_buff_time = 0
         self.cd240_buff_time = 0
         self.cd900_buff_time = 0
+        self.cd1800_buff_time = 0
         self.decent_buff_time = 0
 
     def main(self):
         # buffs = [Key.SPEED_INFUSION, Key.HOLY_SYMBOL, Key.SHARP_EYE, Key.COMBAT_ORDERS, Key.ADVANCED_BLESSING]
         buffs = [Key.SPEED_INFUSION, Key.HOLY_SYMBOL, Key.SHARP_EYE, Key.MAPLE_WARRIOR, Key.WEAVE_INFUSION]
+        # monPark = [Key.MONSTER_PARK_GOLD, Key.MONSTER_PARK_RED, Key.MONSTER_PARK_GREEN]
         now = time.time()
         utils.wait_for_is_standing(1000)
         if self.cd120_buff_time == 0 or now - self.cd120_buff_time > 121:
@@ -220,9 +226,11 @@ class Buff(Command):
             self.cd240_buff_time = now
         if self.cd900_buff_time == 0 or now - self.cd900_buff_time > 900:
             self.cd900_buff_time = now
+        if self.cd1800_buff_time == 0 or now - self.cd1800_buff_time > 1800:
+            self.cd1800_buff_time = now
         if self.decent_buff_time == 0 or now - self.decent_buff_time > settings.buff_cooldown:
 	        for key in buffs:
-		        press(key, 3, up_time=0.3)
+		        press(key, 2, up_time=0.3)
 	        self.decent_buff_time = now	
 
 class FlashJump(Command):
@@ -301,6 +309,40 @@ class Rope(BaseSkill):
     ground_skill=False
     buff_time=0
     combo_delay = 0.2
+
+class Skill_F3(BaseSkill):
+    _display_name = 'MonParkGold'
+    _distance = 27
+    key=Key.MONSTER_PARK_GOLD
+    delay=0.45
+    rep_interval=0.5
+    skill_cool_down=1800
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.25
+
+class Skill_F4(BaseSkill):
+    _display_name = 'MonParkGreen'
+    _distance = 27
+    key=Key.MONSTER_PARK_GREEN
+    delay=0.45
+    rep_interval=0.5
+    skill_cool_down=1800
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.25
+
+class Skill_F4(BaseSkill):
+    _display_name = 'MonParkRed'
+    _distance = 27
+    key=Key.MONSTER_PARK_RED
+    delay=0.45
+    rep_interval=0.5
+    skill_cool_down=1800
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.25
+    
 
 class Skill_Q(BaseSkill):
     _display_name = 'Cleave'
