@@ -332,7 +332,7 @@ class Skill_F4(BaseSkill):
     buff_time=0
     combo_delay = 0.25
 
-class Skill_F4(BaseSkill):
+class Skill_F5(BaseSkill):
     _display_name = 'MonParkRed'
     _distance = 27
     key=Key.MONSTER_PARK_RED
