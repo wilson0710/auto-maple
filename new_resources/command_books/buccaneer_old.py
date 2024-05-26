@@ -4,12 +4,7 @@ from src.routine.components import Command, CustomKey, SkillCombination, Fall, B
 from src.common.vkeys import press, key_down, key_up
 import cv2
 
-IMAGE_DIR = config.RESOURCES_DIR + '/command_books/buccaneer/'
-
-LOTD_BUFF_TEMPLATE = cv2.imread(IMAGE_DIR + 'lotd.png', 0)
-DEATH_DEBUFF_TEMPLATE = cv2.imread(IMAGE_DIR + 'dp_template.png', 0)
-CHARM_TEMPLATE = cv2.imread(IMAGE_DIR + 'charm_template.png', 0)
-CASH_TAB_TEMPLATE = cv2.imread(IMAGE_DIR + 'cashtab_template.png', 0)
+IMAGE_DIR = config.RESOURCES_DIR + '/command_books/dawn_warrior/'
 
 # List of key mappings
 class Key:
@@ -19,23 +14,20 @@ class Key:
     ROPE = 'ctrl'
     UP_JUMP = 'up+space'
     DOWN_JUMP = 'down+space'
-    ADVANCED_DASH = 'shift'
 
     # Buffs
-    BUFF_1          = '1'    # 
-    BUFF_HOME       = 'home' # 
-    BUFF_5          = '5'    # 
-    BUFF_6          = '6'    #
-    BUFF_7          = '7'    # 
-    BUFF_8          = '8'    # 
-    BUFF_9          = '9'    # Speed Infusion
-    BUFF_0          = '0'    # Maple Warrior
+    BUFF_1              = '1'    # 
+    ROLL_OF_THE_DICE    = 'home'    # 
+    HOLY_SYMBOL         = '5'    # 
+    ADVANCED_BLESSING   = '6'    #
+    COMBAT_ORDERS       = '7'    # 
+    SHARP_EYE           = '8'    # 
+    SPEED_INFUSION      = '9'    # Speed Infusion
+    MAPLE_WARRIOR       = '0'    # Maple Warrior
 
 
-    # Potion
-    GOLD_POT = '.'          #MPARK GOLD POT
-    EXP_15M = ';'
-    
+    # Buffs Toggle
+
     # Attack Skills
     SKILL_G = 'g'           #LOTD
     SKILL_D = 'd'           #Serpent Vortex
@@ -43,7 +35,6 @@ class Key:
     SKILL_F = 'down+f'      #Erda Shower
     SKILL_A = 'a'           #True Arachnid Reflection
     SKILL_S = 's'           #Corkscrew Blow
-    SKILL_R = 'r'           #Howling Fist
 
     # special Skills
     # SP_F12 = 'f12'      # 輪迴
@@ -99,7 +90,7 @@ def step(direction, target):
                 time.sleep(utils.rand_float(0.1, 0.15))
                 press(Key.ROPE, 1)
                 time.sleep(utils.rand_float(1.2, 1.5))
-            elif abs(d_y) <= 25:
+            elif abs(d_y) <= 17:
                 UpJump().execute()
                 SkillCombination(direction='',jump='false',target_skills='skill_x').execute()
             else:
@@ -121,7 +112,7 @@ def step(direction, target):
             down_duration = 0.35            #changed
         
         if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
-            # print("down stair")
+            print("down stair")
             if abs(d_x) >= 5:
                 if d_x > 0:
                     Fall(direction='right',duration=down_duration).execute()
@@ -212,7 +203,7 @@ class Buff(Command):
 
     def main(self):
         # buffs = [Key.SPEED_INFUSION, Key.HOLY_SYMBOL, Key.SHARP_EYE, Key.COMBAT_ORDERS, Key.ADVANCED_BLESSING]
-        buffs = [Key.BUFF_HOME, Key.BUFF_5, Key.BUFF_6, Key.BUFF_7, Key.BUFF_8, Key.BUFF_9, Key.BUFF_0]
+        buffs = [Key.SPEED_INFUSION, Key.HOLY_SYMBOL, Key.COMBAT_ORDERS, Key.ADVANCED_BLESSING, Key.MAPLE_WARRIOR, Key.ROLL_OF_THE_DICE, Key.SHARP_EYE]
         now = time.time()
         utils.wait_for_is_standing(1000)
         if self.cd120_buff_time == 0 or now - self.cd120_buff_time > 121:
@@ -230,7 +221,7 @@ class Buff(Command):
             self.cd900_buff_time = now
         if self.decent_buff_time == 0 or now - self.decent_buff_time > settings.buff_cooldown:
 	        for key in buffs:
-		        press(key, 2, up_time=0.3)
+		        press(key, 3, up_time=0.3)
 	        self.decent_buff_time = now		
 
 class FlashJump(Command):
@@ -278,55 +269,6 @@ class FlashJump(Command):
                 key_up(reverse_direction,up_time=0.01)
         time.sleep(utils.rand_float(0.01, 0.02))
 
-class CheckDeathPenalty(Command):
-    _display_name ='Check Death Penalty'
-
-    def main(self):
-
-        frame = config.capture.frame
-
-        # check for debuff
-        death_debuff = utils.multi_match(frame[:95, :], DEATH_DEBUFF_TEMPLATE,threshold=0.93)
-        
-        if len(death_debuff) > 0 :
-
-            #Open inventory
-            press("i")
-
-            #capture frame with invent opened
-            frame = config.capture.frame
-
-            #Check if cash tab is cuurently selected
-            cash_tab_icon = utils.multi_match(frame[:, :], CASH_TAB_TEMPLATE,threshold = 0.93)
-            if len(cash_tab_icon) > 0 :
-                cash_tab_pos = min(cash_tab_icon, key=lambda p: p[0])
-                target = (round(cash_tab_pos[0]), round(cash_tab_pos[1]))
-                utils.game_window_click(target, button='left', click_time = 1, delay = 0.01)
-
-            #ADJUST this if u get a noti saying you are in combat and you cant use item
-            time.sleep(0.2)
-
-            #Recapture a new frame with charm in the picture
-            frame = config.capture.frame
-
-            #Check for safety charm
-            charm_icon = utils.multi_match(frame[:, :], CHARM_TEMPLATE,threshold = 0.93)
-
-            #Use charm
-            if len(charm_icon) > 0 :
-                charm_pos = min(charm_icon, key=lambda p: p[0])
-                target = (round(charm_pos[0]), round(charm_pos[1]))
-                utils.game_window_click(target, button='left', click_time = 2, delay = 0.01)
-            else:
-                print("No charm in inventory!")
-
-            #Close inventory
-            press("i")
-
-        #else:
-            #No death debuff effects
-            #print("no debuff effect")
-
 class UpJump(BaseSkill):
     """Performs a up jump in the given direction."""
     _display_name = 'Up Jump'
@@ -354,107 +296,26 @@ class Rope(BaseSkill):
     buff_time=0
     combo_delay = 0.2
 
-class SuperJump(Command):
-    """Performs a super jump in the given direction."""
-
-    def __init__(self, direction):
-        super().__init__(locals())
-        self.direction = settings.validate_arrows(direction)
-
-    def main(self):
-        key_down(self.direction)
-        time.sleep(0.1)
-        key_down(Key.ADVANCED_DASH,0)
-        key_down(Key.JUMP,0)
-        time.sleep(0.125)
-        key_up(Key.ADVANCED_DASH,0)
-        key_up(Key.JUMP)
-        key_up(self.direction,0)
-        time.sleep(0.5)
-
-class CheckLOTD(Command):
-    _display_name ='Check LOTD'
-
-    def main(self):
-        frame = config.capture.frame
-        # check for buff
-        lotd_buff = utils.multi_match(frame[:, :], LOTD_BUFF_TEMPLATE,threshold=0.93)
-        if len(lotd_buff) <= 0 :
-            Skill_G().execute()
-
-class FaceLeft(BaseSkill):
-    """Performs a flash jump in the given direction."""
-    _display_name = 'FaceLeft'
-    _distance = 1
-    key='left'
-    delay=0.1
-    rep_interval=0
-    skill_cool_down=0
-    ground_skill=False
-    buff_time=0
-    combo_delay = 0.0
-
-class FaceRight(BaseSkill):
-    """Performs a flash jump in the given direction."""
-    _display_name = 'FaceRight'
-    _distance = 1
-    key='right'
-    delay=0.1
-    rep_interval=0
-    skill_cool_down=0
-    ground_skill=False
-    buff_time=0
-
-class FJMobbing(Command):
-    """Performs a flash jump in the given direction."""
-    _display_name = 'FJMobbing'
-    
-    def __init__(self, direction=""):
-        super().__init__(locals())
-        self.direction = settings.validate_arrows(direction)
-
-    def main(self):
-        if self.direction == 'left':
-            FaceLeft().execute()
-        if self.direction == 'right':
-            FaceRight().execute()
-
-        press(Key.JUMP,down_time=0.04,up_time=0.02)
-        press(Key.FLASH_JUMP, 1,down_time=0.06,up_time=0.05)
-        Skill_X().execute()
-        time.sleep(0.3)
-
-class Gold_Pot(BaseSkill):
-    _display_name ='MP Gold Pot'
-    key=Key.GOLD_POT
-    delay=0.5
-    rep_interval=0.5
-    skill_cool_down=1800
-    ground_skill=False
-    buff_time=1800
-    combo_delay = 0.2
-
-class EXP_15M(BaseSkill):
-    _display_name ='15 Min EXP'
-    key=Key.EXP_15M
-    delay=0.5
-    rep_interval=0.5
-    skill_cool_down=900
-    ground_skill=False
-    buff_time=900
-    combo_delay = 0.2
+# class Skill_A(BaseSkill):
+#     _display_name = '冷血連擊'
+#     _distance = 27
+#     key=Key.SKILL_A
+#     delay=0.45
+#     rep_interval=0.5
+#     skill_cool_down=0
+#     ground_skill=False
+#     buff_time=0
+#     combo_delay = 0.25
 
 class Skill_G(BaseSkill):
     _display_name ='Lord of the Deep'
     key=Key.SKILL_G
-    delay=0.5
-    rep_interval=0.5
+    delay=0.3
+    rep_interval=0.25
     skill_cool_down=0
     ground_skill=False
-    buff_time=60
-    combo_delay = 0.2
-    skill_image = IMAGE_DIR + 'lotd.png'
-
+    buff_time=0
+    combo_delay = 0.1
 
 class Skill_D(BaseSkill):
     _display_name ='Serpent Vortex'
@@ -506,18 +367,6 @@ class Skill_S(BaseSkill):
     ground_skill=True
     buff_time=0
     combo_delay = 0.3
-
-    
-class Skill_R(BaseSkill):
-    _display_name ='Howling Fist'
-    key=Key.SKILL_R
-    delay=0.9
-    rep_interval=0.25
-    skill_cool_down=90
-    ground_skill=False
-    buff_time=90
-    combo_delay = 0.3
-    
 
 class AutoHunting(Command):
     _display_name ='Auto Hunting'

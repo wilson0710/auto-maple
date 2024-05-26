@@ -1,0 +1,27 @@
+$, target=id, value=wet
+$, target=move_tolerance, value=12
+$, target=home_scroll_key, value=f9
+$, target=auto_change_channel, value=true
+$, target=frenzy_key, value=f12
+$, target=platforms, value=b63
+
+@, label=fixed
+*, x=233, y=28, frequency=1, skip=False, adjust=False, active_if_in_x_range=, active_if_in_y_range=, active_if_not_in_x_range=, active_if_not_in_y_range=, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Adjust, x=233, y=28, max_steps=15
+    Wait, duration=0.5
+    FaceLeft, direction=left, jump=false, rep=1, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, direction_after_skill=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    SuperJump, direction=left
+    SuperJump, direction=left
+    SuperJump, direction=left
+    Adjust, x=51, y=30, max_steps=5
+    SuperJump, direction=left
+*, x=2.000, y=46.000, frequency=1, skip=False, adjust=False, active_if_in_x_range=, active_if_in_y_range=, active_if_not_in_x_range=, active_if_not_in_y_range=, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    Adjust, x=2, y=46, max_steps=5
+    Wait, duration=0.5
+    FaceRight, direction=right, jump=false, rep=1, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, direction_after_skill=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+    SuperJump, direction=right
+    SuperJump, direction=right
+    SuperJump, direction=right
+    SuperJump, direction=right
+    Rope, direction=, jump=false, rep=1, pre_delay=0, duration=0, key_down_skill=false, key_up_skill=false, combo=false, wait_until_ready=false, direction_after_skill=false, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=
+>, label=fixed, frequency=1, skip=False, frequency_to_loop=False, active_if_skill_ready=, active_if_skill_cd=, active_if_in_skill_buff=, active_if_not_in_skill_buff=

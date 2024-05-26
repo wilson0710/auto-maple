@@ -212,7 +212,7 @@ class Buff(Command):
 
     def main(self):
         # buffs = [Key.SPEED_INFUSION, Key.HOLY_SYMBOL, Key.SHARP_EYE, Key.COMBAT_ORDERS, Key.ADVANCED_BLESSING]
-        buffs = [Key.BUFF_HOME, Key.BUFF_5, Key.BUFF_6, Key.BUFF_7, Key.BUFF_8, Key.BUFF_9, Key.BUFF_0]
+        buffs = [Key.BUFF_1]
         now = time.time()
         utils.wait_for_is_standing(1000)
         if self.cd120_buff_time == 0 or now - self.cd120_buff_time > 121:
