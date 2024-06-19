@@ -13,6 +13,8 @@ from src.common.vkeys import key_down, key_up, press, click
 from src.routine.components import Point
 from src.common.vkeys import release_unreleased_key
 
+import src.modules.telegram_bot as telebot
+
 # A rune's symbol on the minimap
 RUNE_RANGES = (
     ((141, 148, 245), (146, 158, 255)),
@@ -26,6 +28,14 @@ OTHER_RANGES = (
 )
 other_filtered = utils.filter_color(cv2.imread('assets/other_template.png'), OTHER_RANGES)
 OTHER_TEMPLATE = cv2.cvtColor(other_filtered, cv2.COLOR_BGR2GRAY)
+
+# Guild players' symbols on the minimap
+GUILDIE_RANGES = (
+    # ((110, 58, 215), (130, 163, 295)),
+    ((110, 49, 181), (130, 112, 255)),
+)
+guildie_filtered = utils.filter_color(cv2.imread('assets/guildie.png'), GUILDIE_RANGES)
+GUILDIE_TEMPLATE = cv2.cvtColor(guildie_filtered, cv2.COLOR_BGR2GRAY)
 
 # The Elite Boss's warning sign
 ELITE_TEMPLATE = cv2.imread('assets/elite_template2.jpg', 0)
@@ -78,6 +88,7 @@ class Notifier:
     def _main(self):
         self.ready = True
         prev_others = 0
+        g_prev_others = 0
         rune_start_time = time.time()
         detection_i = 0
         rune_check_count = 0
@@ -105,7 +116,7 @@ class Notifier:
                         self._alert('siren')
                     elif settings.auto_change_channel:
                         pass
-                        # config.should_change_channel = True
+                        config.should_change_channel = True
 
                 if settings.rent_frenzy == False and not settings.story_mode:
                     # Check for other players entering the map
@@ -117,7 +128,25 @@ class Notifier:
                     if others != prev_others:
                         if others > prev_others:
                             self._ping('ding')
+                            config.should_change_channel = True
+                            telebot.send_info_msg("Other players detected!")
                         prev_others = others
+
+                if settings.rent_frenzy == False and not settings.story_mode:
+                    # Check for guildie entering the map
+                    g_filtered = utils.filter_color(minimap, GUILDIE_RANGES)
+                    g_others = len(utils.multi_match(g_filtered, GUILDIE_TEMPLATE, threshold=0.5))
+                    config.stage_fright = g_others > 0
+                    if time.time() - config.latest_change_channel_or_map <= 60 and config.stage_fright:
+                        config.should_change_channel = True # if find other guildies in 1 min between change channel, change again
+                        print("guildie in new map, cc again")
+                    if g_others != g_prev_others:
+                        if g_others > g_prev_others:
+                            self._ping('ding')
+                            telebot.send_info_msg("Guildie detected, setting auto change cc to true!")
+                            config.should_change_channel = True
+                            print("guildie here")
+                        g_prev_others = g_others
 
                 # check for fiona_lie_detector
                 fiona_frame = frame[height-400:height, width - 300:width]
@@ -285,22 +314,27 @@ class Notifier:
         once the key bound to 'Start/stop' is pressed.
         """
 
-        config.enabled = False
-        config.listener.enabled = False
+        # config.enabled = False
+        # config.listener.enabled = False
         config.bot.solve_rune_fail_count = 0
-        self.mixer.load(get_alert_path(name))
-        self.mixer.set_volume(volume)
-        self.mixer.play()
+        # self.mixer.load(get_alert_path(name))
+        # self.mixer.set_volume(volume)
+        # self.mixer.play()
         # use go home scroll
         # kb.press("f9")
+        
+        telebot.send_warning_msg("Alert triggered, stopping bot!")
 
-        while not kb.is_pressed(config.listener.config['Start/stop']):
-            time.sleep(0.1)
-            if config.enabled:
-                break
-        self.mixer.stop()
-        time.sleep(1)
-        config.listener.enabled = True
+        # time.sleep(7)
+        # self.mixer.stop()
+        # while not kb.is_pressed(config.listener.config['Start/stop']):
+        #     time.sleep(0.1)
+        #     if config.enabled:
+        #         break
+        # self.mixer.stop()
+        # time.sleep(1)
+        # config.listener.enabled = True
+        # config.enabled = True
 
     def _ping(self, name, volume=0.5):
         """A quick notification for non-dangerous events."""

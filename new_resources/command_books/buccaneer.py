@@ -276,6 +276,7 @@ class FlashJump(Command):
             press(Key.FLASH_JUMP, 1,down_time=0.07,up_time=0.04) # if this job can do triple jump
             if self.reverse_triple:
                 key_up(reverse_direction,up_time=0.01)
+        time.sleep(0.8)
         time.sleep(utils.rand_float(0.01, 0.02))
 
 class CheckDeathPenalty(Command):
@@ -423,6 +424,21 @@ class FJMobbing(Command):
         press(Key.FLASH_JUMP, 1,down_time=0.06,up_time=0.05)
         Skill_X().execute()
         time.sleep(0.3)
+
+class FJump(Command):
+    """Performs a flash jump in the given direction."""
+    _display_name = 'FJump'
+    
+    def __init__(self, direction=""):
+        super().__init__(locals())
+        self.direction = settings.validate_arrows(direction)
+
+    def main(self):
+        press(Key.JUMP,down_time=0.04,up_time=0.02)
+        press(Key.FLASH_JUMP, 1,down_time=0.06,up_time=0.05)
+        time.sleep(1.0)
+
+
 
 class Gold_Pot(BaseSkill):
     _display_name ='MP Gold Pot'
