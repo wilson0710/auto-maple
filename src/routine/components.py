@@ -897,8 +897,8 @@ class Frenzy(BaseSkill):
         return super().main()
 
 class WealthPotion (BaseSkill):
-    _display_name ='財物密藥'
-    key="f10"
+    _display_name ='WAP'
+    key="f12"
     delay=0.2
     rep_interval=0.2
     skill_cool_down=7260

@@ -46,6 +46,9 @@ STOP_CONVERSTION_TEMPLATE = cv2.imread('assets/stop_conversation.jpg', 0)
 # check for unexpected conversation
 REVIVE_CONFIRM_TEMPLATE = cv2.imread('assets/revive_confirm.png', 0)
 
+# death debuff
+DEATH_DEBUFF_TEMPLATE = cv2.imread('assets/dp_template.png', 0)
+
 # fiona_lie_detector image
 FIONA_LIE_DETECTOR_TEMPLATE = cv2.imread('assets/fiona_lie_detector.png',0)
 
@@ -208,6 +211,11 @@ class Notifier:
                         utils.game_window_click((700,100), button='right')
                         if not settings.auto_revive:
                             self._alert('siren')
+                    
+                    # check for debuff
+                    death_debuff = utils.multi_match(frame[:95, :], DEATH_DEBUFF_TEMPLATE,threshold=0.93)
+                    if len(death_debuff) > 0 :
+                        telebot.send_warning_msg("Character Dead...")
 
                 
                 # Check for skill cd
