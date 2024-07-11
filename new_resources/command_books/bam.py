@@ -71,7 +71,6 @@ def step(direction, target):
     if direction == 'left' or direction == 'right':
         if abs(d_x) >= 17:
             Teleport(direction='',combo='true').execute()
-            Skill_X(combo='true').execute()
         elif abs(d_x) > 10:
             time.sleep(utils.rand_float(0.25, 0.35))
         else:
@@ -100,7 +99,6 @@ def step(direction, target):
                 else:
                     Teleport(direction=direction).execute()
                 utils.wait_for_is_standing(300)
-                Skill_X(combo='False').execute()
             else:
                 press(Key.JUMP, 1)
                 time.sleep(utils.rand_float(0.2, 0.25))
@@ -115,7 +113,6 @@ def step(direction, target):
                     Fall(duration='0.3').execute()
                 if abs(d_y) > 10 and utils.bernoulli(0.9):
                     Teleport(direction=direction,combo='true').execute()
-                    Skill_X(combo='True').execute()
                 else:
                     time.sleep(utils.rand_float(0.2, 0.3))
                     Fall(duration='0.3').execute()
@@ -285,7 +282,12 @@ class TeleportCombination(Command):
         self.combo_direction = settings.validate_arrows(combo_direction)
 
     def main(self):
-        Teleport(direction=self.direction,combo="true",jump=str(self.jump)).execute()
+        if not self.jump:
+            utils.wait_for_is_standing()
+        else:
+            key_down(self.direction,down_time=0.05)
+            press(Key.JUMP,down_time=0.02,up_time=0.02)
+
         skills_array = self.combo_skill.split("|")
         for skill in skills_array:
             skill = skill.lower()
@@ -296,6 +298,9 @@ class TeleportCombination(Command):
                 print(skill)
                 s(direction=self.combo_direction,combo=self.combo2).execute()
                 break
+        Teleport(direction=self.direction,combo="true",jump='false').execute()
+        
+        
 
 class Skill_X(BaseSkill):
     _display_name ='Battle Burst'

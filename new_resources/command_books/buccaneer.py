@@ -439,25 +439,34 @@ class FJump(Command):
         time.sleep(1.0)
 
 
-
-class Gold_Pot(BaseSkill):
-    _display_name ='MP Gold Pot'
-    key=Key.GOLD_POT
-    delay=0.5
-    rep_interval=0.5
-    skill_cool_down=1800
+class EXPPotion (BaseSkill):
+    _display_name ='EAP'
+    key="f2"
+    delay=0.2
+    rep_interval=0.2
+    skill_cool_down=7260
     ground_skill=False
-    buff_time=1800
+    buff_time=7260
     combo_delay = 0.2
 
-class EXP_15M(BaseSkill):
-    _display_name ='15 Min EXP'
-    key=Key.EXP_15M
-    delay=0.5
-    rep_interval=0.5
-    skill_cool_down=900
+class GoldPotion (BaseSkill):
+    _display_name ='goldpotion'
+    key="f3"
+    delay=0.2
+    rep_interval=0.2
+    skill_cool_down=1860
     ground_skill=False
-    buff_time=900
+    buff_time=1860
+    combo_delay = 0.2
+
+class EXPBuff15 (BaseSkill):
+    _display_name ='expbuff15'
+    key="f4"
+    delay=0.2
+    rep_interval=0.2
+    skill_cool_down=960
+    ground_skill=False
+    buff_time=960
     combo_delay = 0.2
 
 class Skill_G(BaseSkill):
