@@ -40,7 +40,7 @@ class Key:
     SKILL_G = 'g'           #LOTD
     SKILL_D = 'd'           #Serpent Vortex
     SKILL_X = 'x'           #Hook Bomber
-    SKILL_F = 'down+f'      #Erda Shower
+    SKILL_F = 'f'      #Erda Shower
     SKILL_A = 'a'           #True Arachnid Reflection
     SKILL_S = 's'           #Corkscrew Blow
     SKILL_R = 'r'           #Howling Fist
