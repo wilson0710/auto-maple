@@ -11,7 +11,7 @@ class Key:
     # Movement
     JUMP = 'space'
     TELEPORT = 'shift' # 瞬移
-    UPJUMP = 'space' # 上跳
+    UPJUMP = 'up+space' # 上跳
     ROPE = 'ctrl'
 
 
@@ -55,69 +55,88 @@ def step(direction, target):
     d_y = target[1] - config.player_pos[1]
     d_x = target[0] - config.player_pos[0]
 
-    # if not check_current_tag('alpha'):
-    #     utils.wait_for_is_standing(1000)
-    #     Skill_X().execute()
-    if config.player_states['is_stuck'] and abs(d_x) >= 17:
-        print("is stuck")
-        time.sleep(utils.rand_float(0.2, 0.3))
-        press(Key.JUMP)
-        WaitStanding(duration='1').execute()
-        # if d_x <= 0:
-        #     Fall(direction='left',duration='0.3')
-        # else:
-        #     Fall(direction='right',duration='0.3')
-        config.player_states['is_stuck'] = False
     if direction == 'left' or direction == 'right':
-        if abs(d_x) >= 17:
-            Teleport(direction='',combo='true').execute()
-        elif abs(d_x) > 10:
-            time.sleep(utils.rand_float(0.25, 0.35))
+        utils.wait_for_is_standing(1000)
+        d_y = target[1] - config.player_pos[1]
+        d_x = target[0] - config.player_pos[0]
+        if config.player_states['is_stuck'] and abs(d_x) < 16:
+            print("is stuck")
+            time.sleep(utils.rand_float(0.1, 0.2))
+            press(Key.JUMP)
+            WaitStanding(duration='1').execute()
+        if abs(d_x) >= 16:
+            if abs(d_x) >= 60:
+                Teleport(direction='',combo='false').execute()
+            elif abs(d_x) >= 28:
+                Teleport(direction='',combo='false').execute()
+            else:
+                if d_y == 0:
+                    Skill_X().execute()
+            time.sleep(utils.rand_float(0.04, 0.06))
+            # if abs(d_x) <= 22:
+            #     key_up(direction)
+            if config.player_states['movement_state'] == config.MOVEMENT_STATE_FALLING:
+                SkillCombination(direction='',jump='false',target_skills='skill_c').execute()
+            utils.wait_for_is_standing(500)
         else:
-            time.sleep(utils.rand_float(0.01, 0.015))
-        utils.wait_for_is_standing(200)
-        # d_x = target[0] - config.player_pos[0]
-        # if abs(d_x) >= settings.move_tolerance and config.player_states['in_bottom_platform'] == False and len(settings.platforms) > 0:
-        #     print('back to ground')
-        #     key_up(direction)
-        #     time.sleep(utils.rand_float(0.3, 0.4))
-        #     Fall(duration='0.2').execute()
-        #     Teleport(direction='down').execute()
-        #     Skill_X(combo='True').execute()
+            time.sleep(utils.rand_float(0.05, 0.08))
+            utils.wait_for_is_standing(500)
     
     if direction == 'up':
-        if abs(d_x) <= settings.move_tolerance and not config.player_states['is_keydown_skill']:
-            time.sleep(utils.rand_float(0.2, 0.25))
-            key_up('left')
-            key_up('right')
-            if abs(d_y) > 3 :
-                if abs(d_y) >= 40:
-                    UpJump().execute()
-                    Teleport(direction=direction,jump='false',combo='true').execute()
-                elif abs(d_y) >= 25:
-                    Teleport(direction=direction,jump='true',combo='true').execute()
-                else:
-                    Teleport(direction=direction).execute()
-                utils.wait_for_is_standing(300)
-            else:
+        utils.wait_for_is_standing(500)
+        if abs(d_x) > settings.move_tolerance:
+            return
+        if abs(d_y) > 6 :
+            if abs(d_y) > 36:
                 press(Key.JUMP, 1)
-                time.sleep(utils.rand_float(0.2, 0.25))
+                time.sleep(utils.rand_float(0.1, 0.15))
+                press(Key.ROPE, 1)
+                time.sleep(utils.rand_float(1.2, 1.5))
+            elif abs(d_y) <= 25:
+                UpJump().execute()
+                SkillCombination(direction='',jump='false',target_skills='skill_c').execute()
+            else:
+                press(Key.ROPE, 1)
+                time.sleep(utils.rand_float(1.2, 1.5))
+                SkillCombination(direction='',jump='false',target_skills='skill_c').execute()
+            utils.wait_for_is_standing(300)
+        else:
+            press(Key.JUMP, 1) 
+            time.sleep(utils.rand_float(0.1, 0.15))
+
     if direction == 'down':
-        if abs(d_x) <= settings.move_tolerance:
-            key_up('left')
-            key_up('right')
-            if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
-                print("down stair")
-                if abs(d_y) >= 25 :
-                    time.sleep(utils.rand_float(0.2, 0.3))
-                    Fall(duration='0.3').execute()
-                if abs(d_y) > 10 and utils.bernoulli(0.9):
-                    Teleport(direction=direction,combo='true').execute()
+        if abs(d_x) > settings.move_tolerance:
+            return
+        down_duration = 0.15                #changed
+        if abs(d_y) > 20:
+            down_duration = 0.55            #changed
+        elif abs(d_y) > 13:
+            down_duration = 0.35            #changed
+        
+        if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING and config.player_states['in_bottom_platform'] == False:
+            # print("down stair")
+            if abs(d_x) >= 5:
+                if d_x > 0:
+                    Fall(direction='right',duration=down_duration).execute()
                 else:
-                    time.sleep(utils.rand_float(0.2, 0.3))
-                    Fall(duration='0.3').execute()
-        time.sleep(utils.rand_float(0.05, 0.08))
-        utils.wait_for_is_standing(800)
+                    Fall(direction='left',duration=down_duration).execute()
+                
+            else:
+                Fall(direction='',duration=(down_duration+0.1)).execute()
+                if config.player_states['movement_state'] == config.MOVEMENT_STATE_STANDING:
+                    print("leave lader")
+                    if d_x > 0:
+                        key_down('left')
+                        press(Key.JUMP)
+                        key_up('left')
+                    else:
+                        key_down('right')
+                        press(Key.JUMP)
+                        key_up('right')
+            SkillCombination(direction='',jump='false',target_skills='skill_c').execute()
+                
+        utils.wait_for_is_standing(2000)
+        time.sleep(utils.rand_float(0.1, 0.12))
 
 class Adjust(Command):
     """Fine-tunes player position using small movements."""
@@ -249,25 +268,20 @@ class Teleport(BaseSkill):
     buff_time=0
     combo_delay = 0.15
 
-class UpJump(Command):
+class UpJump(BaseSkill):
     """Performs a up jump in the given direction."""
     _display_name = 'Up Jump'
-
-    def __init__(self, direction="", jump='False',combo="false"):
-        super().__init__(locals())
-        self.direction = settings.validate_arrows(direction)
-        self.jump = settings.validate_boolean(jump)
-        self.combo = settings.validate_boolean(combo)
-
+    _distance = 27
+    key=Key.UPJUMP
+    delay=0.1
+    rep_interval=0.5
+    skill_cool_down=0
+    ground_skill=False
+    buff_time=0
+    combo_delay = 0.1
     def main(self):
-        self.player_jump(self.direction)
-        time.sleep(utils.rand_float(0.03, 0.06)) 
-        press(Key.UPJUMP, 1,up_time=0.05)
-        key_up(self.direction)
-        if self.combo:
-            time.sleep(utils.rand_float(0.05, 0.1))
-        else:
-            time.sleep(utils.rand_float(0.4, 0.6))
+        self.jump = True
+        super().main()
 
 class TeleportCombination(Command):
     """teleport with other skill."""
