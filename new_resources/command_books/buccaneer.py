@@ -44,6 +44,7 @@ class Key:
     SKILL_A = 'a'           #True Arachnid Reflection
     SKILL_S = 's'           #Corkscrew Blow
     SKILL_R = 'r'           #Howling Fist
+    SKILL_V = 'v'           #Howling Fist
 
     # special Skills
     # SP_F12 = 'f12'      # 輪迴
@@ -494,6 +495,26 @@ class Skill_D(BaseSkill):
 class Skill_F(BaseSkill):
     _display_name ='Erda Shower'
     key=Key.SKILL_F
+    delay=0.9
+    rep_interval=0.25
+    skill_cool_down=57
+    ground_skill=True
+    buff_time=60
+    combo_delay = 0.3
+
+class Skill_V1(BaseSkill):
+    _display_name ='Sol Janus 1'
+    key=Key.SKILL_V
+    delay=0.9
+    rep_interval=0.25
+    skill_cool_down=57
+    ground_skill=True
+    buff_time=60
+    combo_delay = 0.3
+
+class Skill_V2(BaseSkill):
+    _display_name ='Sol Janus 2'
+    key=Key.SKILL_V
     delay=0.9
     rep_interval=0.25
     skill_cool_down=57
