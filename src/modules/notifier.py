@@ -130,9 +130,10 @@ class Notifier:
                         config.should_change_channel = True # if find other in 1 min between change channel, change again
                     if others != prev_others:
                         if others > prev_others:
-                            self._ping('ding')
-                            config.should_change_channel = True
-                            telebot.send_info_msg("Other players detected!")
+                            if settings.auto_change_channel:
+                                self._ping('ding')
+                                config.should_change_channel = True
+                                telebot.send_info_msg("Other players detected!")
                         prev_others = others
 
                 if settings.rent_frenzy == False and not settings.story_mode:
@@ -265,10 +266,13 @@ class Notifier:
                         self._send_msg_to_line_notify("解輪耗時過久")
                         if settings.auto_change_channel:
                             config.should_change_channel = True
+                            telebot.send_warning_msg("CC due to rune")
                         else:
                             self._alert('siren')
+                            telebot.send_warning_msg("Rune Problem")
                     elif config.bot.solve_rune_fail_count >= 3 and not settings.auto_change_channel:
                         self._send_msg_to_line_notify("多次解輪失敗")
+                        telebot.send_warning_msg("Rune solve >3 & CC is off")
                         self._alert('siren')
                     else:
                         # check for rune is actually existing
